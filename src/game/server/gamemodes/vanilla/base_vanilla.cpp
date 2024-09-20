@@ -36,8 +36,10 @@ bool CGameControllerVanilla::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &F
 		Dmg = 1;
 	if(Weapon == WEAPON_LASER)
 		Dmg = 5;
-	if(Weapon == WEAPON_GRENADE)
-		Dmg = 6;
+	// this would mess with explosion damage
+	// https://github.com/ddnet-insta/ddnet-insta/issues/135
+	// if(Weapon == WEAPON_GRENADE)
+	// 	Dmg = 6;
 
 	// m_pPlayer only inflicts half damage on self
 	if(From == Character.GetPlayer()->GetCid())
