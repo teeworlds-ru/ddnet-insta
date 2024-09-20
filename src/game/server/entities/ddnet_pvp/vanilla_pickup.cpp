@@ -22,18 +22,18 @@ CVanillaPickup::CVanillaPickup(CGameWorld *pGameWorld, int Type, int SubType, in
 	m_Layer = Layer;
 	m_Number = Number;
 
-	Reset();
+	int SpawnDelay = m_Type == POWERUP_NINJA ? 90 : 0;
+	if(SpawnDelay > 0)
+		m_SpawnTick = Server()->Tick() + Server()->TickSpeed() * SpawnDelay;
+	else
+		m_SpawnTick = -1;
 
 	GameWorld()->InsertEntity(this);
 }
 
 void CVanillaPickup::Reset()
 {
-	int SpawnDelay = m_Type == POWERUP_NINJA ? 90 : 0;
-	if(SpawnDelay > 0)
-		m_SpawnTick = Server()->Tick() + Server()->TickSpeed() * SpawnDelay;
-	else
-		m_SpawnTick = -1;
+	m_MarkedForDestroy = true;
 }
 
 void CVanillaPickup::Tick()
