@@ -13,6 +13,7 @@ CGameControllerInstagib::CGameControllerInstagib(class CGameContext *pGameServer
 	CGameControllerPvp(pGameServer)
 {
 	m_GameFlags = GAMEFLAG_TEAMS | GAMEFLAG_FLAGS;
+	m_IsVanillaGameType = false;
 	m_AllowSkinChange = true;
 }
 

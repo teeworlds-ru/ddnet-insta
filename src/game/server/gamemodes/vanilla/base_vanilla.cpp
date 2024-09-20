@@ -15,6 +15,7 @@ CGameControllerVanilla::CGameControllerVanilla(class CGameContext *pGameServer) 
 	CGameControllerPvp(pGameServer)
 {
 	m_GameFlags = 0;
+	m_IsVanillaGameType = true;
 	m_AllowSkinChange = true;
 	m_DefaultWeapon = WEAPON_GUN;
 }
