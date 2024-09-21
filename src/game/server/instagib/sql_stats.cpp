@@ -484,6 +484,7 @@ bool CSqlStats::CreateTableThread(IDbConnection *pSqlServer, const ISqlData *pGa
 	str_format(aBuf, sizeof(aBuf),
 		"CREATE TABLE IF NOT EXISTS %s%s("
 		"name        VARCHAR(%d)   COLLATE %s  NOT NULL,"
+		"first_seen  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP, "
 		"kills       INTEGER       DEFAULT 0,"
 		"deaths      INTEGER       DEFAULT 0,"
 		"spree       INTEGER       DEFAULT 0,"
