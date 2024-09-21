@@ -2765,6 +2765,7 @@ if(SERVER)
     gamemodes/instagib/dm.h
     gamemodes/instagib/fng/fng.cpp
     gamemodes/instagib/fng/fng.h
+    gamemodes/instagib/fng/sql_columns.h
     gamemodes/instagib/gctf/gctf.cpp
     gamemodes/instagib/gctf/gctf.h
     gamemodes/instagib/gctf/sql_columns.h
@@ -2781,6 +2782,7 @@ if(SERVER)
     gamemodes/instagib/itdm/itdm.h
     gamemodes/instagib/solofng/solofng.cpp
     gamemodes/instagib/solofng/solofng.h
+    gamemodes/instagib/solofng/sql_columns.h
     gamemodes/instagib/tdm.cpp
     gamemodes/instagib/tdm.h
     gamemodes/instagib/team_fng.cpp
