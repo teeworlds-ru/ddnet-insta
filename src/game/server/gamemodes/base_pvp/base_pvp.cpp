@@ -251,9 +251,10 @@ bool CGameControllerPvp::IsLoser(const CPlayer *pPlayer)
 
 bool CGameControllerPvp::IsStatTrack()
 {
+	int MinPlayers = IsTeamPlay() ? 3 : 2;
 	int Count = NumConnectedIps();
-	// dbg_msg("stats", "connected unique ips=%d (2+ needed to track)", Count);
-	return Count > 1;
+	// dbg_msg("stats", "connected unique ips=%d (%d+ needed to track)", Count, MinPlayers);
+	return Count >= MinPlayers;
 }
 
 bool CGameControllerPvp::OnVoteNetMessage(const CNetMsg_Cl_Vote *pMsg, int ClientId)
