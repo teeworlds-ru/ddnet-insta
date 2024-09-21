@@ -52,6 +52,7 @@ public:
 	 *******************************************************************/
 	int m_LastToucherId = -1;
 	void UpdateLastToucher(int ClientId);
+	int m_OriginalFreezerId = -1;
 
 	int m_Multi = 1;
 
