@@ -465,6 +465,12 @@ bool CSqlStats::CreateTableThread(IDbConnection *pSqlServer, const ISqlData *pGa
 {
 	if(w == Write::NORMAL_FAILED)
 	{
+		if(!MysqlAvailable())
+		{
+			dbg_msg("sql-thread", "failed to create table! Make sure to compile with MySQL support if you want to use stats");
+			return true;
+		}
+
 		dbg_assert(false, "CreateTableThread failed to write");
 		return true;
 	}
