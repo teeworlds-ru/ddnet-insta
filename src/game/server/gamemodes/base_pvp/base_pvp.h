@@ -85,6 +85,9 @@ public:
 	bool IsLoser(const CPlayer *pPlayer) override;
 	bool IsStatTrack() override;
 
+	bool m_InvalidateConnectedIpsCache = true;
+	int m_NumConnectedIpsCached = 0;
+
 	// Anticamper
 	void Anticamper();
 
@@ -95,6 +98,9 @@ public:
 
 	// returns the amount of players that currently have a tee in the world
 	int NumAlivePlayers();
+
+	// cached amount of unique ips
+	int NumConnectedIps();
 
 	// different than NumAlivePlayers()
 	// it does check m_IsDead which is set in OnCharacterDeath

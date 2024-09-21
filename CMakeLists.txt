@@ -2684,6 +2684,7 @@ if(SERVER)
     databases/connection_pool.h
     databases/mysql.cpp
     databases/sqlite.cpp
+    instagib/server.cpp
     main.cpp
     name_ban.cpp
     name_ban.h

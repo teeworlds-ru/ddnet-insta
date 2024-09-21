@@ -251,7 +251,9 @@ bool CGameControllerPvp::IsLoser(const CPlayer *pPlayer)
 
 bool CGameControllerPvp::IsStatTrack()
 {
-	return true;
+	int Count = NumConnectedIps();
+	// dbg_msg("stats", "connected unique ips=%d (2+ needed to track)", Count);
+	return Count > 1;
 }
 
 bool CGameControllerPvp::OnVoteNetMessage(const CNetMsg_Cl_Vote *pMsg, int ClientId)
@@ -755,6 +757,7 @@ void CGameControllerPvp::EndSpree(class CPlayer *pPlayer, class CPlayer *pKiller
 
 void CGameControllerPvp::OnPlayerConnect(CPlayer *pPlayer)
 {
+	m_InvalidateConnectedIpsCache = true;
 	OnPlayerConstruct(pPlayer);
 	IGameController::OnPlayerConnect(pPlayer);
 	int ClientId = pPlayer->GetCid();
@@ -808,6 +811,7 @@ void CGameControllerPvp::SendChatSpectators(const char *pMessage, int Flags)
 
 void CGameControllerPvp::OnPlayerDisconnect(class CPlayer *pPlayer, const char *pReason)
 {
+	m_InvalidateConnectedIpsCache = true;
 	pPlayer->OnDisconnect();
 	int ClientId = pPlayer->GetCid();
 	if(Server()->ClientIngame(ClientId))
@@ -1036,6 +1040,16 @@ bool CGameControllerPvp::OnFireWeapon(CCharacter &Character, int &Weapon, vec2 &
 	}
 
 	return true;
+}
+
+int CGameControllerPvp::NumConnectedIps()
+{
+	if(!m_InvalidateConnectedIpsCache)
+		return m_NumConnectedIpsCached;
+
+	m_InvalidateConnectedIpsCache = false;
+	m_NumConnectedIpsCached = Server()->NumConnectedIps();
+	return m_NumConnectedIpsCached;
 }
 
 int CGameControllerPvp::NumActivePlayers()
