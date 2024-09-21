@@ -219,8 +219,11 @@ void CGameControllerBaseFng::OnSpike(class CCharacter *pChr, int SpikeTile)
 					Server()->ClientName(pOriginalFreezer->GetCid()));
 				GameServer()->SendChat(-1, TEAM_ALL, aBuf);
 
-				pKiller->m_Stats.m_StealsFromOthers++;
-				pOriginalFreezer->m_Stats.m_StealsByOthers++;
+				if(IsStatTrack())
+				{
+					pKiller->m_Stats.m_StealsFromOthers++;
+					pOriginalFreezer->m_Stats.m_StealsByOthers++;
+				}
 			}
 		}
 
@@ -288,7 +291,8 @@ bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &F
 	if(GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
 	{
 		// boosting mates counts neither as hit nor as miss
-		Character.GetPlayer()->m_Stats.m_ShotsFired--;
+		if(IsStatTrack())
+			Character.GetPlayer()->m_Stats.m_ShotsFired--;
 		return false;
 	}
 	CPlayer *pKiller = nullptr;
@@ -309,7 +313,8 @@ bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &F
 		//
 		// yes this means that grenade boost kills
 		// can get you a accuracy over 100%
-		Character.GetPlayer()->m_Stats.m_ShotsFired--;
+		if(IsStatTrack())
+			Character.GetPlayer()->m_Stats.m_ShotsFired--;
 		return false;
 	}
 

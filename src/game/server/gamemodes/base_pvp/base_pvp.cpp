@@ -249,6 +249,11 @@ bool CGameControllerPvp::IsLoser(const CPlayer *pPlayer)
 	return !IsWinner(pPlayer, 0, 0);
 }
 
+bool CGameControllerPvp::IsStatTrack()
+{
+	return true;
+}
+
 bool CGameControllerPvp::OnVoteNetMessage(const CNetMsg_Cl_Vote *pMsg, int ClientId)
 {
 	CPlayer *pPlayer = GameServer()->m_apPlayers[ClientId];
@@ -458,11 +463,14 @@ int CGameControllerPvp::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 	// 			GameServer()->m_apPlayers[i]->UpdateDeadSpecMode();
 	// }
 
-	// selfkill is no kill
-	if(pKiller != pVictim->GetPlayer())
-		pKiller->m_Stats.m_Kills++;
-	// but selfkill is a death
-	pVictim->GetPlayer()->m_Stats.m_Deaths++;
+	if(IsStatTrack())
+	{
+		// selfkill is no kill
+		if(pKiller != pVictim->GetPlayer())
+			pKiller->m_Stats.m_Kills++;
+		// but selfkill is a death
+		pVictim->GetPlayer()->m_Stats.m_Deaths++;
+	}
 
 	if(pKiller && pVictim)
 	{
@@ -572,7 +580,8 @@ bool CGameControllerPvp::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From,
 	if(GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
 	{
 		// boosting mates counts neither as hit nor as miss
-		pPlayer->m_Stats.m_ShotsFired--;
+		if(IsStatTrack())
+			pPlayer->m_Stats.m_ShotsFired--;
 		Dmg = 0;
 		return false;
 	}
@@ -590,18 +599,21 @@ bool CGameControllerPvp::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From,
 			return false;
 	}
 
-	if(From == pPlayer->GetCid())
+	if(IsStatTrack())
 	{
-		// self damage counts as boosting
-		// so the hit/misses rate should not be affected
-		//
-		// yes this means that grenade boost kills
-		// can get you a accuracy over 100%
-		pPlayer->m_Stats.m_ShotsFired--;
-	}
-	else if(pKiller)
-	{
-		pKiller->m_Stats.m_ShotsHit++;
+		if(From == pPlayer->GetCid())
+		{
+			// self damage counts as boosting
+			// so the hit/misses rate should not be affected
+			//
+			// yes this means that grenade boost kills
+			// can get you a accuracy over 100%
+			pPlayer->m_Stats.m_ShotsFired--;
+		}
+		else if(pKiller)
+		{
+			pKiller->m_Stats.m_ShotsHit++;
+		}
 	}
 
 	// instagib damage always kills no matter the armor
@@ -694,6 +706,9 @@ void CGameControllerPvp::OnCharacterSpawn(class CCharacter *pChr)
 
 void CGameControllerPvp::AddSpree(class CPlayer *pPlayer)
 {
+	if(IsStatTrack())
+		return;
+
 	pPlayer->m_Spree++;
 	const int NumMsg = 5;
 	char aBuf[128];
@@ -947,7 +962,8 @@ void CGameControllerPvp::Anticamper()
 
 bool CGameControllerPvp::OnFireWeapon(CCharacter &Character, int &Weapon, vec2 &Direction, vec2 &MouseTarget, vec2 &ProjStartPos)
 {
-	Character.GetPlayer()->m_Stats.m_ShotsFired++;
+	if(IsStatTrack())
+		Character.GetPlayer()->m_Stats.m_ShotsFired++;
 
 	if(g_Config.m_SvGrenadeAmmoRegenResetOnFire)
 		Character.m_Core.m_aWeapons[Character.m_Core.m_ActiveWeapon].m_AmmoRegenStart = -1;

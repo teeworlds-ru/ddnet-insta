@@ -77,6 +77,10 @@ int64_t CPlayer::HandleMulti()
 		m_Multi = 1;
 		return TimeNow;
 	}
+
+	if(GameServer()->m_pController->IsStatTrack())
+		return TimeNow;
+
 	m_Multi++;
 	if(m_Stats.m_BestMulti < m_Multi)
 		m_Stats.m_BestMulti = m_Multi;

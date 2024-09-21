@@ -83,6 +83,7 @@ public:
 
 	bool IsWinner(const CPlayer *pPlayer, char *pMessage, int SizeOfMessage) override;
 	bool IsLoser(const CPlayer *pPlayer) override;
+	bool IsStatTrack() override;
 
 	// Anticamper
 	void Anticamper();
