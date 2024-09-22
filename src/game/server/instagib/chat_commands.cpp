@@ -1,3 +1,4 @@
+#include <engine/shared/protocol.h>
 #include <game/server/entities/character.h>
 #include <game/server/gamecontroller.h>
 #include <game/server/player.h>
@@ -19,8 +20,25 @@ void CGameContext::ConStatsRound(IConsole::IResult *pResult, void *pUserData)
 	if(!pSelf->m_pController)
 		return;
 
+	if(!pSelf->m_pController->IsStatTrack())
+		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp",
+			"! WARNING: not enough players connected to track stats");
+
+	const char *pName = pResult->NumArguments() ? pResult->GetString(0) : pSelf->Server()->ClientName(pResult->m_ClientId);
+	int TargetId = pSelf->m_pController->GetCidByName(pName);
+	if(TargetId < 0 || TargetId >= MAX_CLIENTS)
+		return;
+	const CPlayer *pPlayer = pSelf->m_apPlayers[TargetId];
+
+	char aBuf[512];
+	str_format(aBuf, sizeof(aBuf), "~~~ round stats for '%s'", pName);
+	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
+	str_format(aBuf, sizeof(aBuf), "~ Kills: %d", pPlayer->m_Stats.m_Kills);
+	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
+	str_format(aBuf, sizeof(aBuf), "~ Deaths: %d", pPlayer->m_Stats.m_Deaths);
+	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp",
-		"round stats are not implemnted yet try /statsall");
+		"~ see also /statsall");
 }
 
 void CGameContext::ConStatsAllTime(IConsole::IResult *pResult, void *pUserData)

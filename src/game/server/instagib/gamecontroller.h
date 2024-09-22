@@ -363,6 +363,9 @@ public:
 	bool IsSkinChangeAllowed() const { return m_AllowSkinChange; }
 	int GameFlags() const { return m_GameFlags; }
 
+	// get client id by in game name
+	int GetCidByName(const char *pName);
+
 	CSqlStats *m_pSqlStats = nullptr;
 	const char *m_pStatsTable = "";
 	const char *StatsTable() const { return m_pStatsTable; }
