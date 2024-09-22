@@ -201,7 +201,12 @@ public:
 			pRequestingPlayer - player who initiated the stats request (might differ from the requested player)
 			pRequestedName - player name the stats belong to
 	*/
-	virtual void OnShowRank(int Rank, int RankedScore, const char *pRankType, class CPlayer *pRequestingPlayer, const char *pRequestedName){};
+	virtual void OnShowRank(
+		int Rank,
+		int RankedScore,
+		const char *pRankType,
+		class CPlayer *pRequestingPlayer,
+		const char *pRequestedName){};
 
 	/*
 		Function: IsStatTrack

@@ -26,6 +26,13 @@ void CGameContext::RegisterInstagibCommands()
 	Console()->Register("rankkills", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConRankKills, this, "Shows the all time kills rank of player name (your stats by default)");
 	Console()->Register("rank_kills", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConRankKills, this, "Shows the all time kills rank of player name (your stats by default)");
 
+#define MACRO_ADD_COLUMN(name, sql_name, sql_type, bind_type, default, merge_method) ;
+#define MACRO_RANK_COLUMN(name, sql_name, display_name, order_by) \
+	Console()->Register("rank_" #sql_name, "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConRank##name, this, "Shows the all time " #sql_name " rank of player name (your stats by default)");
+#include <game/server/instagib/sql_colums_all.h>
+#undef MACRO_ADD_COLUMN
+#undef MACRO_RANK_COLUMN
+
 #define CONSOLE_COMMAND(name, params, flags, callback, userdata, help) Console()->Register(name, params, flags, callback, userdata, help);
 #include <game/server/instagib/rcon_commands.h>
 #undef CONSOLE_COMMAND

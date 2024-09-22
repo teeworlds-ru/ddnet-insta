@@ -64,5 +64,23 @@ void CGameContext::ConRankKills(IConsole::IResult *pResult, void *pUserData)
 		return;
 
 	const char *pName = pResult->NumArguments() ? pResult->GetString(0) : pSelf->Server()->ClientName(pResult->m_ClientId);
-	pSelf->m_pController->m_pSqlStats->ShowRank(pResult->m_ClientId, pName, "Kills", "kills", pSelf->m_pController->StatsTable());
+	pSelf->m_pController->m_pSqlStats->ShowRank(pResult->m_ClientId, pName, "Kills", "kills", pSelf->m_pController->StatsTable(), "DESC");
 }
+
+#define MACRO_ADD_COLUMN(name, sql_name, sql_type, bind_type, default, merge_method) ;
+#define MACRO_RANK_COLUMN(name, sql_name, display_name, order_by) \
+	void CGameContext::ConRank##name(IConsole::IResult *pResult, void *pUserData) \
+	{ \
+		CGameContext *pSelf = (CGameContext *)pUserData; \
+		if(!CheckClientId(pResult->m_ClientId)) \
+			return; \
+\
+		if(!pSelf->m_pController) \
+			return; \
+\
+		const char *pName = pResult->NumArguments() ? pResult->GetString(0) : pSelf->Server()->ClientName(pResult->m_ClientId); \
+		pSelf->m_pController->m_pSqlStats->ShowRank(pResult->m_ClientId, pName, display_name, #sql_name, pSelf->m_pController->StatsTable(), order_by); \
+	}
+#include <game/server/instagib/sql_colums_all.h>
+#undef MACRO_ADD_COLUMN
+#undef MACRO_RANK_COLUMN

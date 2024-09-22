@@ -84,6 +84,7 @@ void CSqlStats::ExecPlayerRankOrTopThread(
 	const char *pRankColumnDisplay,
 	const char *pRankColumnSql,
 	const char *pTable,
+	const char *pOrderBy,
 	int Offset)
 {
 	auto pResult = NewInstaSqlResult(ClientId);
@@ -95,6 +96,7 @@ void CSqlStats::ExecPlayerRankOrTopThread(
 	str_copy(Tmp->m_aRankColumnDisplay, pRankColumnDisplay, sizeof(Tmp->m_aRankColumnDisplay));
 	str_copy(Tmp->m_aRankColumnSql, pRankColumnSql, sizeof(Tmp->m_aRankColumnSql));
 	str_copy(Tmp->m_aTable, pTable, sizeof(Tmp->m_aTable));
+	str_copy(Tmp->m_aOrderBy, pOrderBy, sizeof(Tmp->m_aOrderBy));
 	Tmp->m_Offset = Offset;
 
 	m_pPool->Execute(pFuncPtr, std::move(Tmp), pThreadName);
@@ -131,11 +133,26 @@ void CSqlStats::ShowStats(int ClientId, const char *pName, const char *pTable)
 	ExecPlayerStatsThread(ShowStatsWorker, "show stats", ClientId, pName, pTable);
 }
 
-void CSqlStats::ShowRank(int ClientId, const char *pName, const char *pRankColumnDisplay, const char *pRankColumnSql, const char *pTable)
+void CSqlStats::ShowRank(
+	int ClientId,
+	const char *pName,
+	const char *pRankColumnDisplay,
+	const char *pRankColumnSql,
+	const char *pTable,
+	const char *pOrderBy)
 {
 	if(RateLimitPlayer(ClientId))
 		return;
-	ExecPlayerRankOrTopThread(ShowRankWorker, "show rank", ClientId, pName, pRankColumnDisplay, pRankColumnSql, pTable, 0);
+	ExecPlayerRankOrTopThread(
+		ShowRankWorker,
+		"show rank",
+		ClientId,
+		pName,
+		pRankColumnDisplay,
+		pRankColumnSql,
+		pTable,
+		pOrderBy,
+		0);
 }
 
 void CSqlStats::SaveRoundStats(const char *pName, const char *pTable, CSqlStatsPlayer *pStats)
@@ -232,11 +249,12 @@ bool CSqlStats::ShowRankWorker(IDbConnection *pSqlServer, const ISqlData *pGameD
 		aBuf,
 		sizeof(aBuf),
 		"SELECT %s, rank " // column
-		"FROM (SELECT name, %s, RANK() OVER (ORDER BY %s DESC) rank FROM %s) sub_table " // column, column, table
+		"FROM (SELECT name, %s, RANK() OVER (ORDER BY %s %s) rank FROM %s) sub_table " // column, column, table
 		"WHERE name = ?;",
 		pData->m_aRankColumnSql,
 		pData->m_aRankColumnSql,
 		pData->m_aRankColumnSql,
+		pData->m_aOrderBy,
 		pData->m_aTable);
 	if(pSqlServer->PrepareStatement(aBuf, pError, ErrorSize))
 	{

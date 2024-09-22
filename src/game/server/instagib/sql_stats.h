@@ -87,6 +87,9 @@ struct CSqlPlayerStatsRequest : CSqlInstaData
 
 	// table name depends on gametype
 	char m_aTable[128];
+
+	// SQL ASC or DESC
+	char m_aOrderBy[128];
 };
 
 struct CSqlSaveRoundStatsRequest : CSqlInstaData
@@ -148,6 +151,7 @@ class CSqlStats
 		const char *pRankColumnDisplay,
 		const char *pRankColumnSql,
 		const char *pTable,
+		const char *pOrderBy,
 		int Offset);
 
 	bool RateLimitPlayer(int ClientId);
@@ -162,7 +166,7 @@ public:
 	void SaveRoundStats(const char *pName, const char *pTable, CSqlStatsPlayer *pStats);
 
 	void ShowStats(int ClientId, const char *pName, const char *pTable);
-	void ShowRank(int ClientId, const char *pName, const char *pRankColumnDisplay, const char *pRankColumnSql, const char *pTable);
+	void ShowRank(int ClientId, const char *pName, const char *pRankColumnDisplay, const char *pRankColumnSql, const char *pTable, const char *pOrderBy);
 };
 
 #endif
