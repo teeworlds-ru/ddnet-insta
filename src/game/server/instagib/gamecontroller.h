@@ -171,6 +171,15 @@ public:
 	virtual bool IsLoser(const CPlayer *pPlayer) { return false; }
 
 	/*
+		Function: PointsForWin
+			Computes the amount of points for winning a round
+
+		Arguments:
+			pPlayer - the player that won
+	*/
+	virtual int PointsForWin(const CPlayer *pPlayer) { return 1; }
+
+	/*
 		Function: OnShowStatsAll
 			called from the main thread when a SQL worker finished querying stats from the database
 

@@ -50,7 +50,7 @@ void IGameController::OnEndRoundInsta()
 			if(Won)
 			{
 				pPlayer->m_Stats.m_Wins++;
-				pPlayer->m_Stats.m_Points++;
+				pPlayer->m_Stats.m_Points += PointsForWin(pPlayer);
 			}
 			if(Lost)
 				pPlayer->m_Stats.m_Losses++;
