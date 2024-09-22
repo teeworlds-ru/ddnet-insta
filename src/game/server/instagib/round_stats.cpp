@@ -48,7 +48,10 @@ void IGameController::OnEndRoundInsta()
 		if(IsStatTrack())
 		{
 			if(Won)
+			{
 				pPlayer->m_Stats.m_Wins++;
+				pPlayer->m_Stats.m_Points++;
+			}
 			if(Lost)
 				pPlayer->m_Stats.m_Losses++;
 		}

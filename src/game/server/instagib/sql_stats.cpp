@@ -162,7 +162,7 @@ bool CSqlStats::ShowStatsWorker(IDbConnection *pSqlServer, const ISqlData *pGame
 		aBuf,
 		sizeof(aBuf),
 		"SELECT"
-		" kills, deaths, spree,"
+		" points, kills, deaths, spree,"
 		" wins, losses, shots_fired, shots_hit %s "
 		"FROM %s "
 		"WHERE name = ?;",
@@ -197,6 +197,7 @@ bool CSqlStats::ShowStatsWorker(IDbConnection *pSqlServer, const ISqlData *pGame
 		str_copy(pResult->m_Info.m_aRequestedPlayer, pData->m_aName, sizeof(pResult->m_Info.m_aRequestedPlayer));
 
 		int Offset = 1;
+		pResult->m_Stats.m_Points = pSqlServer->GetInt(Offset++);
 		pResult->m_Stats.m_Kills = pSqlServer->GetInt(Offset++);
 		pResult->m_Stats.m_Deaths = pSqlServer->GetInt(Offset++);
 		pResult->m_Stats.m_BestSpree = pSqlServer->GetInt(Offset++);
@@ -286,7 +287,7 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 		aBuf,
 		sizeof(aBuf),
 		"SELECT"
-		" name, kills, deaths, spree,"
+		" name, points, kills, deaths, spree,"
 		" wins, losses, shots_fired, shots_hit %s "
 		"FROM %s "
 		"WHERE name = ?;",
@@ -321,12 +322,12 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 			sizeof(aBuf),
 			"%s INTO %s%s(" // INSERT INTO
 			" name,"
-			" kills, deaths, spree,"
+			" points, kills, deaths, spree,"
 			" wins, losses,"
 			" shots_fired, shots_hit  %s"
 			") VALUES ("
 			" ?,"
-			" ?, ?, ?,"
+			" ?, ?, ?, ?,"
 			" ?, ?,"
 			" ?, ? %s"
 			");",
@@ -346,6 +347,7 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 
 		int Offset = 1;
 		pSqlServer->BindString(Offset++, pData->m_aName);
+		pSqlServer->BindInt(Offset++, pData->m_Stats.m_Points);
 		pSqlServer->BindInt(Offset++, pData->m_Stats.m_Kills);
 		pSqlServer->BindInt(Offset++, pData->m_Stats.m_Deaths);
 		pSqlServer->BindInt(Offset++, pData->m_Stats.m_BestSpree);
@@ -376,6 +378,7 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 		CSqlStatsPlayer MergeStats;
 		// 1 is name that we don't really need for now
 		int Offset = 2;
+		MergeStats.m_Points = pSqlServer->GetInt(Offset++);
 		MergeStats.m_Kills = pSqlServer->GetInt(Offset++);
 		MergeStats.m_Deaths = pSqlServer->GetInt(Offset++);
 		MergeStats.m_BestSpree = pSqlServer->GetInt(Offset++);
@@ -399,7 +402,7 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 			sizeof(aBuf),
 			"UPDATE %s%s "
 			"SET"
-			" kills = ?, deaths = ?, spree = ?,"
+			" points = ?, kills = ?, deaths = ?, spree = ?,"
 			" wins = ?, losses = ?,"
 			" shots_fired = ?, shots_hit = ? %s"
 			"WHERE name = ?;",
@@ -414,6 +417,7 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 		}
 
 		Offset = 1;
+		pSqlServer->BindInt(Offset++, MergeStats.m_Points);
 		pSqlServer->BindInt(Offset++, MergeStats.m_Kills);
 		pSqlServer->BindInt(Offset++, MergeStats.m_Deaths);
 		pSqlServer->BindInt(Offset++, MergeStats.m_BestSpree);
@@ -485,6 +489,7 @@ bool CSqlStats::CreateTableThread(IDbConnection *pSqlServer, const ISqlData *pGa
 		"CREATE TABLE IF NOT EXISTS %s%s("
 		"name        VARCHAR(%d)   COLLATE %s  NOT NULL,"
 		"first_seen  TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP, "
+		"points      INTEGER       DEFAULT 0,"
 		"kills       INTEGER       DEFAULT 0,"
 		"deaths      INTEGER       DEFAULT 0,"
 		"spree       INTEGER       DEFAULT 0,"
