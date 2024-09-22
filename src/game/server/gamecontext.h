@@ -316,13 +316,17 @@ public:
 	static void ConStatsRound(IConsole::IResult *pResult, void *pUserData);
 	static void ConStatsAllTime(IConsole::IResult *pResult, void *pUserData);
 	static void ConRankKills(IConsole::IResult *pResult, void *pUserData);
+	static void ConTopKills(IConsole::IResult *pResult, void *pUserData);
 
 #define MACRO_ADD_COLUMN(name, sql_name, sql_type, bind_type, default, merge_method) ;
 #define MACRO_RANK_COLUMN(name, sql_name, display_name, order_by) \
 	static void ConRank##name(IConsole::IResult *pResult, void *pUserData);
+#define MACRO_TOP_COLUMN(name, sql_name, display_name, order_by) \
+	static void ConTop##name(IConsole::IResult *pResult, void *pUserData);
 #include <game/server/instagib/sql_colums_all.h>
 #undef MACRO_ADD_COLUMN
 #undef MACRO_RANK_COLUMN
+#undef MACRO_TOP_COLUMN
 
 	//
 	void CheckPureTuning();

@@ -155,6 +155,29 @@ void CSqlStats::ShowRank(
 		0);
 }
 
+void CSqlStats::ShowTop(
+	int ClientId,
+	const char *pName,
+	const char *pRankColumnDisplay,
+	const char *pRankColumnSql,
+	const char *pTable,
+	const char *pOrderBy,
+	int Offset)
+{
+	if(RateLimitPlayer(ClientId))
+		return;
+	ExecPlayerRankOrTopThread(
+		ShowTopWorker,
+		"show top",
+		ClientId,
+		pName,
+		pRankColumnDisplay,
+		pRankColumnSql,
+		pTable,
+		pOrderBy,
+		Offset);
+}
+
 void CSqlStats::SaveRoundStats(const char *pName, const char *pTable, CSqlStatsPlayer *pStats)
 {
 	auto Tmp = std::make_unique<CSqlSaveRoundStatsRequest>();
@@ -288,6 +311,61 @@ bool CSqlStats::ShowRankWorker(IDbConnection *pSqlServer, const ISqlData *pGameD
 		pResult->m_RankedScore = pSqlServer->GetInt(1);
 		pResult->m_Rank = pSqlServer->GetInt(2);
 	}
+	return false;
+}
+
+bool CSqlStats::ShowTopWorker(IDbConnection *pSqlServer, const ISqlData *pGameData, char *pError, int ErrorSize)
+{
+	const auto *pData = dynamic_cast<const CSqlPlayerStatsRequest *>(pGameData);
+	auto *pResult = dynamic_cast<CInstaSqlResult *>(pGameData->m_pResult.get());
+	pResult->m_MessageKind = CInstaSqlResult::DIRECT;
+
+	auto *paMessages = pResult->m_aaMessages;
+
+	int LimitStart = maximum(pData->m_Offset - 1, 0);
+
+	char aBuf[512];
+	str_format(aBuf, sizeof(aBuf),
+		"SELECT RANK() OVER (ORDER BY a.%s DESC) as ranking, %s, name "
+		"FROM ("
+		"  SELECT %s, name "
+		"  FROM %s "
+		"  ORDER BY %s DESC LIMIT ?"
+		") as a "
+		"ORDER BY ranking ASC, name ASC LIMIT ?, 5",
+		pData->m_aRankColumnSql,
+		pData->m_aRankColumnSql,
+		pData->m_aRankColumnSql,
+		pData->m_aTable,
+		pData->m_aRankColumnSql);
+	if(pSqlServer->PrepareStatement(aBuf, pError, ErrorSize))
+	{
+		dbg_msg("sql-thread", "prepare top failed query: %s", aBuf);
+		return true;
+	}
+	pSqlServer->BindInt(1, LimitStart + 5);
+	pSqlServer->BindInt(2, LimitStart);
+
+	// show top points
+	str_format(paMessages[0], sizeof(paMessages[0]), "-------- Top %s --------", pData->m_aRankColumnDisplay);
+	bool End = false;
+	int Line = 1;
+	while(!pSqlServer->Step(&End, pError, ErrorSize) && !End)
+	{
+		int Rank = pSqlServer->GetInt(1);
+		int Points = pSqlServer->GetInt(2);
+		char aName[MAX_NAME_LENGTH];
+		pSqlServer->GetString(3, aName, sizeof(aName));
+		str_format(paMessages[Line], sizeof(paMessages[Line]),
+			"%d. %s %s: %d", Rank, aName, pData->m_aRankColumnDisplay, Points);
+		Line++;
+	}
+	if(!End)
+	{
+		return true;
+	}
+	str_copy(paMessages[Line], "-------------------------------", sizeof(paMessages[Line]));
+
 	return false;
 }
 
