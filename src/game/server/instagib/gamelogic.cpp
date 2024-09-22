@@ -341,7 +341,25 @@ void CGameContext::InstagibUnstackChatMessage(char *pUnstacked, const char *pMes
 		m_UnstackHackCharacterOffset++;
 		if(m_UnstackHackCharacterOffset >= (int)(sizeof(aaInvisibleUnicodes) / 8))
 			m_UnstackHackCharacterOffset = 0;
-		str_format(pUnstacked, Size, "%s%s", aaInvisibleUnicodes[m_UnstackHackCharacterOffset], pMessage);
+
+		const char *pPingPrefix = "";
+
+		if(aaInvisibleUnicodes[m_UnstackHackCharacterOffset][0] != '\0')
+		{
+			for(const CPlayer *pPlayer : m_apPlayers)
+			{
+				if(!pPlayer)
+					continue;
+
+				if(str_startswith(pMessage, Server()->ClientName(pPlayer->GetCid())))
+				{
+					pPingPrefix = " ";
+					break;
+				}
+			}
+		}
+
+		str_format(pUnstacked, Size, "%s%s%s", aaInvisibleUnicodes[m_UnstackHackCharacterOffset], pPingPrefix, pMessage);
 	}
 	for(int i = MAX_LINES - 1; i > 0; i--)
 	{
