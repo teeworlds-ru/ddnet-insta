@@ -1128,7 +1128,7 @@ bool CGameControllerPvp::OnFireWeapon(CCharacter &Character, int &Weapon, vec2 &
 	{
 		int ShotSpread = 2;
 
-		for(int i = -ShotSpread; i <= ShotSpread; ++i)
+		for(int i = -ShotSpread; i <= ShotSpread; ++i) // NOLINT(clang-analyzer-unix.Malloc)
 		{
 			float Spreading[] = {-0.185f, -0.070f, 0, 0.070f, 0.185f};
 			float Angle = angle(Direction);
@@ -1151,7 +1151,7 @@ bool CGameControllerPvp::OnFireWeapon(CCharacter &Character, int &Weapon, vec2 &
 				vec2(cosf(Angle), sinf(Angle)) * Speed); // InitDir
 		}
 
-		GameServer()->CreateSound(Character.m_Pos, SOUND_SHOTGUN_FIRE);
+		GameServer()->CreateSound(Character.m_Pos, SOUND_SHOTGUN_FIRE); // NOLINT(clang-analyzer-unix.Malloc)
 	}
 	else
 	{
