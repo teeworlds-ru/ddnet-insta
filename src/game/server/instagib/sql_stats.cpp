@@ -68,7 +68,7 @@ void CSqlStats::ExecPlayerStatsThread(
 	auto pResult = NewInstaSqlResult(ClientId);
 	if(pResult == nullptr)
 		return;
-	auto Tmp = std::make_unique<CSqlPlayerStatsRequest>(pResult);
+	auto Tmp = std::make_unique<CSqlPlayerStatsRequest>(pResult, g_Config.m_SvDebugStats);
 	str_copy(Tmp->m_aName, pName, sizeof(Tmp->m_aName));
 	str_copy(Tmp->m_aRequestingPlayer, Server()->ClientName(ClientId), sizeof(Tmp->m_aRequestingPlayer));
 	str_copy(Tmp->m_aTable, pTable, sizeof(Tmp->m_aTable));
@@ -90,7 +90,7 @@ void CSqlStats::ExecPlayerRankOrTopThread(
 	auto pResult = NewInstaSqlResult(ClientId);
 	if(pResult == nullptr)
 		return;
-	auto Tmp = std::make_unique<CSqlPlayerStatsRequest>(pResult);
+	auto Tmp = std::make_unique<CSqlPlayerStatsRequest>(pResult, g_Config.m_SvDebugStats);
 	str_copy(Tmp->m_aName, pName, sizeof(Tmp->m_aName));
 	str_copy(Tmp->m_aRequestingPlayer, Server()->ClientName(ClientId), sizeof(Tmp->m_aRequestingPlayer));
 	str_copy(Tmp->m_aRankColumnDisplay, pRankColumnDisplay, sizeof(Tmp->m_aRankColumnDisplay));
@@ -116,11 +116,13 @@ void CSqlStats::SetExtraColumns(CExtraColumns *pExtraColumns)
 
 CSqlInstaData::~CSqlInstaData()
 {
-	dbg_msg("sql-thread", "round stats request destructor called");
+	if(m_DebugStats > 1)
+		dbg_msg("sql-thread", "round stats request destructor called");
 
 	if(m_pExtraColumns)
 	{
-		dbg_msg("sql-thread", "free memory at %p", m_pExtraColumns);
+		if(m_DebugStats > 1)
+			dbg_msg("sql-thread", "free memory at %p", m_pExtraColumns);
 		free(m_pExtraColumns);
 		m_pExtraColumns = nullptr;
 	}
@@ -180,11 +182,12 @@ void CSqlStats::ShowTop(
 
 void CSqlStats::SaveRoundStats(const char *pName, const char *pTable, CSqlStatsPlayer *pStats)
 {
-	auto Tmp = std::make_unique<CSqlSaveRoundStatsRequest>();
+	auto Tmp = std::make_unique<CSqlSaveRoundStatsRequest>(g_Config.m_SvDebugStats);
 
 	Tmp->m_pExtraColumns = (CExtraColumns *)malloc(sizeof(CExtraColumns));
 	mem_copy(Tmp->m_pExtraColumns, m_pExtraColumns, sizeof(CExtraColumns));
-	dbg_msg("sql", "allocated memory at %p", Tmp->m_pExtraColumns);
+	if(g_Config.m_SvDebugStats > 1)
+		dbg_msg("sql", "allocated memory at %p", Tmp->m_pExtraColumns);
 
 	str_copy(Tmp->m_aName, pName);
 	str_copy(Tmp->m_aTable, pTable);
@@ -246,8 +249,11 @@ bool CSqlStats::ShowStatsWorker(IDbConnection *pSqlServer, const ISqlData *pGame
 		pResult->m_Stats.m_ShotsFired = pSqlServer->GetInt(Offset++);
 		pResult->m_Stats.m_ShotsHit = pSqlServer->GetInt(Offset++);
 
-		dbg_msg("sql-thread", "loaded base stats:");
-		pResult->m_Stats.Dump(pData->m_pExtraColumns, "sql-thread");
+		if(pData->m_DebugStats > 1)
+		{
+			dbg_msg("sql-thread", "loaded base stats:");
+			pResult->m_Stats.Dump(pData->m_pExtraColumns, "sql-thread");
+		}
 
 		CSqlStatsPlayer EmptyStats;
 		EmptyStats.Reset();
@@ -256,8 +262,11 @@ bool CSqlStats::ShowStatsWorker(IDbConnection *pSqlServer, const ISqlData *pGame
 		if(pData->m_pExtraColumns)
 			pData->m_pExtraColumns->ReadAndMergeStats(&Offset, pSqlServer, &pResult->m_Stats, &EmptyStats);
 
-		dbg_msg("sql-thread", "loaded gametype specific stats:");
-		pResult->m_Stats.Dump(pData->m_pExtraColumns, "sql-thread");
+		if(pData->m_DebugStats > 1)
+		{
+			dbg_msg("sql-thread", "loaded gametype specific stats:");
+			pResult->m_Stats.Dump(pData->m_pExtraColumns, "sql-thread");
+		}
 	}
 	return false;
 }
@@ -375,8 +384,11 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 		return false;
 
 	const CSqlSaveRoundStatsRequest *pData = dynamic_cast<const CSqlSaveRoundStatsRequest *>(pGameData);
-	dbg_msg("sql-thread", "writing stats of player '%s'", pData->m_aName);
-	dbg_msg("sql-thread", "extra columns %p", pData->m_pExtraColumns);
+	if(pData->m_DebugStats > 1)
+	{
+		dbg_msg("sql-thread", "writing stats of player '%s'", pData->m_aName);
+		dbg_msg("sql-thread", "extra columns %p", pData->m_pExtraColumns);
+	}
 
 	char aBuf[4096];
 	str_format(
@@ -397,7 +409,8 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 	pSqlServer->BindString(1, pData->m_aName);
 	pSqlServer->Print();
 
-	dbg_msg("sql-thread", "select query: %s", aBuf);
+	if(pData->m_DebugStats > 1)
+		dbg_msg("sql-thread", "select query: %s", aBuf);
 
 	bool End;
 	if(pSqlServer->Step(&End, pError, ErrorSize))
@@ -407,7 +420,8 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 	}
 	if(End)
 	{
-		dbg_msg("sql-thread", "inserting new record ...");
+		if(pData->m_DebugStats > 1)
+			dbg_msg("sql-thread", "inserting new record ...");
 		// the _backup table is not used yet
 		// because we guard the write mode at the top
 		// to avoid complexity for now
@@ -439,7 +453,8 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 			return true;
 		}
 
-		dbg_msg("sql-thread", "inserted query: %s", aBuf);
+		if(pData->m_DebugStats > 1)
+			dbg_msg("sql-thread", "inserted query: %s", aBuf);
 
 		int Offset = 1;
 		pSqlServer->BindString(Offset++, pData->m_aName);
@@ -452,12 +467,14 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 		pSqlServer->BindInt(Offset++, pData->m_Stats.m_ShotsFired);
 		pSqlServer->BindInt(Offset++, pData->m_Stats.m_ShotsHit);
 
-		dbg_msg("sql-thread", "pre extra offset %d", Offset);
+		if(pData->m_DebugStats > 1)
+			dbg_msg("sql-thread", "pre extra offset %d", Offset);
 
 		if(pData->m_pExtraColumns)
 			pData->m_pExtraColumns->InsertBindings(&Offset, pSqlServer, &pData->m_Stats);
 
-		dbg_msg("sql-thread", "final offset %d", Offset);
+		if(pData->m_DebugStats > 1)
+			dbg_msg("sql-thread", "final offset %d", Offset);
 
 		pSqlServer->Print();
 
@@ -469,7 +486,8 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 	}
 	else
 	{
-		dbg_msg("sql-thread", "updating existing record ...");
+		if(pData->m_DebugStats > 1)
+			dbg_msg("sql-thread", "updating existing record ...");
 
 		CSqlStatsPlayer MergeStats;
 		// 1 is name that we don't really need for now
@@ -483,15 +501,21 @@ bool CSqlStats::SaveRoundStatsThread(IDbConnection *pSqlServer, const ISqlData *
 		MergeStats.m_ShotsFired = pSqlServer->GetInt(Offset++);
 		MergeStats.m_ShotsHit = pSqlServer->GetInt(Offset++);
 
-		dbg_msg("sql-thread", "loaded stats:");
-		MergeStats.Dump(pData->m_pExtraColumns, "sql-thread");
+		if(pData->m_DebugStats > 1)
+		{
+			dbg_msg("sql-thread", "loaded stats:");
+			MergeStats.Dump(pData->m_pExtraColumns, "sql-thread");
+		}
 
 		MergeStats.Merge(&pData->m_Stats);
 		if(pData->m_pExtraColumns)
 			pData->m_pExtraColumns->ReadAndMergeStats(&Offset, pSqlServer, &MergeStats, &pData->m_Stats);
 
-		dbg_msg("sql-thread", "merged stats:");
-		MergeStats.Dump(pData->m_pExtraColumns, "sql-thread");
+		if(pData->m_DebugStats > 1)
+		{
+			dbg_msg("sql-thread", "merged stats:");
+			MergeStats.Dump(pData->m_pExtraColumns, "sql-thread");
+		}
 
 		str_format(
 			aBuf,

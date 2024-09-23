@@ -63,14 +63,16 @@ struct CSqlInstaData : ISqlData
 
 	~CSqlInstaData() override;
 
+	int m_DebugStats = 0;
 	CExtraColumns *m_pExtraColumns = nullptr;
 };
 
 struct CSqlPlayerStatsRequest : CSqlInstaData
 {
-	CSqlPlayerStatsRequest(std::shared_ptr<CInstaSqlResult> pResult) :
+	CSqlPlayerStatsRequest(std::shared_ptr<CInstaSqlResult> pResult, int DebugStats) :
 		CSqlInstaData(std::move(pResult))
 	{
+		m_DebugStats = DebugStats;
 	}
 
 	// object being requested, player (16 bytes)
@@ -94,9 +96,10 @@ struct CSqlPlayerStatsRequest : CSqlInstaData
 
 struct CSqlSaveRoundStatsRequest : CSqlInstaData
 {
-	CSqlSaveRoundStatsRequest() :
+	CSqlSaveRoundStatsRequest(int DebugStats) :
 		CSqlInstaData(nullptr)
 	{
+		m_DebugStats = DebugStats;
 	}
 
 	char m_aName[128];
