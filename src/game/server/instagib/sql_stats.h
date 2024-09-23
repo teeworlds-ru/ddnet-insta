@@ -132,6 +132,7 @@ class CSqlStats
 
 	static bool ShowStatsWorker(IDbConnection *pSqlServer, const ISqlData *pGameData, char *pError, int ErrorSize);
 	static bool ShowRankWorker(IDbConnection *pSqlServer, const ISqlData *pGameData, char *pError, int ErrorSize);
+	static bool ShowTopWorker(IDbConnection *pSqlServer, const ISqlData *pGameData, char *pError, int ErrorSize);
 
 	std::shared_ptr<CInstaSqlResult> NewInstaSqlResult(int ClientId);
 
@@ -167,6 +168,7 @@ public:
 
 	void ShowStats(int ClientId, const char *pName, const char *pTable);
 	void ShowRank(int ClientId, const char *pName, const char *pRankColumnDisplay, const char *pRankColumnSql, const char *pTable, const char *pOrderBy);
+	void ShowTop(int ClientId, const char *pName, const char *pRankColumnDisplay, const char *pRankColumnSql, const char *pTable, const char *pOrderBy, int Offset);
 };
 
 #endif
