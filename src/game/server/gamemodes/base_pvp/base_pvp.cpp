@@ -833,7 +833,7 @@ void CGameControllerPvp::OnCharacterSpawn(class CCharacter *pChr)
 
 void CGameControllerPvp::AddSpree(class CPlayer *pPlayer)
 {
-	if(IsStatTrack())
+	if(!IsStatTrack())
 		return;
 
 	pPlayer->m_Spree++;
