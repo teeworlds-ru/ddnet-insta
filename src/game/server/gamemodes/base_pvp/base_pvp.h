@@ -81,9 +81,12 @@ public:
 	void OnShowRank(int Rank, int RankedScore, const char *pRankType, class CPlayer *pRequestingPlayer, const char *pRequestedName) override;
 	void OnRoundStart() override;
 
+	bool HasWinningScore(const CPlayer *pPlayer) const;
 	bool IsWinner(const CPlayer *pPlayer, char *pMessage, int SizeOfMessage) override;
 	bool IsLoser(const CPlayer *pPlayer) override;
 	bool IsStatTrack() override;
+	void SaveStatsOnRoundEnd(CPlayer *pPlayer) override;
+	void SaveStatsOnDisconnect(CPlayer *pPlayer) override;
 
 	bool m_InvalidateConnectedIpsCache = true;
 	int m_NumConnectedIpsCached = 0;

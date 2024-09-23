@@ -142,6 +142,8 @@ sv_vote_veto_time 0
 
 Below is a list of all the settings that were added in ddnet-insta.
 
+## ddnet-insta configs
+
 + `sv_gametype` Game type (gctf, ictf, gdm, idm, gtdm, itdm, zcatch)
 + `sv_spectator_votes` Allow spectators to vote
 + `sv_spectator_votes_sixup` Allow 0.7 players to vote as spec if sv_spectator_vote is 1 (hacky dead spec)
@@ -186,6 +188,7 @@ Below is a list of all the settings that were added in ddnet-insta.
 + `sv_chat_ratelimit_spam` Needs sv_spamprotection 0 (0=off, 1=ratelimit chat detected as spam)
 + `sv_chat_ratelimit_debug` Logs which of the ratelimits kicked in
 + `sv_fastcap` Insert flag captures into ddrace rank database
++ `sv_debug_stats` Verbose logging for the SQL player stats
 + `sv_vote_checkboxes` Fill [ ] checkbox in vote name if the config is already set
 + `sv_hide_admins` Only send admin status to other authed players
 + `sv_show_settings_motd` Show insta game settings in motd on join

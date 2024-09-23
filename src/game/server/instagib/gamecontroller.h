@@ -220,6 +220,30 @@ public:
 			false - do not count stats
 	*/
 	virtual bool IsStatTrack() { return true; }
+
+	/*
+		Function: SaveStatsOnRoundEnd
+			Called for every player on round end once
+			the base_pvp controller implements stats saving
+			you probably do not need to extend this.
+			If a player leaves before round end the method
+			SaveStatsOnDisconnect() will be called.
+
+		Arguments:
+			pPlayer - player to save stats for
+	*/
+	virtual void SaveStatsOnRoundEnd(CPlayer *pPlayer){};
+
+	/*
+		Function: SaveStatsOnDisconnect
+			Called for every player that leaves the game
+			unless the game state is in round end
+			then SaveStatsOnRoundEnd() was already called
+
+		Arguments:
+			pPlayer - player to save stats for
+	*/
+	virtual void SaveStatsOnDisconnect(CPlayer *pPlayer){};
 	virtual void OnPlayerReadyChange(class CPlayer *pPlayer); // 0.7 ready change
 	virtual int GameInfoExFlags(int SnappingClient) { return 0; }; // TODO: this breaks the ddrace gametype
 	virtual int GameInfoExFlags2(int SnappingClient) { return 0; };
