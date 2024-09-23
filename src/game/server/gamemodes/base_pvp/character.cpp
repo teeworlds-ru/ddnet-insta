@@ -105,6 +105,8 @@ void CCharacter::TakeHammerHit(CCharacter *pFrom)
 	vec2 Push = vec2(0.f, -1.f) + normalize(Dir + vec2(0.f, -1.1f)) * 10.0f;
 	if(g_Config.m_SvFngHammer)
 	{
+		// matches ddnet clients prediction code by default
+		// https://github.com/ddnet/ddnet/blob/f9df4a85be4ca94ca91057cd447707bcce16fd94/src/game/client/prediction/entities/character.cpp#L334-L346
 		if(GameServer()->m_pController->IsTeamplay() && pFrom->GetPlayer() && m_pPlayer->GetTeam() == pFrom->GetPlayer()->GetTeam() && m_FreezeTime)
 		{
 			Push.x *= g_Config.m_SvMeltHammerScaleX * 0.01f;
