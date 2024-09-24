@@ -280,6 +280,14 @@ bool CGameControllerBaseFng::OnSelfkill(int ClientId)
 	return true;
 }
 
+bool CGameControllerBaseFng::OnWallshotHit(int Bounces, int From, int Weapon, CCharacter *pVictim)
+{
+	// do not track wallshots on frozen tees
+	if(pVictim->m_FreezeTime)
+		return true;
+	return CGameControllerInstagib::OnWallshotHit(Bounces, From, Weapon, pVictim);
+}
+
 // warning this does not call the base pvp take damage method
 // so it has to reimplement all the relevant functionality
 bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From, int &Weapon, CCharacter &Character)

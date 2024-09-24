@@ -699,6 +699,17 @@ void CGameControllerPvp::OnPlayerTick(class CPlayer *pPlayer)
 	}
 }
 
+bool CGameControllerPvp::OnWallshotHit(int Bounces, int From, int Weapon, CCharacter *pVictim)
+{
+	CPlayer *pPlayer = GameServer()->m_apPlayers[From];
+	if(!pPlayer)
+		return true;
+
+	if(IsStatTrack())
+		pPlayer->m_Stats.m_Wallshots++;
+	return true;
+}
+
 bool CGameControllerPvp::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From, int &Weapon, CCharacter &Character)
 {
 	CPlayer *pPlayer = Character.GetPlayer();
