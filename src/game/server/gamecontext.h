@@ -78,6 +78,9 @@ private:
 
 class CGameContext : public IGameServer
 {
+#define IN_CLASS_IGAMECONTEXT
+#include <game/server/instagib/gamecontext.h>
+
 	IServer *m_pServer;
 	IConfigManager *m_pConfigManager;
 	CConfig *m_pConfig;
