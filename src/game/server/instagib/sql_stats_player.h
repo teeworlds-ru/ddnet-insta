@@ -24,9 +24,12 @@ public:
 	int m_Wins;
 	int m_Losses;
 	// used to track accuracy in any gametype
-	// in grenade, hammer, ninja and shotgun based gametypes the
+	// in grenade, ninja and shotgun based gametypes the
 	// accuracy can go over 100%
 	// because one shot can have multiple hits
+	//
+	// hammer is excluded by default from ShotsFired and ShotsHit
+	// if you need to track hammer as well you have to do so in your gamemode
 	int m_ShotsFired;
 	int m_ShotsHit;
 
@@ -66,7 +69,7 @@ public:
 
 	int m_aMultis[MAX_MULTIS];
 
-	int m_Freezes;
+	int m_GotFrozen;
 	int m_GoldSpikes;
 	int m_GreenSpikes;
 	int m_PurpleSpikes;
@@ -102,7 +105,7 @@ public:
 		m_TicksCaught = 0;
 		m_TicksInGame = 0;
 		m_BestMulti = 0;
-		m_Freezes = 0;
+		m_GotFrozen = 0;
 		m_GoldSpikes = 0;
 		m_GreenSpikes = 0;
 		m_PurpleSpikes = 0;
@@ -165,7 +168,7 @@ public:
 		       m_TicksCaught ||
 		       m_TicksInGame ||
 		       m_BestMulti ||
-		       m_Freezes ||
+		       m_GotFrozen ||
 		       m_GoldSpikes ||
 		       m_GreenSpikes ||
 		       m_PurpleSpikes ||

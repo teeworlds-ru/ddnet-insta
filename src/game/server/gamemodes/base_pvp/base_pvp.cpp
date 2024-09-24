@@ -707,7 +707,7 @@ bool CGameControllerPvp::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From,
 	if(GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
 	{
 		// boosting mates counts neither as hit nor as miss
-		if(IsStatTrack())
+		if(IsStatTrack() && Weapon != WEAPON_HAMMER)
 			pPlayer->m_Stats.m_ShotsFired--;
 		Dmg = 0;
 		return false;
@@ -726,7 +726,7 @@ bool CGameControllerPvp::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From,
 			return false;
 	}
 
-	if(IsStatTrack())
+	if(IsStatTrack() && Weapon != WEAPON_HAMMER)
 	{
 		if(From == pPlayer->GetCid())
 		{
@@ -1094,7 +1094,7 @@ void CGameControllerPvp::Anticamper()
 
 bool CGameControllerPvp::OnFireWeapon(CCharacter &Character, int &Weapon, vec2 &Direction, vec2 &MouseTarget, vec2 &ProjStartPos)
 {
-	if(IsStatTrack())
+	if(IsStatTrack() && Weapon != WEAPON_HAMMER)
 		Character.GetPlayer()->m_Stats.m_ShotsFired++;
 
 	if(g_Config.m_SvGrenadeAmmoRegenResetOnFire)

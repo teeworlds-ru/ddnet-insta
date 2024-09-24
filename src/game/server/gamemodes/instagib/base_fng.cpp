@@ -280,6 +280,8 @@ bool CGameControllerBaseFng::OnSelfkill(int ClientId)
 	return true;
 }
 
+// warning this does not call the base pvp take damage method
+// so it has to reimplement all the relevant functionality
 bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From, int &Weapon, CCharacter &Character)
 {
 	Character.GetPlayer()->UpdateLastToucher(From);
@@ -291,7 +293,7 @@ bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &F
 	if(GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
 	{
 		// boosting mates counts neither as hit nor as miss
-		if(IsStatTrack())
+		if(IsStatTrack() && Weapon != WEAPON_HAMMER)
 			Character.GetPlayer()->m_Stats.m_ShotsFired--;
 		return false;
 	}
@@ -313,7 +315,7 @@ bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &F
 		//
 		// yes this means that grenade boost kills
 		// can get you a accuracy over 100%
-		if(IsStatTrack())
+		if(IsStatTrack() && Weapon != WEAPON_HAMMER)
 			Character.GetPlayer()->m_Stats.m_ShotsFired--;
 		return false;
 	}
@@ -326,9 +328,19 @@ bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &F
 
 	if(pKiller)
 	{
+		if(IsStatTrack())
+		{
+			pKiller->m_Stats.m_ShotsHit++;
+		}
+
 		pKiller->IncrementScore();
 		m_aTeamscore[pKiller->GetTeam()]++;
 		DoWincheckRound();
+	}
+
+	if(IsStatTrack())
+	{
+		Character.GetPlayer()->m_Stats.m_GotFrozen++;
 	}
 
 	Character.Freeze(10);
