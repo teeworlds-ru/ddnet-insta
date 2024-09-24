@@ -162,16 +162,22 @@ void CGameControllerBaseFng::OnSpike(class CCharacter *pChr, int SpikeTile)
 		}
 		if(SpikeTile == TILE_FNG_SPIKE_GOLD)
 		{
+			if(IsStatTrack())
+				pKiller->m_Stats.m_GoldSpikes++;
 			pKiller->AddScore(7);
 			m_aTeamscore[pKiller->GetTeam()] += 12;
 		}
 		if(SpikeTile == TILE_FNG_SPIKE_GREEN)
 		{
+			if(IsStatTrack())
+				pKiller->m_Stats.m_GreenSpikes++;
 			pKiller->AddScore(5);
 			m_aTeamscore[pKiller->GetTeam()] += 15;
 		}
 		if(SpikeTile == TILE_FNG_SPIKE_PURPLE)
 		{
+			if(IsStatTrack())
+				pKiller->m_Stats.m_PurpleSpikes++;
 			pKiller->AddScore(9);
 			m_aTeamscore[pKiller->GetTeam()] += 18;
 		}
