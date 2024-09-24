@@ -80,8 +80,8 @@ void CGameContext::ConTopKills(IConsole::IResult *pResult, void *pUserData)
 	if(!pSelf->m_pController)
 		return;
 
-	const char *pName = pResult->NumArguments() ? pResult->GetString(0) : pSelf->Server()->ClientName(pResult->m_ClientId);
-	int Offset = pResult->NumArguments() > 1 ? pResult->GetInteger(1) : 0;
+	const char *pName = pSelf->Server()->ClientName(pResult->m_ClientId);
+	int Offset = pResult->NumArguments() ? pResult->GetInteger(0) : 1;
 	pSelf->m_pController->m_pSqlStats->ShowTop(pResult->m_ClientId, pName, "Kills", "kills", pSelf->m_pController->StatsTable(), "DESC", Offset);
 }
 
