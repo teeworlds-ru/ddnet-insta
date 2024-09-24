@@ -95,7 +95,7 @@ bool CLaser::HitCharacter(vec2 From, vec2 To)
 		// ddnet-insta fng
 		// pHit->UnFreeze();
 	}
-	if(!m_Bounces || GameServer()->m_pController->OnWallshotHit(m_Bounces, m_Owner, m_Type, pHit))
+	if(GameServer()->m_pController->OnLaserHit(m_Bounces, m_Owner, m_Type, pHit))
 		pHit->TakeDamage(vec2(0, 0), 0, m_Owner, m_Type);
 	return true;
 }

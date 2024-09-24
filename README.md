@@ -163,6 +163,7 @@ Below is a list of all the settings that were added in ddnet-insta.
 + `sv_grenade_ammo_regen_reset_on_fire` Reset regen time if shot is fired
 + `sv_sprayprotection` Spray protection
 + `sv_only_hook_kills` Only count kills when enemy is hooked
++ `sv_only_wallshot_kills` Only count kills when enemy is wallshotted (needs laser)
 + `sv_kill_hook` Hook kills
 + `sv_killingspree_kills` How many kills are needed to be on a killing-spree (0=off)
 + `sv_damage_needed_for_kill` Damage needed to kill

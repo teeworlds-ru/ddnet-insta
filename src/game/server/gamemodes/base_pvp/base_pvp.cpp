@@ -699,14 +699,17 @@ void CGameControllerPvp::OnPlayerTick(class CPlayer *pPlayer)
 	}
 }
 
-bool CGameControllerPvp::OnWallshotHit(int Bounces, int From, int Weapon, CCharacter *pVictim)
+bool CGameControllerPvp::OnLaserHit(int Bounces, int From, int Weapon, CCharacter *pVictim)
 {
 	CPlayer *pPlayer = GameServer()->m_apPlayers[From];
 	if(!pPlayer)
 		return true;
 
-	if(IsStatTrack())
+	if(IsStatTrack() && Bounces != 0)
 		pPlayer->m_Stats.m_Wallshots++;
+
+	if(g_Config.m_SvOnlyWallshotKills)
+		return Bounces != 0;
 	return true;
 }
 

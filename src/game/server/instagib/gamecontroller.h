@@ -46,14 +46,14 @@ public:
 	virtual bool OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From, int &Weapon, CCharacter &Character) { return false; };
 
 	/*
-		Function: OnWallshotHit
+		Function: OnLaserHit
 			Will be called before Character::TakeDamage() and CGameController::OnCharacterTakeDamage()
 
 			this function was added in ddnet-insta and is a non standard controller method.
 			neither ddnet nor teeworlds have this
 
 		Arguments:
-			Bounces - lowest possible amount is 1 otherwise its not a wallshot
+			Bounces - 1 and more is a wallshot
 			From - client id of the player who shot the laser
 			Weapon - probably either WEAPON_LASER or WEAPON_SHOTGUN
 			pVictim - character that was hit
@@ -62,7 +62,7 @@ public:
 			true - to call TakeDamage
 			false - to skip TakeDamage
 	*/
-	virtual bool OnWallshotHit(int Bounces, int From, int Weapon, CCharacter *pVictim) { return true; };
+	virtual bool OnLaserHit(int Bounces, int From, int Weapon, CCharacter *pVictim) { return true; };
 
 	/*
 		Function: OnFireWeapon
