@@ -125,6 +125,8 @@ bool CGameControllerBaseFng::OnEntity(int Index, int x, int y, int Layer, int Fl
 
 void CGameControllerBaseFng::OnWrongSpike(class CPlayer *pPlayer)
 {
+	if(IsStatTrack())
+		pPlayer->m_Stats.m_WrongSpikes++;
 	pPlayer->AddScore(-6);
 	CCharacter *pChr = pPlayer->GetCharacter();
 	// this means you can selfkill before the wrong spike hits
@@ -304,16 +306,16 @@ bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &F
 
 	if(Character.m_IsGodmode)
 		return true;
-	if(GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
-	{
-		// boosting mates counts neither as hit nor as miss
-		if(IsStatTrack() && Weapon != WEAPON_HAMMER)
-			Character.GetPlayer()->m_Stats.m_ShotsFired--;
-		return false;
-	}
 	CPlayer *pKiller = nullptr;
 	if(From >= 0 && From <= MAX_CLIENTS)
 		pKiller = GameServer()->m_apPlayers[From];
+	if(GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
+	{
+		// boosting mates counts neither as hit nor as miss
+		if(IsStatTrack() && Weapon != WEAPON_HAMMER && pKiller)
+			pKiller->m_Stats.m_ShotsFired--;
+		return false;
+	}
 	if(g_Config.m_SvOnlyHookKills && pKiller)
 	{
 		CCharacter *pChr = pKiller->GetCharacter();
