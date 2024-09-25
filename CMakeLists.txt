@@ -2798,6 +2798,7 @@ if(SERVER)
     gamemodes/vanilla/base_vanilla.h
     gamemodes/vanilla/ctf/ctf.cpp
     gamemodes/vanilla/ctf/ctf.h
+    gamemodes/vanilla/ctf/sql_columns.h
     gamemodes/vanilla/dm/dm.cpp
     gamemodes/vanilla/dm/dm.h
     gamemodes/vanilla/dm/sql_columns.h
