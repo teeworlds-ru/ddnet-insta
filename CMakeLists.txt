@@ -2800,6 +2800,7 @@ if(SERVER)
     gamemodes/vanilla/ctf/ctf.h
     gamemodes/vanilla/dm/dm.cpp
     gamemodes/vanilla/dm/dm.h
+    gamemodes/vanilla/dm/sql_columns.h
     gameworld.cpp
     gameworld.h
     instagib/chat_commands.cpp
