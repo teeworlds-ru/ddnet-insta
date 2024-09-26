@@ -199,8 +199,10 @@ void CGameControllerBaseCTF::OnFlagGrab(class CFlag *pFlag)
 		Teams().OnCharacterStart(pPlayer->GetCid());
 }
 
-void CGameControllerBaseCTF::OnFlagCapture(class CFlag *pFlag, float Time)
+void CGameControllerBaseCTF::OnFlagCapture(class CFlag *pFlag, float Time, int TimeTicks)
 {
+	CGameControllerPvp::OnFlagCapture(pFlag, Time, TimeTicks);
+
 	if(!pFlag)
 		return;
 	if(!pFlag->m_pCarrier)
@@ -276,7 +278,7 @@ void CGameControllerBaseCTF::FlagTick()
 
 						GameServer()->SendChatTarget(pPlayer->GetCid(), aBuf);
 					}
-					GameServer()->m_pController->OnFlagCapture(pFlag, Diff);
+					GameServer()->m_pController->OnFlagCapture(pFlag, Diff, Server()->Tick() - pFlag->GetGrabTick());
 					GameServer()->SendGameMsg(protocol7::GAMEMSG_CTF_CAPTURE, FlagColor, pFlag->GetCarrier()->GetPlayer()->GetCid(), Diff, -1);
 					GameServer()->CreateSoundGlobal(SOUND_CTF_CAPTURE);
 					for(CFlag *pF : m_apFlags)
