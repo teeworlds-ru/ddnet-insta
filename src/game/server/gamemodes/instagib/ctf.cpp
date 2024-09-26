@@ -45,6 +45,20 @@ void CGameControllerInstaBaseCTF::OnShowStatsAll(const CSqlStatsPlayer *pStats, 
 	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
 }
 
+void CGameControllerInstaBaseCTF::OnShowRoundStats(const CSqlStatsPlayer *pStats, class CPlayer *pRequestingPlayer, const char *pRequestedName)
+{
+	char aBuf[512];
+
+	str_format(aBuf, sizeof(aBuf), "~ Flag grabs: %d", pStats->m_FlagGrabs);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	str_format(aBuf, sizeof(aBuf), "~ Flag captures: %d", pStats->m_FlagCaptures);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	str_format(aBuf, sizeof(aBuf), "~ Flagger kills: %d", pStats->m_FlaggerKills);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+}
+
 bool CGameControllerInstaBaseCTF::OnVoteNetMessage(const CNetMsg_Cl_Vote *pMsg, int ClientId)
 {
 	if(!g_Config.m_SvDropFlagOnVote)

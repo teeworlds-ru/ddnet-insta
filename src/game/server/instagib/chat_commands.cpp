@@ -30,6 +30,9 @@ void CGameContext::ConStatsRound(IConsole::IResult *pResult, void *pUserData)
 	if(TargetId < 0 || TargetId >= MAX_CLIENTS)
 		return;
 	const CPlayer *pPlayer = pSelf->m_apPlayers[TargetId];
+	CPlayer *pRequestingPlayer = pSelf->m_apPlayers[pResult->m_ClientId];
+	if(!pRequestingPlayer)
+		return;
 
 	char aBuf[512];
 	char aUntracked[512];
@@ -52,6 +55,9 @@ void CGameContext::ConStatsRound(IConsole::IResult *pResult, void *pUserData)
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
 	str_format(aBuf, sizeof(aBuf), "~ Highest killing spree: %d", pPlayer->m_Stats.m_BestSpree);
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
+
+	pSelf->m_pController->OnShowRoundStats(&pPlayer->m_Stats, pRequestingPlayer, pName);
+
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp",
 		"~ see also /statsall");
 }
