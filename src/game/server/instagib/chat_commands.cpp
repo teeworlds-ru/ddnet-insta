@@ -1,3 +1,4 @@
+#include <base/system.h>
 #include <engine/shared/protocol.h>
 #include <game/server/entities/character.h>
 #include <game/server/gamecontroller.h>
@@ -31,11 +32,21 @@ void CGameContext::ConStatsRound(IConsole::IResult *pResult, void *pUserData)
 	const CPlayer *pPlayer = pSelf->m_apPlayers[TargetId];
 
 	char aBuf[512];
+	char aUntracked[512];
 	str_format(aBuf, sizeof(aBuf), "~~~ round stats for '%s'", pName);
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
-	str_format(aBuf, sizeof(aBuf), "~ Kills: %d", pPlayer->m_Stats.m_Kills);
+
+	aUntracked[0] = '\0';
+	if(!pSelf->m_pController->IsStatTrack())
+		str_format(aUntracked, sizeof(aUntracked), " (%d untracked)", pPlayer->m_Kills);
+	str_format(aBuf, sizeof(aBuf), "~ Kills: %d%s", pPlayer->m_Stats.m_Kills, aUntracked);
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
-	str_format(aBuf, sizeof(aBuf), "~ Deaths: %d", pPlayer->m_Stats.m_Deaths);
+
+	aUntracked[0] = '\0';
+	if(!pSelf->m_pController->IsStatTrack())
+		str_format(aUntracked, sizeof(aUntracked), " (%d untracked)", pPlayer->m_Deaths);
+	str_format(aBuf, sizeof(aBuf), "~ Deaths: %d%s", pPlayer->m_Stats.m_Deaths, aUntracked);
+
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
 	str_format(aBuf, sizeof(aBuf), "~ Current killing spree: %d", pPlayer->Spree());
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);

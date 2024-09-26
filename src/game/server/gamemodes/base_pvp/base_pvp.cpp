@@ -293,7 +293,7 @@ void CGameControllerPvp::SaveStatsOnRoundEnd(CPlayer *pPlayer)
 	}
 
 	m_pSqlStats->SaveRoundStats(Server()->ClientName(pPlayer->GetCid()), StatsTable(), &pPlayer->m_Stats);
-	pPlayer->m_Stats.Reset();
+	pPlayer->ResetStats();
 }
 
 void CGameControllerPvp::SaveStatsOnDisconnect(CPlayer *pPlayer)
@@ -597,14 +597,11 @@ int CGameControllerPvp::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 	// 			GameServer()->m_apPlayers[i]->UpdateDeadSpecMode();
 	// }
 
-	if(IsStatTrack())
-	{
-		// selfkill is no kill
-		if(pKiller != pVictim->GetPlayer())
-			pKiller->m_Stats.m_Kills++;
-		// but selfkill is a death
-		pVictim->GetPlayer()->m_Stats.m_Deaths++;
-	}
+	// selfkill is no kill
+	if(pKiller != pVictim->GetPlayer())
+		pKiller->AddKill();
+	// but selfkill is a death
+	pVictim->GetPlayer()->AddDeath();
 
 	if(pKiller && pVictim)
 	{
@@ -907,7 +904,7 @@ void CGameControllerPvp::OnPlayerConnect(CPlayer *pPlayer)
 	OnPlayerConstruct(pPlayer);
 	IGameController::OnPlayerConnect(pPlayer);
 	int ClientId = pPlayer->GetCid();
-	pPlayer->m_Stats.Reset();
+	pPlayer->ResetStats();
 
 	// init the player
 	Score()->PlayerData(ClientId)->Reset();
