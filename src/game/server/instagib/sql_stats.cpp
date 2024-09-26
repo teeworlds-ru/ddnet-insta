@@ -184,10 +184,13 @@ void CSqlStats::SaveRoundStats(const char *pName, const char *pTable, CSqlStatsP
 {
 	auto Tmp = std::make_unique<CSqlSaveRoundStatsRequest>(g_Config.m_SvDebugStats);
 
-	Tmp->m_pExtraColumns = (CExtraColumns *)malloc(sizeof(CExtraColumns));
-	mem_copy(Tmp->m_pExtraColumns, m_pExtraColumns, sizeof(CExtraColumns));
-	if(g_Config.m_SvDebugStats > 1)
-		dbg_msg("sql", "allocated memory at %p", Tmp->m_pExtraColumns);
+	if(m_pExtraColumns)
+	{
+		Tmp->m_pExtraColumns = (CExtraColumns *)malloc(sizeof(CExtraColumns));
+		mem_copy(Tmp->m_pExtraColumns, m_pExtraColumns, sizeof(CExtraColumns));
+		if(g_Config.m_SvDebugStats > 1)
+			dbg_msg("sql", "allocated memory at %p", Tmp->m_pExtraColumns);
+	}
 
 	str_copy(Tmp->m_aName, pName);
 	str_copy(Tmp->m_aTable, pTable);
