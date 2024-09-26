@@ -32,7 +32,7 @@ and [cmakelist](https://github.com/ddnet-insta/ddnet-insta/blob/ba38c11ccf46e888
 you should be able to build almost any gametype without ever having to edit code outside
 of your gamemode directory. Just look at the existing gamemodes for examples. A simple mode to look at would be
 [vanilla deathmatch](https://github.com/ddnet-insta/ddnet-insta/tree/ba38c11ccf46e888786c90c7dc0f09503be19a49/src/game/server/gamemodes/vanilla/dm).
-Adding your own stats columns and rank/top commands can be done in a few lines of code without writing any line of SQL.
+Adding your own stats columns and rank/top commands can be done in a few lines of code without writing any SQL.
 
 # Features
 
