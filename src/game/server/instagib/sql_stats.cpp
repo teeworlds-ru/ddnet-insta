@@ -369,7 +369,7 @@ bool CSqlStats::ShowTopWorker(IDbConnection *pSqlServer, const ISqlData *pGameDa
 		char aName[MAX_NAME_LENGTH];
 		pSqlServer->GetString(3, aName, sizeof(aName));
 		str_format(paMessages[Line], sizeof(paMessages[Line]),
-			"%d. %s %s: %d", Rank, aName, pData->m_aRankColumnDisplay, Points);
+			"%d. '%s' - %s: %d", Rank, aName, pData->m_aRankColumnDisplay, Points);
 		Line++;
 	}
 	if(!End)
