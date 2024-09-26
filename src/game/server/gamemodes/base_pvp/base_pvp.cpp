@@ -120,9 +120,18 @@ void CGameControllerPvp::OnShowStatsAll(const CSqlStatsPlayer *pStats, class CPl
 	str_format(
 		aBuf,
 		sizeof(aBuf),
-		"'%s' kills: %d, requested by '%s'",
+		"~~~ all time stats for '%s'",
 		pRequestedName, pStats->m_Kills, Server()->ClientName(pRequestingPlayer->GetCid()));
-	GameServer()->SendChat(-1, TEAM_ALL, aBuf);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	str_format(aBuf, sizeof(aBuf), "~ Kills: %d", pStats->m_Kills);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	str_format(aBuf, sizeof(aBuf), "~ Deaths: %d", pStats->m_Deaths);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	str_format(aBuf, sizeof(aBuf), "~ Highest killing spree: %d", pStats->m_BestSpree);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
 }
 
 void CGameControllerPvp::OnShowRank(int Rank, int RankedScore, const char *pRankType, class CPlayer *pRequestingPlayer, const char *pRequestedName)
