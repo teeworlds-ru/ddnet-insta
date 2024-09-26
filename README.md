@@ -21,6 +21,19 @@ focus on gCTF with the possible future scope for also other instagib (one shot k
 But it now has expanded to support also damage based gameplay such as teeworlds vanilla CTF and DM. So currently it aims to support
 any kind of round based pvp gametype that can be implemented without causing too much maintenance cost.
 
+
+NOTE FOR DEVELOPERS:
+
+
+It also tries to be extendable and fork friendly. If you want to build a pvp gamemode with score points and rounds.
+This code base should get you started quite easily. Just create a new folder for your gamemode. After wiring it up in
+[gamecontext](https://github.com/ddnet-insta/ddnet-insta/blob/ba38c11ccf46e888786c90c7dc0f09503be19a49/src/game/server/gamecontext.cpp#L4018-L4019)
+and [cmakelist](https://github.com/ddnet-insta/ddnet-insta/blob/ba38c11ccf46e888786c90c7dc0f09503be19a49/CMakeLists.txt#L2751-L2752)
+you should be able to build almost any gametype without ever having to edit code outside
+of your gamemode directory. Just look at the existing gamemodes for examples. A simple mode to look at would be
+[vanilla deathmatch](https://github.com/ddnet-insta/ddnet-insta/tree/ba38c11ccf46e888786c90c7dc0f09503be19a49/src/game/server/gamemodes/vanilla/dm).
+Adding your own stats columns and rank/top commands can be done in a few lines of code without writing any line of SQL.
+
 # Features
 
 ## Stats tracked in sql database
