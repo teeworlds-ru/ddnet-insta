@@ -130,6 +130,9 @@ void CGameControllerPvp::OnShowStatsAll(const CSqlStatsPlayer *pStats, class CPl
 	str_format(aBuf, sizeof(aBuf), "~ Deaths: %d", pStats->m_Deaths);
 	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
 
+	str_format(aBuf, sizeof(aBuf), "~ Wins: %d", pStats->m_Wins);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
 	str_format(aBuf, sizeof(aBuf), "~ Highest killing spree: %d", pStats->m_BestSpree);
 	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
 }
