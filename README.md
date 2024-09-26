@@ -14,6 +14,13 @@ Implementing most of the relevant pvp gametypes: gctf, ictf, gdm, idm, gtdm, itd
 
 Planned gametypes are: ctf, dm
 
+# Project name and scope
+
+The name **ddnet-insta** is short for DummyDragRaceNetwork Instagib. Because it started out as a ddnet based modification with the
+focus on gCTF with the possible future scope for also other instagib (one shot kills) gametypes such as iCTF, zCatch and fng.
+But it now has expanded to support also damage based gameplay such as teeworlds vanilla CTF and DM. So currently it aims to support
+any kind of round based pvp gametype that can be implemented without causing too much maintenance cost.
+
 # Features
 
 ## Stats tracked in sql database
