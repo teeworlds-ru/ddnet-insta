@@ -124,7 +124,12 @@ void CGameControllerPvp::OnShowStatsAll(const CSqlStatsPlayer *pStats, class CPl
 		pRequestedName, pStats->m_Kills, Server()->ClientName(pRequestingPlayer->GetCid()));
 	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
 
-	str_format(aBuf, sizeof(aBuf), "~ Kills: %d", pStats->m_Kills);
+	char aAccuracy[512];
+	aAccuracy[0] = '\0';
+	if(pStats->m_ShotsFired)
+		str_format(aAccuracy, sizeof(aAccuracy), " (%.2f%% hit accuracy)", pStats->HitAccuracy());
+
+	str_format(aBuf, sizeof(aBuf), "~ Kills: %d%s", pStats->m_Kills, aAccuracy);
 	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
 
 	str_format(aBuf, sizeof(aBuf), "~ Deaths: %d", pStats->m_Deaths);

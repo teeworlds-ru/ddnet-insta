@@ -35,16 +35,19 @@ void CGameContext::ConStatsRound(IConsole::IResult *pResult, void *pUserData)
 		return;
 
 	char aBuf[512];
-	char aUntracked[512];
+	char aUntrackedOrAccuracy[512];
 	str_format(aBuf, sizeof(aBuf), "~~~ round stats for '%s'", pName);
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
 
-	aUntracked[0] = '\0';
+	aUntrackedOrAccuracy[0] = '\0';
+	if(pPlayer->m_Stats.m_ShotsFired)
+		str_format(aUntrackedOrAccuracy, sizeof(aUntrackedOrAccuracy), " (%.2f%% hit accuracy)", pPlayer->m_Stats.HitAccuracy());
 	if(!pSelf->m_pController->IsStatTrack())
-		str_format(aUntracked, sizeof(aUntracked), " (%d untracked)", pPlayer->m_Kills);
-	str_format(aBuf, sizeof(aBuf), "~ Kills: %d%s", pPlayer->m_Stats.m_Kills, aUntracked);
+		str_format(aUntrackedOrAccuracy, sizeof(aUntrackedOrAccuracy), " (%d untracked)", pPlayer->m_Kills);
+	str_format(aBuf, sizeof(aBuf), "~ Kills: %d%s", pPlayer->m_Stats.m_Kills, aUntrackedOrAccuracy);
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
 
+	char aUntracked[512];
 	aUntracked[0] = '\0';
 	if(!pSelf->m_pController->IsStatTrack())
 		str_format(aUntracked, sizeof(aUntracked), " (%d untracked)", pPlayer->m_Deaths);
