@@ -16,7 +16,7 @@ Planned gametypes are: ctf, dm
 
 # Features
 
-## stats tracked in sql database
+## Stats tracked in sql database
 
 Every players kills, deaths, wins and more statistics are persisted in a database.
 There are no accounts. The stats are tacked on the players names. What exactly is tracked
@@ -27,7 +27,7 @@ depends on the ``sv_gametype``. But here are some chat commands that work in any
 - ``/top5kills`` Shows the all time top 5 players by amount of kills. Takes an offset as optional argument ``/top5kills 5`` to see rank 5 till 10 for example.
 - ``/rank_kills`` Show the all time rank of a players kills compared to others. Takes a player name as optional argument.
 
-## checkbox votes
+## Checkbox votes
 
 If a vote is added starting with a ``[ ]`` in the display name. It will be used as a checkbox.
 If the underlying config is currently set that checkbox will be ticked and users see ``[x]`` in the vote menu.
@@ -38,7 +38,7 @@ at the end so it does not update all votes for every setting it loads.
 
 ![checkbox votes](https://raw.githubusercontent.com/ddnet-insta/images/c6c3e871a844fa06b460b8be61ba0ff01d0a82f6/checkbox_votes.png)
 
-## unstack chat for ddnet clients
+## Unstack chat for ddnet clients
 
 Newer DDNet clients do not show duplicated messages multiple times. This is not always wanted when using call binds for team communication during pvp games. So there is ``sv_unstack_chat`` to revert that ddnet feature and ensure every message is sent properly in chat.
 
@@ -315,15 +315,15 @@ Here is how it would display when posted on discord:
 
 ![psv on discord](https://raw.githubusercontent.com/ddnet-insta/images/5fafe03ed60153096facf4cc5d56c5df9ff20a5c/psv_discord.png)
 
-## ascii table (format 2)
+## Ascii table (format 2)
 
 NOT IMPLEMENTED YET
 
-## markdown (format 3)
+## Markdown (format 3)
 
 NOT IMPLEMENTED YET
 
-## json - javascript object notation (format 4)
+## JSON - javascript object notation (format 4)
 
 ```json
 {
