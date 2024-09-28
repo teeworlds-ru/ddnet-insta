@@ -295,6 +295,7 @@ int CGameControllerZcatch::OnCharacterDeath(class CCharacter *pVictim, class CPl
 		ReleasePlayer(pPlayer, aBuf);
 	}
 
+	pVictim->GetPlayer()->m_vVictimIds.clear();
 	DoWincheckRound();
 
 	return 0;
