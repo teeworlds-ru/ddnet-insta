@@ -142,7 +142,11 @@ int CGameControllerInstaBaseCTF::OnCharacterDeath(class CCharacter *pVictim, cla
 			pFlag->m_pLastCarrier = nullptr;
 
 			if(pKiller && pKiller->GetTeam() != pVictim->GetPlayer()->GetTeam())
+			{
 				pKiller->IncrementScore();
+				if(IsStatTrack())
+					pKiller->m_Stats.m_FlaggerKills++;
+			}
 
 			HadFlag |= 1;
 		}
