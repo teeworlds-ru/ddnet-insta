@@ -98,11 +98,6 @@ int CGameControllerPvp::GameInfoExFlags(int SnappingClient)
 		GAMEINFOFLAG_RACE;
 	if(!g_Config.m_SvAllowZoom) //ddnet-insta
 		Flags &= ~(GAMEINFOFLAG_ALLOW_ZOOM);
-	if(g_Config.m_SvFastcap) //ddnet-insta
-	{
-		Flags |= GAMEINFOFLAG_GAMETYPE_FASTCAP;
-		Flags |= GAMEINFOFLAG_FLAG_STARTS_RACE;
-	}
 
 	// ddnet clients do not predict sv_old_laser correctly
 	// https://github.com/ddnet/ddnet/issues/7589

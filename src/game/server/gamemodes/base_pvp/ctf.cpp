@@ -194,9 +194,6 @@ void CGameControllerBaseCTF::OnFlagGrab(class CFlag *pFlag)
 	CPlayer *pPlayer = pFlag->m_pCarrier->GetPlayer();
 	if(IsStatTrack())
 		pPlayer->m_Stats.m_FlagGrabs++;
-
-	if(g_Config.m_SvFastcap)
-		Teams().OnCharacterStart(pPlayer->GetCid());
 }
 
 void CGameControllerBaseCTF::OnFlagCapture(class CFlag *pFlag, float Time, int TimeTicks)
@@ -211,9 +208,6 @@ void CGameControllerBaseCTF::OnFlagCapture(class CFlag *pFlag, float Time, int T
 	CPlayer *pPlayer = pFlag->m_pCarrier->GetPlayer();
 	if(IsStatTrack())
 		pPlayer->m_Stats.m_FlagCaptures++;
-
-	if(g_Config.m_SvFastcap)
-		Teams().OnCharacterFinish(pPlayer->GetCid());
 }
 
 void CGameControllerBaseCTF::FlagTick()
