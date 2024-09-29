@@ -100,6 +100,8 @@ public:
 
 	// generic helpers
 
+	bool IsSpawnProtected(CPlayer *pVictim, CPlayer *pKiller) const;
+
 	// returns the amount of tee's that are not spectators
 	int NumActivePlayers();
 
