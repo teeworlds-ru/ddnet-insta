@@ -229,6 +229,22 @@ bool CGameControllerZcatch::OnSelfkill(int ClientId)
 
 void CGameControllerZcatch::KillPlayer(class CPlayer *pVictim, class CPlayer *pKiller)
 {
+	if(!pKiller)
+		return;
+	if(!pKiller->GetCharacter())
+		return;
+	if(pKiller->GetTeam() == TEAM_SPECTATORS)
+		return;
+	if(pKiller->m_IsDead)
+	{
+		dbg_msg(
+			"zcatch",
+			"warning '%s' was killed by the dead (but not spec) player '%s'",
+			Server()->ClientName(pVictim->GetCid()),
+			Server()->ClientName(pKiller->GetCid()));
+		return;
+	}
+
 	char aBuf[512];
 	str_format(aBuf, sizeof(aBuf), "You are spectator until '%s' dies", Server()->ClientName(pKiller->GetCid()));
 	GameServer()->SendChatTarget(pVictim->GetCid(), aBuf);
