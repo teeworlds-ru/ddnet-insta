@@ -73,6 +73,11 @@ bool CGameControllerZcatch::IsWinner(const CPlayer *pPlayer, char *pMessage, int
 		return false;
 	if(pPlayer->m_IsDead)
 		return false;
+	// you can never win with 0 kills
+	// this should cover edge cases where one spawns into the world
+	// where everyone else is currently in a death screen
+	if(!pPlayer->m_Spree)
+		return false;
 	// there are no winners in release games even if the round ends
 	if(!IsCatchGameRunning())
 		return false;
