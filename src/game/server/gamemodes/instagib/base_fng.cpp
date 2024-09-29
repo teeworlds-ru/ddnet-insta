@@ -22,9 +22,9 @@ CGameControllerBaseFng::CGameControllerBaseFng(class CGameContext *pGameServer) 
 
 CGameControllerBaseFng::~CGameControllerBaseFng() = default;
 
-int CGameControllerBaseFng::GameInfoExFlags(int SnappingClient)
+int CGameControllerBaseFng::GameInfoExFlags(int SnappingClient, int DDRaceFlags)
 {
-	int Flags = CGameControllerPvp::GameInfoExFlags(SnappingClient);
+	int Flags = CGameControllerPvp::GameInfoExFlags(SnappingClient, DDRaceFlags);
 	Flags &= ~(GAMEINFOFLAG_ENTITIES_DDNET);
 	Flags &= ~(GAMEINFOFLAG_ENTITIES_DDRACE);
 	Flags &= ~(GAMEINFOFLAG_ENTITIES_RACE);

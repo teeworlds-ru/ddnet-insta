@@ -72,7 +72,7 @@ CGameControllerPvp::~CGameControllerPvp()
 	}
 }
 
-int CGameControllerPvp::GameInfoExFlags(int SnappingClient)
+int CGameControllerPvp::GameInfoExFlags(int SnappingClient, int DDRaceFlags)
 {
 	int Flags =
 		GAMEINFOFLAG_PREDICT_VANILLA | // ddnet-insta
@@ -107,7 +107,7 @@ int CGameControllerPvp::GameInfoExFlags(int SnappingClient)
 	return Flags;
 }
 
-int CGameControllerPvp::GameInfoExFlags2(int SnappingClient)
+int CGameControllerPvp::GameInfoExFlags2(int SnappingClient, int DDRaceFlags)
 {
 	return GAMEINFOFLAG2_HUD_AMMO | GAMEINFOFLAG2_HUD_HEALTH_ARMOR; // ddnet-insta
 }

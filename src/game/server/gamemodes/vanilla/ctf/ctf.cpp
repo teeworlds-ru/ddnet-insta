@@ -36,9 +36,9 @@ void CGameControllerCTF::OnCharacterSpawn(class CCharacter *pChr)
 	pChr->GiveWeapon(WEAPON_GUN, false, 10);
 }
 
-int CGameControllerCTF::GameInfoExFlags(int SnappingClient)
+int CGameControllerCTF::GameInfoExFlags(int SnappingClient, int DDRaceFlags)
 {
-	int Flags = CGameControllerPvp::GameInfoExFlags(SnappingClient);
+	int Flags = CGameControllerPvp::GameInfoExFlags(SnappingClient, DDRaceFlags);
 	Flags &= ~(GAMEINFOFLAG_UNLIMITED_AMMO);
 	Flags &= ~(GAMEINFOFLAG_PREDICT_DDRACE);
 	return Flags;
