@@ -162,6 +162,25 @@ void CGameContext::ConRankKills(IConsole::IResult *pResult, void *pUserData)
 	pSelf->m_pController->m_pSqlStats->ShowRank(pResult->m_ClientId, pName, "Kills", "kills", pSelf->m_pController->StatsTable(), "DESC");
 }
 
+void CGameContext::ConInstaRankPoints(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!CheckClientId(pResult->m_ClientId))
+		return;
+
+	if(!pSelf->m_pController)
+		return;
+
+	if(pSelf->m_pController->IsDDRaceGameType())
+	{
+		ConPoints(pResult, pUserData);
+		return;
+	}
+
+	const char *pName = pResult->NumArguments() ? pResult->GetString(0) : pSelf->Server()->ClientName(pResult->m_ClientId);
+	pSelf->m_pController->m_pSqlStats->ShowRank(pResult->m_ClientId, pName, "Points", "points", pSelf->m_pController->StatsTable(), "DESC");
+}
+
 void CGameContext::ConTopKills(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
