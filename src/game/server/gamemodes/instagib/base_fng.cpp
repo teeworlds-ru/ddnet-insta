@@ -309,7 +309,7 @@ bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &F
 	CPlayer *pKiller = nullptr;
 	if(From >= 0 && From <= MAX_CLIENTS)
 		pKiller = GameServer()->m_apPlayers[From];
-	if(GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
+	if(From >= 0 && From <= MAX_CLIENTS && GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
 	{
 		// boosting mates counts neither as hit nor as miss
 		if(IsStatTrack() && Weapon != WEAPON_HAMMER && pKiller)

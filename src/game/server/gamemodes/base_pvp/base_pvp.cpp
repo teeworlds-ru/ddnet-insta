@@ -799,7 +799,7 @@ bool CGameControllerPvp::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From,
 	CPlayer *pPlayer = Character.GetPlayer();
 	if(Character.m_IsGodmode)
 		return true;
-	if(GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
+	if(From >= 0 && From <= MAX_CLIENTS && GameServer()->m_pController->IsFriendlyFire(Character.GetPlayer()->GetCid(), From))
 	{
 		// boosting mates counts neither as hit nor as miss
 		if(IsStatTrack() && Weapon != WEAPON_HAMMER)
