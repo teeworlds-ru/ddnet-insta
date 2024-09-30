@@ -74,6 +74,12 @@ void CGameContext::ConStatsRound(IConsole::IResult *pResult, void *pUserData)
 	if(!pSelf->m_pController)
 		return;
 
+	if(pSelf->m_pController->IsDDRaceGameType())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes.");
+		return;
+	}
+
 	if(!pSelf->m_pController->IsStatTrack())
 		pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp",
 			"! WARNING: not enough players connected to track stats");
@@ -127,6 +133,12 @@ void CGameContext::ConStatsAllTime(IConsole::IResult *pResult, void *pUserData)
 	if(!pSelf->m_pController)
 		return;
 
+	if(pSelf->m_pController->IsDDRaceGameType())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes.");
+		return;
+	}
+
 	const char *pName = pResult->NumArguments() ? pResult->GetString(0) : pSelf->Server()->ClientName(pResult->m_ClientId);
 	pSelf->m_pController->m_pSqlStats->ShowStats(pResult->m_ClientId, pName, pSelf->m_pController->StatsTable());
 }
@@ -139,6 +151,12 @@ void CGameContext::ConRankKills(IConsole::IResult *pResult, void *pUserData)
 
 	if(!pSelf->m_pController)
 		return;
+
+	if(pSelf->m_pController->IsDDRaceGameType())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes.");
+		return;
+	}
 
 	const char *pName = pResult->NumArguments() ? pResult->GetString(0) : pSelf->Server()->ClientName(pResult->m_ClientId);
 	pSelf->m_pController->m_pSqlStats->ShowRank(pResult->m_ClientId, pName, "Kills", "kills", pSelf->m_pController->StatsTable(), "DESC");
@@ -153,6 +171,12 @@ void CGameContext::ConTopKills(IConsole::IResult *pResult, void *pUserData)
 	if(!pSelf->m_pController)
 		return;
 
+	if(pSelf->m_pController->IsDDRaceGameType())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes.");
+		return;
+	}
+
 	const char *pName = pSelf->Server()->ClientName(pResult->m_ClientId);
 	int Offset = pResult->NumArguments() ? pResult->GetInteger(0) : 1;
 	pSelf->m_pController->m_pSqlStats->ShowTop(pResult->m_ClientId, pName, "Kills", "kills", pSelf->m_pController->StatsTable(), "DESC", Offset);
@@ -166,6 +190,12 @@ void CGameContext::ConRankFastcaps(IConsole::IResult *pResult, void *pUserData)
 
 	if(!pSelf->m_pController)
 		return;
+
+	if(pSelf->m_pController->IsDDRaceGameType())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes.");
+		return;
+	}
 
 	if(!(pSelf->m_pController->GameFlags() & GAMEFLAG_FLAGS))
 	{
@@ -191,6 +221,12 @@ void CGameContext::ConTopFastcaps(IConsole::IResult *pResult, void *pUserData)
 
 	if(!pSelf->m_pController)
 		return;
+
+	if(pSelf->m_pController->IsDDRaceGameType())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes.");
+		return;
+	}
 
 	if(!(pSelf->m_pController->GameFlags() & GAMEFLAG_FLAGS))
 	{
@@ -219,6 +255,12 @@ void CGameContext::ConRankFlagCaptures(IConsole::IResult *pResult, void *pUserDa
 	if(!pSelf->m_pController)
 		return;
 
+	if(pSelf->m_pController->IsDDRaceGameType())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes.");
+		return;
+	}
+
 	if(!(pSelf->m_pController->GameFlags() & GAMEFLAG_FLAGS))
 	{
 		pSelf->SendChatTarget(pResult->m_ClientId, "this gamemode has no flags");
@@ -236,9 +278,13 @@ void CGameContext::ConRankFlagCaptures(IConsole::IResult *pResult, void *pUserDa
 		CGameContext *pSelf = (CGameContext *)pUserData; \
 		if(!CheckClientId(pResult->m_ClientId)) \
 			return; \
-\
 		if(!pSelf->m_pController) \
 			return; \
+		if(pSelf->m_pController->IsDDRaceGameType()) \
+		{ \
+			pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes."); \
+			return; \
+		} \
 \
 		const char *pName = pResult->NumArguments() ? pResult->GetString(0) : pSelf->Server()->ClientName(pResult->m_ClientId); \
 		pSelf->m_pController->m_pSqlStats->ShowRank(pResult->m_ClientId, pName, display_name, #sql_name, pSelf->m_pController->StatsTable(), order_by); \
@@ -249,9 +295,13 @@ void CGameContext::ConRankFlagCaptures(IConsole::IResult *pResult, void *pUserDa
 		CGameContext *pSelf = (CGameContext *)pUserData; \
 		if(!CheckClientId(pResult->m_ClientId)) \
 			return; \
-\
 		if(!pSelf->m_pController) \
 			return; \
+		if(pSelf->m_pController->IsDDRaceGameType()) \
+		{ \
+			pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes."); \
+			return; \
+		} \
 \
 		const char *pName = pSelf->Server()->ClientName(pResult->m_ClientId); \
 		int Offset = pResult->NumArguments() ? pResult->GetInteger(0) : 1; \
