@@ -428,7 +428,8 @@ void CGameControllerZcatch::UpdateCatchTicks(class CPlayer *pPlayer)
 		str_format(aBuf, sizeof(aBuf), "spectating player '%s' left or joined (no ticks tracked)", Server()->ClientName(pPlayer->GetCid()));
 	}
 
-	SendChat(-1, TEAM_ALL, aBuf);
+	if(g_Config.m_SvDebugStats > 1)
+		SendChat(-1, TEAM_ALL, aBuf);
 }
 
 void CGameControllerZcatch::DoTeamChange(CPlayer *pPlayer, int Team, bool DoChatMsg)
