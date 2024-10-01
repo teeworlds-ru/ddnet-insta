@@ -178,7 +178,23 @@ void CGameControllerPvp::OnShowRank(int Rank, int RankedScore, const char *pRank
 		sizeof(aBuf),
 		"%d. '%s' %s: %d, requested by '%s'",
 		Rank, pRequestedName, pRankType, RankedScore, Server()->ClientName(pRequestingPlayer->GetCid()));
-	GameServer()->SendChat(-1, TEAM_ALL, aBuf);
+
+	if(AllowPublicChat(pRequestingPlayer))
+	{
+		GameServer()->SendChat(-1, TEAM_ALL, aBuf);
+		return;
+	}
+
+	int Team = pRequestingPlayer->GetTeam();
+	for(const CPlayer *pPlayer : GameServer()->m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+		if(pPlayer->GetTeam() != Team)
+			continue;
+
+		SendChatTarget(pPlayer->GetCid(), aBuf);
+	}
 }
 
 void CGameControllerPvp::OnUpdateSpectatorVotesConfig()
