@@ -88,7 +88,22 @@ void CGameControllerPvp::ResetPlayer(class CPlayer *pPlayer)
 
 int CGameControllerPvp::SnapPlayerScore(class CPlayer *pPlayer, int SnappingClient, int DDRaceScore)
 {
-	return pPlayer->m_Score.value_or(0);
+	int Score = pPlayer->m_Score.value_or(0);
+	if(g_Config.m_SvSaveServer)
+	{
+		Score += pPlayer->m_SavedStats.m_Points;
+
+		// yes this is cursed
+		// but during the final scoreboard we already saved and reset the stats
+		// so we manually merged the save stats
+		// but the player still has his round score
+		// so the round score is counted twice
+		if(GameState() == IGS_END_ROUND)
+		{
+			Score -= pPlayer->m_Score.value_or(0);
+		}
+	}
+	return Score;
 }
 
 int CGameControllerPvp::GameInfoExFlags(int SnappingClient, int DDRaceFlags)
@@ -169,6 +184,9 @@ void CGameControllerPvp::OnShowStatsAll(const CSqlStatsPlayer *pStats, class CPl
 		sizeof(aBuf),
 		"~~~ all time stats for '%s'",
 		pRequestedName, pStats->m_Kills, Server()->ClientName(pRequestingPlayer->GetCid()));
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	str_format(aBuf, sizeof(aBuf), "~ Points: %d", pStats->m_Points);
 	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
 
 	char aAccuracy[512];
@@ -373,6 +391,18 @@ void CGameControllerPvp::SaveStatsOnRoundEnd(CPlayer *pPlayer)
 	}
 
 	m_pSqlStats->SaveRoundStats(Server()->ClientName(pPlayer->GetCid()), StatsTable(), &pPlayer->m_Stats);
+
+	// instead of doing a db write and read for ALL players
+	// on round end we manually sum up the stats for save servers
+	// this means that if someone else is using the same name on
+	// another server the stats will be outdated
+	// but that is fine
+	//
+	// saved stats are a gimmic not a source of truth
+	pPlayer->m_SavedStats.Merge(&pPlayer->m_Stats);
+	if(m_pExtraColumns)
+		m_pExtraColumns->MergeStats(&pPlayer->m_SavedStats, &pPlayer->m_Stats);
+
 	pPlayer->ResetStats();
 }
 
