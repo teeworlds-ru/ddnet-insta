@@ -74,6 +74,12 @@ CGameControllerPvp::~CGameControllerPvp()
 
 void CGameControllerPvp::ResetPlayer(class CPlayer *pPlayer)
 {
+	pPlayer->m_IsDead = false;
+	pPlayer->m_KillerId = -1;
+	pPlayer->m_Spree = 0;
+	pPlayer->ResetStats();
+	pPlayer->m_SavedStats.Reset();
+
 	pPlayer->m_IsReadyToPlay = !GameServer()->m_pController->IsPlayerReadyMode();
 	pPlayer->m_DeadSpecMode = false;
 	pPlayer->m_GameStateBroadcast = false;
@@ -1008,10 +1014,39 @@ void CGameControllerPvp::EndSpree(class CPlayer *pPlayer, class CPlayer *pKiller
 	pPlayer->m_Spree = 0;
 }
 
+void CGameControllerPvp::OnLoadedNameStats(const CSqlStatsPlayer *pStats, class CPlayer *pPlayer)
+{
+	if(!pPlayer)
+		return;
+
+	pPlayer->m_SavedStats = *pStats;
+
+	if(g_Config.m_SvDebugStats > 1)
+	{
+		dbg_msg("ddnet-insta", "copied stats:");
+		pPlayer->m_SavedStats.Dump(m_pExtraColumns);
+	}
+}
+
+bool CGameControllerPvp::LoadNewPlayerNameData(int ClientId)
+{
+	if(ClientId < 0 || ClientId >= MAX_CLIENTS)
+		return true;
+
+	CPlayer *pPlayer = GameServer()->m_apPlayers[ClientId];
+	if(!pPlayer)
+		return true;
+
+	pPlayer->m_SavedStats.Reset();
+	m_pSqlStats->LoadInstaPlayerData(ClientId, m_pStatsTable);
+
+	// consume the event and do not load ddrace times
+	return true;
+}
+
 void CGameControllerPvp::OnPlayerConnect(CPlayer *pPlayer)
 {
 	m_InvalidateConnectedIpsCache = true;
-	OnPlayerConstruct(pPlayer);
 	IGameController::OnPlayerConnect(pPlayer);
 	int ClientId = pPlayer->GetCid();
 	pPlayer->ResetStats();
@@ -1019,9 +1054,10 @@ void CGameControllerPvp::OnPlayerConnect(CPlayer *pPlayer)
 	// init the player
 	Score()->PlayerData(ClientId)->Reset();
 
-	// Can't set score here as LoadScore() is threaded, run it in
-	// LoadScoreThreaded() instead
-	Score()->LoadPlayerData(ClientId);
+	if(!LoadNewPlayerNameData(ClientId))
+	{
+		Score()->LoadPlayerData(ClientId);
+	}
 
 	if(!Server()->ClientPrevIngame(ClientId))
 	{

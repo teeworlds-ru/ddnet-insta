@@ -77,6 +77,14 @@ public:
 	// see stats directly in CPlayer such as CPlayer::m_Kills for stats
 	// that are always counted
 	CSqlStatsPlayer m_Stats;
+
+	// these are the all time stats of that player
+	// loaded from the database
+	// they should not be written to
+	// new stats should be written to m_Stats
+	// the m_SavedStats are used to display all time stats in the scoreboard
+	CSqlStatsPlayer m_SavedStats;
+
 	int Spree() const { return m_Spree; }
 	int Kills() const { return m_Stats.m_Kills; }
 	int Deaths() const { return m_Stats.m_Deaths; }
