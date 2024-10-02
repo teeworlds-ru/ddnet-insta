@@ -281,6 +281,8 @@ public:
 	virtual int GameInfoExFlags2(int SnappingClient, int DDRaceFlags) { return DDRaceFlags; };
 	virtual void OnSnapDDNetCharacter(class CCharacter *pChr, CNetObj_DDNetCharacter *pDDNetCharacter, int SnappingClient){};
 	virtual CClientMask FreezeDamageIndicatorMask(class CCharacter *pChr);
+	virtual int SnapRoundStartTick(int SnappingClient);
+	virtual int SnapTimeLimit(int SnappingClient);
 
 	// ddnet has grenade
 	// but the actual implementation is in CGameControllerPvp::IsGrenadeGameType()
@@ -333,6 +335,9 @@ public:
 	EGameState m_GameState;
 	EGameState GameState() const { return m_GameState; }
 	int m_GameStateTimer;
+
+	// custom ddnet-insta timers
+	int m_UnpauseStartTick = 0;
 
 	const char *GameStateToStr(EGameState GameState)
 	{
