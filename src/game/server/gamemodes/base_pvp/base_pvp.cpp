@@ -72,6 +72,19 @@ CGameControllerPvp::~CGameControllerPvp()
 	}
 }
 
+void CGameControllerPvp::ResetPlayer(class CPlayer *pPlayer)
+{
+	pPlayer->m_IsReadyToPlay = !GameServer()->m_pController->IsPlayerReadyMode();
+	pPlayer->m_DeadSpecMode = false;
+	pPlayer->m_GameStateBroadcast = false;
+	pPlayer->m_Score = 0; // ddnet-insta
+}
+
+int CGameControllerPvp::SnapPlayerScore(class CPlayer *pPlayer, int SnappingClient, int DDRaceScore)
+{
+	return pPlayer->m_Score.value_or(0);
+}
+
 int CGameControllerPvp::GameInfoExFlags(int SnappingClient, int DDRaceFlags)
 {
 	int Flags =

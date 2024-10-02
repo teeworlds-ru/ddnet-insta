@@ -39,6 +39,9 @@ public:
 	int GetPlayerTeam(class CPlayer *pPlayer, bool Sixup) override;
 	void OnUpdateSpectatorVotesConfig() override;
 	bool OnSetTeamNetMessage(const CNetMsg_Cl_SetTeam *pMsg, int ClientId) override;
+	int SnapPlayerScore(class CPlayer *pPlayer, int SnappingClient, int DDRaceScore) override;
+	void OnDDRaceTimeLoad(class CPlayer *pPlayer, float Time) override{};
+	void ResetPlayer(class CPlayer *pPlayer) override;
 
 	void ModifyWeapons(IConsole::IResult *pResult, void *pUserData, int Weapon, bool Remove);
 

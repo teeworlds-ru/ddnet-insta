@@ -21,6 +21,22 @@
 
 // ddnet-insta
 
+void IGameController::OnDDRaceTimeLoad(class CPlayer *pPlayer, float Time)
+{
+	pPlayer->m_Score = Time;
+}
+
+int IGameController::SnapPlayerScore(class CPlayer *pPlayer, int SnappingClient, int DDRaceScore)
+{
+	if(Server()->IsSixup(SnappingClient))
+	{
+		// Times are in milliseconds for 0.7
+		return pPlayer->m_Score.has_value() ? GameServer()->Score()->PlayerData(pPlayer->GetCid())->m_BestTime * 1000 : -1;
+	}
+
+	return DDRaceScore;
+}
+
 int IGameController::SnapRoundStartTick(int SnappingClient)
 {
 	if(
