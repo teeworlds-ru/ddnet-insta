@@ -89,19 +89,21 @@ void CGameControllerPvp::ResetPlayer(class CPlayer *pPlayer)
 int CGameControllerPvp::SnapPlayerScore(class CPlayer *pPlayer, int SnappingClient, int DDRaceScore)
 {
 	int Score = pPlayer->m_Score.value_or(0);
-	if(g_Config.m_SvSaveServer)
+	// display round score if the game ended
+	// otherwise you can not see who actually won
+	if(g_Config.m_SvSaveServer && GameState() != IGS_END_ROUND)
 	{
 		Score += pPlayer->m_SavedStats.m_Points;
 
-		// yes this is cursed
-		// but during the final scoreboard we already saved and reset the stats
-		// so we manually merged the save stats
-		// but the player still has his round score
-		// so the round score is counted twice
-		if(GameState() == IGS_END_ROUND)
-		{
-			Score -= pPlayer->m_Score.value_or(0);
-		}
+		// // yes this is cursed
+		// // but during the final scoreboard we already saved and reset the stats
+		// // so we manually merged the save stats
+		// // but the player still has his round score
+		// // so the round score is counted twice
+		// if(GameState() == IGS_END_ROUND)
+		// {
+		// 	Score -= pPlayer->m_Score.value_or(0);
+		// }
 	}
 	return Score;
 }
