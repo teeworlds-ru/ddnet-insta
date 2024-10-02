@@ -46,6 +46,8 @@ depends on the ``sv_gametype``. But here are some chat commands that work in any
 - ``/statsall`` Shows the all time stats. Takes a player name as optional argument.
 - ``/top5kills`` Shows the all time top 5 players by amount of kills. Takes an offset as optional argument ``/top5kills 5`` to see rank 5 till 10 for example.
 - ``/rank_kills`` Show the all time rank of a players kills compared to others. Takes a player name as optional argument.
+- ``/rank`` to list all rank commands for the current gametype
+- ``/top`` to list all top commands for the current gametype
 
 ## Checkbox votes
 
