@@ -299,6 +299,8 @@ bool CGameControllerPvp::HasWinningScore(const CPlayer *pPlayer) const
 {
 	if(IsTeamplay())
 	{
+		if(pPlayer->GetTeam() < TEAM_RED || pPlayer->GetTeam() > TEAM_BLUE)
+			return false;
 		return m_aTeamscore[pPlayer->GetTeam()] > m_aTeamscore[!pPlayer->GetTeam()];
 	}
 	else
