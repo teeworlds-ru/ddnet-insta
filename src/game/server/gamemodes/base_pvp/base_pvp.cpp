@@ -1372,7 +1372,6 @@ int CGameControllerPvp::NumConnectedIps()
 		return m_NumConnectedIpsCached;
 
 	m_InvalidateConnectedIpsCache = false;
-	// m_NumConnectedIpsCached = Server()->NumConnectedIps();
 	m_NumConnectedIpsCached = Server()->DistinctClientCount();
 	return m_NumConnectedIpsCached;
 }
