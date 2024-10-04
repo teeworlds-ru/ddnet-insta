@@ -213,7 +213,7 @@ void CGameControllerBaseFng::OnSpike(class CCharacter *pChr, int SpikeTile)
 		pKiller->m_LastKillTime = pKiller->HandleMulti();
 
 		// check for steal
-		if(pChr->GetPlayer()->m_OriginalFreezerId != -1)
+		if(pChr->GetPlayer()->m_OriginalFreezerId != -1 && (GameFlags() & GAMEFLAG_TEAMS))
 		{
 			CPlayer *pOriginalFreezer = GameServer()->m_apPlayers[pChr->GetPlayer()->m_OriginalFreezerId];
 			if(pOriginalFreezer && pOriginalFreezer != pKiller)
