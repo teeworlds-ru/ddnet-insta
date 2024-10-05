@@ -50,8 +50,8 @@ gen_rcon_cmds() {
 }
 
 gen_chat_cmds() {
-	gen_console_cmds "/" src/game/server/instagib/chat_commands.h \
-		| grep -Ev '(ready|pause|shuffle|swap|drop)'
+	gen_console_cmds "/" src/game/server/instagib/chat_commands.h |
+		grep -Ev '(ready|pause|shuffle|swap|drop)'
 }
 
 insert_at() {
@@ -72,7 +72,7 @@ insert_at() {
 	to_ln="$((from_ln + to_ln - 2))"
 
 	{
-		head -n "$((from_ln-1))" "$filename"
+		head -n "$((from_ln - 1))" "$filename"
 		printf '%b\n' "$content"
 		tail -n +"$to_ln" "$filename"
 	} > "$(tmp)"
@@ -88,10 +88,9 @@ insert_at() {
 	fi
 }
 
-insert_at '^## ddnet-insta configs$' '^# ' "\n$(gen_configs)"   README.md
-insert_at '^# Rcon commands$'        '^# ' "\n$(gen_rcon_cmds)" README.md
-insert_at '^\+ `/drop flag'          '^# ' "$(gen_chat_cmds)" README.md
-
+insert_at '^## ddnet-insta configs$' '^# ' "\n$(gen_configs)" README.md
+insert_at '^# Rcon commands$' '^# ' "\n$(gen_rcon_cmds)" README.md
+insert_at '^\+ `/drop flag' '^# ' "$(gen_chat_cmds)" README.md
 
 [[ -f "$(tmp)" ]] && rm "$(tmp)"
 exit 0
