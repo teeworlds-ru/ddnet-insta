@@ -4,7 +4,16 @@
 #define CONSOLE_COMMAND(name, params, flags, callback, userdata, help)
 #endif
 
+// some commands ddnet-insta defined already existed in ddnet
+// these are marked as "shadows"
+// if a command is registered twice in the ddnet console system
+// the latter one overwrites the former
+// ideally the ddnet-insta commands call the original command
+// if sv_gametype is "ddnet"
+
+// "rank" shadows a ddnet command
 CONSOLE_COMMAND("rank", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConRankCmdlist, this, "Lists available rank commands")
+// "top5" shadows a ddnet command
 CONSOLE_COMMAND("top5", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConTopCmdlist, this, "Lists available top commands")
 CONSOLE_COMMAND("top", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConTopCmdlist, this, "Lists available top commands")
 
@@ -22,6 +31,7 @@ CONSOLE_COMMAND("stats", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConSt
 CONSOLE_COMMAND("statsall", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConStatsAllTime, this, "Shows the all time stats of player name (your stats by default)")
 CONSOLE_COMMAND("stats_all", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConStatsAllTime, this, "Shows the all time stats of player name (your stats by default)")
 
+// "points" shadows a ddnet command
 CONSOLE_COMMAND("points", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaRankPoints, this, "Shows the all time points rank of player name (your stats by default)")
 CONSOLE_COMMAND("rank_points", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaRankPoints, this, "Shows the all time points rank of player name (your stats by default)")
 
