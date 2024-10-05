@@ -205,7 +205,7 @@ bool CGameControllerPvp::OnBangCommand(int ClientId, const char *pCmd, int NumAr
 	}
 	else
 	{
-		SendChatTarget(ClientId, "Unknown command. Commands: !restart, !ready, !shuffle, !1on1, !settings");
+		SendChatTarget(ClientId, "Unknown command. Commands: !restart, !ready, !shuffle, !swap, !swap_random, !1on1, !settings, !gamestate");
 		return false;
 	}
 	return true;
