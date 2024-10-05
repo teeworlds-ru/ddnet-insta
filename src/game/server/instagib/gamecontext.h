@@ -41,6 +41,7 @@ public:
 	static void ConchainZcatchColors(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 	static void ConchainSpectatorVotes(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 
+	// rcon
 	static void ConHammer(IConsole::IResult *pResult, void *pUserData);
 	static void ConGun(IConsole::IResult *pResult, void *pUserData);
 	static void ConUnHammer(IConsole::IResult *pResult, void *pUserData);
@@ -50,6 +51,9 @@ public:
 	static void ConShuffleTeams(IConsole::IResult *pResult, void *pUserData);
 	static void ConSwapTeams(IConsole::IResult *pResult, void *pUserData);
 	static void ConSwapTeamsRandom(IConsole::IResult *pResult, void *pUserData);
+
+	// chat
+	static void ConReadyChange(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConRankCmdlist(IConsole::IResult *pResult, void *pUserData);
 	static void ConTopCmdlist(IConsole::IResult *pResult, void *pUserData);

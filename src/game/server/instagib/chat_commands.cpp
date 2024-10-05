@@ -13,6 +13,22 @@
 // yes that is cursed
 bool CheckClientId(int ClientId);
 
+void CGameContext::ConReadyChange(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!CheckClientId(pResult->m_ClientId))
+		return;
+
+	if(!pSelf->m_pController)
+		return;
+
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientId];
+	if(!pPlayer)
+		return;
+
+	pSelf->m_pController->OnPlayerReadyChange(pPlayer);
+}
+
 void CGameContext::ConRankCmdlist(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

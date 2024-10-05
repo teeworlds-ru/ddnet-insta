@@ -22,6 +22,9 @@ void CGameContext::RegisterInstagibCommands()
 	Console()->Register("top5", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConTopCmdlist, this, "Lists available top commands");
 	Console()->Register("top", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConTopCmdlist, this, "Lists available top commands");
 
+	Console()->Register("ready", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConReadyChange, this, "Pause or resume the game");
+	Console()->Register("pause", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConReadyChange, this, "Pause or resume the game");
+
 	Console()->Register("stats", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConStatsRound, this, "Shows the current round stats of player name (your stats by default)");
 
 	Console()->Register("statsall", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConStatsAllTime, this, "Shows the all time stats of player name (your stats by default)");

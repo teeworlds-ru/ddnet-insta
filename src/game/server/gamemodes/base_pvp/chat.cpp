@@ -410,12 +410,7 @@ bool CGameControllerPvp::OnChatMessage(const CNetMsg_Cl_Say *pMsg, int Length, i
 		str_format(aBuf, sizeof(aBuf), "%d used %s", ClientId, pMsg->m_pMessage);
 		GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chat-command", aBuf);
 
-		if(!str_comp_nocase(pMsg->m_pMessage + 1, "ready") || !str_comp_nocase(pMsg->m_pMessage + 1, "pause")) // ddnet-insta
-		{
-			GameServer()->m_pController->OnPlayerReadyChange(pPlayer);
-			return true;
-		}
-		else if(!str_comp_nocase(pMsg->m_pMessage + 1, "shuffle")) // ddnet-insta
+		if(!str_comp_nocase(pMsg->m_pMessage + 1, "shuffle")) // ddnet-insta
 		{
 			ComCallShuffleVote(ClientId);
 			return true;
