@@ -2807,6 +2807,7 @@ if(SERVER)
     gameworld.cpp
     gameworld.h
     instagib/chat_commands.cpp
+    instagib/chat_commands.h
     instagib/extra_columns.h
     instagib/gamecontext.h
     instagib/gamecontext/bangcommands.cpp
