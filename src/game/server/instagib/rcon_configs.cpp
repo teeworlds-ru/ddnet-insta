@@ -23,7 +23,10 @@ void CGameContext::RegisterInstagibCommands()
 	Console()->Register("top", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConTopCmdlist, this, "Lists available top commands");
 
 	Console()->Register("ready", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConReadyChange, this, "Pause or resume the game");
+	// "pause" shadows a ddnet command
 	Console()->Register("pause", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConReadyChange, this, "Pause or resume the game");
+	// "swap" shadows a ddnet command
+	Console()->Register("swap", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaSwap, this, "Call a vote to swap teams");
 
 	Console()->Register("stats", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConStatsRound, this, "Shows the current round stats of player name (your stats by default)");
 

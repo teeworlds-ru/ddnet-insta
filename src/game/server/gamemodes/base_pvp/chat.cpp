@@ -415,11 +415,6 @@ bool CGameControllerPvp::OnChatMessage(const CNetMsg_Cl_Say *pMsg, int Length, i
 			GameServer()->ComCallShuffleVote(ClientId);
 			return true;
 		}
-		else if(!str_comp_nocase(pMsg->m_pMessage + 1, "swap")) // ddnet-insta
-		{
-			GameServer()->ComCallSwapTeamsVote(ClientId);
-			return true;
-		}
 		else if(!str_comp_nocase(pMsg->m_pMessage + 1, "swap_random")) // ddnet-insta
 		{
 			GameServer()->ComCallSwapTeamsRandomVote(ClientId);

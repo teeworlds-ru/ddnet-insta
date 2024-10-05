@@ -29,6 +29,22 @@ void CGameContext::ConReadyChange(IConsole::IResult *pResult, void *pUserData)
 	pSelf->m_pController->OnPlayerReadyChange(pPlayer);
 }
 
+void CGameContext::ConInstaSwap(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!CheckClientId(pResult->m_ClientId))
+		return;
+
+	if(!pSelf->m_pController)
+		return;
+
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientId];
+	if(!pPlayer)
+		return;
+
+	pSelf->ComCallSwapTeamsVote(pResult->m_ClientId);
+}
+
 void CGameContext::ConRankCmdlist(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
