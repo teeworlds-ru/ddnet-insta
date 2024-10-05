@@ -25,6 +25,7 @@ public:
 	void OnPlayerTick(class CPlayer *pPlayer);
 
 	void SendChatSpectators(const char *pMessage, int Flags);
+	void OnInit() override;
 	void OnPlayerConnect(CPlayer *pPlayer) override;
 	void OnPlayerDisconnect(class CPlayer *pPlayer, const char *pReason) override;
 	void DoTeamChange(CPlayer *pPlayer, int Team, bool DoChatMsg) override;
