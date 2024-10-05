@@ -47,12 +47,6 @@ public:
 
 	void ModifyWeapons(IConsole::IResult *pResult, void *pUserData, int Weapon, bool Remove);
 
-	void BangCommandVote(int ClientId, const char *pCommand, const char *pDesc);
-	void ComCallShuffleVote(int ClientId);
-	void ComCallSwapTeamsVote(int ClientId);
-	void ComCallSwapTeamsRandomVote(int ClientId);
-	void ComDropFlag(int ClientId);
-
 	bool AllowPublicChat(const CPlayer *pPlayer);
 	bool ParseChatCmd(char Prefix, int ClientId, const char *pCmdWithArgs);
 	bool OnBangCommand(int ClientId, const char *pCmd, int NumArgs, const char **ppArgs);

@@ -11,6 +11,13 @@ class CGameContext
 public:
 	const char *ServerInfoPlayerScoreKind() override { return "points"; }
 
+	// bang commands
+	void BangCommandVote(int ClientId, const char *pCommand, const char *pDesc);
+	void ComCallShuffleVote(int ClientId);
+	void ComCallSwapTeamsVote(int ClientId);
+	void ComCallSwapTeamsRandomVote(int ClientId);
+	void ComDropFlag(int ClientId);
+
 	void SendGameMsg(int GameMsgId, int ClientId) const;
 	void SendGameMsg(int GameMsgId, int ParaI1, int ClientId) const;
 	void SendGameMsg(int GameMsgId, int ParaI1, int ParaI2, int ParaI3, int ClientId) const; // ddnet-insta
