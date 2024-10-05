@@ -45,6 +45,61 @@ void CGameContext::ConInstaSwap(IConsole::IResult *pResult, void *pUserData)
 	pSelf->ComCallSwapTeamsVote(pResult->m_ClientId);
 }
 
+void CGameContext::ConInstaSwapRandom(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!CheckClientId(pResult->m_ClientId))
+		return;
+
+	if(!pSelf->m_pController)
+		return;
+
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientId];
+	if(!pPlayer)
+		return;
+
+	pSelf->ComCallSwapTeamsRandomVote(pResult->m_ClientId);
+}
+
+void CGameContext::ConInstaShuffle(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!CheckClientId(pResult->m_ClientId))
+		return;
+
+	if(!pSelf->m_pController)
+		return;
+
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientId];
+	if(!pPlayer)
+		return;
+
+	pSelf->ComCallShuffleVote(pResult->m_ClientId);
+}
+
+void CGameContext::ConInstaDrop(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!CheckClientId(pResult->m_ClientId))
+		return;
+
+	if(!pSelf->m_pController)
+		return;
+
+	CPlayer *pPlayer = pSelf->m_apPlayers[pResult->m_ClientId];
+	if(!pPlayer)
+		return;
+
+	int ClientId = pResult->m_ClientId;
+	if(pResult->NumArguments() != 1 || str_comp_nocase(pResult->GetString(0), "flag"))
+	{
+		pSelf->SendChatTarget(ClientId, "Did you mean '/drop flag'?");
+		return;
+	}
+
+	pSelf->ComDropFlag(pResult->m_ClientId);
+}
+
 void CGameContext::ConRankCmdlist(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

@@ -62,6 +62,9 @@ public:
 	// chat
 	static void ConReadyChange(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaSwap(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaSwapRandom(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaShuffle(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaDrop(IConsole::IResult *pResult, void *pUserData);
 
 	static void ConRankCmdlist(IConsole::IResult *pResult, void *pUserData);
 	static void ConTopCmdlist(IConsole::IResult *pResult, void *pUserData);

@@ -404,32 +404,5 @@ bool CGameControllerPvp::OnChatMessage(const CNetMsg_Cl_Say *pMsg, int Length, i
 		return true;
 	}
 
-	if(pMsg->m_pMessage[0] == '/')
-	{
-		char aBuf[256];
-		str_format(aBuf, sizeof(aBuf), "%d used %s", ClientId, pMsg->m_pMessage);
-		GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chat-command", aBuf);
-
-		if(!str_comp_nocase(pMsg->m_pMessage + 1, "shuffle")) // ddnet-insta
-		{
-			GameServer()->ComCallShuffleVote(ClientId);
-			return true;
-		}
-		else if(!str_comp_nocase(pMsg->m_pMessage + 1, "swap_random")) // ddnet-insta
-		{
-			GameServer()->ComCallSwapTeamsRandomVote(ClientId);
-			return true;
-		}
-		else if(!str_comp_nocase(pMsg->m_pMessage + 1, "drop flag")) // ddnet-insta
-		{
-			GameServer()->ComDropFlag(ClientId);
-			return true;
-		}
-		else if(str_startswith(pMsg->m_pMessage + 1, "drop")) // ddnet-insta
-		{
-			SendChatTarget(ClientId, "Did you mean '/drop flag'?");
-			return true;
-		}
-	}
 	return false;
 }

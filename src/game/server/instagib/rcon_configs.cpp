@@ -27,6 +27,9 @@ void CGameContext::RegisterInstagibCommands()
 	Console()->Register("pause", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConReadyChange, this, "Pause or resume the game");
 	// "swap" shadows a ddnet command
 	Console()->Register("swap", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaSwap, this, "Call a vote to swap teams");
+	Console()->Register("shuffle", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaShuffle, this, "Call a vote to shuffle teams");
+	Console()->Register("swap_random", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaSwapRandom, this, "Call vote to swap teams to a random side");
+	Console()->Register("drop", "?s[flag]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaDrop, this, "Drop the flag");
 
 	Console()->Register("stats", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConStatsRound, this, "Shows the current round stats of player name (your stats by default)");
 
