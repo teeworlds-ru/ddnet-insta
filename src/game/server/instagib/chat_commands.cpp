@@ -355,6 +355,26 @@ void CGameContext::ConTopFastcaps(IConsole::IResult *pResult, void *pUserData)
 		Offset);
 }
 
+void CGameContext::ConTopNumCaps(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!CheckClientId(pResult->m_ClientId))
+		return;
+
+	if(!pSelf->m_pController)
+		return;
+
+	if(pSelf->m_pController->IsDDRaceGameType())
+	{
+		pSelf->SendChatTarget(pResult->m_ClientId, "This command is not available in ddrace gametypes.");
+		return;
+	}
+
+	const char *pName = pSelf->Server()->ClientName(pResult->m_ClientId);
+	int Offset = pResult->NumArguments() ? pResult->GetInteger(0) : 1;
+	pSelf->m_pController->m_pSqlStats->ShowTop(pResult->m_ClientId, pName, "Flag captures", "flag_captures", pSelf->m_pController->StatsTable(), "DESC", Offset);
+}
+
 void CGameContext::ConRankFlagCaptures(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
