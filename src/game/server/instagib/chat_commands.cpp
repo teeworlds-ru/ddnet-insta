@@ -201,10 +201,14 @@ void CGameContext::ConStatsRound(IConsole::IResult *pResult, void *pUserData)
 	if(!pSelf->m_pController->IsStatTrack())
 		str_format(aUntracked, sizeof(aUntracked), " (%d untracked)", pPlayer->m_Deaths);
 	str_format(aBuf, sizeof(aBuf), "~ Deaths: %d%s", pPlayer->m_Stats.m_Deaths, aUntracked);
+	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
 
+	aUntracked[0] = '\0';
+	if(!pSelf->m_pController->IsStatTrack())
+		str_format(aUntracked, sizeof(aUntracked), " (%d untracked)", pPlayer->m_UntrackedSpree);
+	str_format(aBuf, sizeof(aBuf), "~ Current killing spree: %d%s", pPlayer->Spree(), aUntracked);
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
-	str_format(aBuf, sizeof(aBuf), "~ Current killing spree: %d", pPlayer->Spree());
-	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
+
 	str_format(aBuf, sizeof(aBuf), "~ Highest killing spree: %d", pPlayer->m_Stats.m_BestSpree);
 	pSelf->Console()->Print(IConsole::OUTPUT_LEVEL_STANDARD, "chatresp", aBuf);
 

@@ -83,6 +83,7 @@ void CGameControllerPvp::ResetPlayer(class CPlayer *pPlayer)
 	pPlayer->m_IsDead = false;
 	pPlayer->m_KillerId = -1;
 	pPlayer->m_Spree = 0;
+	pPlayer->m_UntrackedSpree = 0;
 	pPlayer->ResetStats();
 	pPlayer->m_SavedStats.Reset();
 
@@ -1008,7 +1009,10 @@ void CGameControllerPvp::OnCharacterSpawn(class CCharacter *pChr)
 void CGameControllerPvp::AddSpree(class CPlayer *pPlayer)
 {
 	if(!IsStatTrack())
+	{
+		pPlayer->m_UntrackedSpree++;
 		return;
+	}
 
 	pPlayer->m_Spree++;
 	const int NumMsg = 5;
@@ -1052,6 +1056,7 @@ void CGameControllerPvp::EndSpree(class CPlayer *pPlayer, class CPlayer *pKiller
 	if(pPlayer->m_Stats.m_BestSpree < pPlayer->Spree())
 		pPlayer->m_Stats.m_BestSpree = pPlayer->Spree();
 	pPlayer->m_Spree = 0;
+	pPlayer->m_UntrackedSpree = 0;
 }
 
 void CGameControllerPvp::OnLoadedNameStats(const CSqlStatsPlayer *pStats, class CPlayer *pPlayer)
