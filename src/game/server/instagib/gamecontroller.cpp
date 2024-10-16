@@ -84,6 +84,11 @@ void IGameController::ToggleGamePause()
 		SetGameState(IGS_GAME_PAUSED, TIMER_INFINITE);
 }
 
+void IGameController::AddTeamscore(int Team, int Score)
+{
+	m_aTeamscore[Team] += Score;
+}
+
 bool IGameController::IsPlayerReadyMode()
 {
 	return Config()->m_SvPlayerReadyMode != 0 && (m_GameStateTimer == TIMER_INFINITE && (m_GameState == IGS_WARMUP_USER || m_GameState == IGS_GAME_PAUSED));

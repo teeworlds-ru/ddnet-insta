@@ -354,6 +354,8 @@ public:
 		m_aTeamscore[TEAM_BLUE] = Score;
 	};
 
+	void AddTeamscore(int Team, int Score);
+
 	int m_aTeamSize[protocol7::NUM_TEAMS];
 
 	// game
