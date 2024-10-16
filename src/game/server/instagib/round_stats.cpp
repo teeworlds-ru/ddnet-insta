@@ -95,12 +95,16 @@ void IGameController::GetRoundEndStatsStrJson(char *pBuf, size_t Size)
 		{
 			if(!pPlayer)
 				continue;
+			if(pPlayer->GetTeam() < TEAM_RED)
+				continue;
+			if(pPlayer->GetTeam() > TEAM_BLUE)
+				continue;
 
 			Writer.BeginObject();
 			Writer.WriteAttribute("id");
 			Writer.WriteIntValue(pPlayer->GetCid());
 			Writer.WriteAttribute("team");
-			Writer.WriteStrValue(pPlayer->GetTeam() == TEAM_RED ? "red" : "blue");
+			Writer.WriteStrValue(pPlayer->GetTeamStr());
 			Writer.WriteAttribute("name");
 			Writer.WriteStrValue(Server()->ClientName(pPlayer->GetCid()));
 			Writer.WriteAttribute("score");
