@@ -327,7 +327,11 @@ void IGameController::PublishRoundEndStatsStrHttp(const char *pStr)
 
 void IGameController::PublishRoundEndStats()
 {
-	char aStats[8192];
+	// should be able to fit a 10v10 player game
+	// as json easily
+	//
+	// but a 32v32 will still overflow
+	char aStats[16384];
 	aStats[0] = '\0';
 	if(g_Config.m_SvRoundStatsDiscordWebhook[0] != '\0')
 	{
