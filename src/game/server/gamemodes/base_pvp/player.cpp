@@ -39,7 +39,7 @@ void CPlayer::AddScore(int Score)
 
 	// never decrement the tracked score
 	// so fakers can not remove points from others
-	if(Score > 0 && GameServer()->m_pController->IsStatTrack())
+	if(Score > 0 && GameServer()->m_pController && GameServer()->m_pController->IsStatTrack())
 		m_Stats.m_Points += Score;
 
 	m_Score = m_Score.value_or(0) + Score;
