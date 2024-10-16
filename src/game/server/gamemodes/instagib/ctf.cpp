@@ -401,6 +401,9 @@ void CGameControllerInstaBaseCTF::Snap(int SnappingClient)
 
 bool CGameControllerInstaBaseCTF::DoWincheckRound()
 {
+	if(IsWarmup())
+		return false;
+
 	CGameControllerPvp::DoWincheckRound();
 
 	// check score win condition

@@ -86,6 +86,9 @@ void IGameController::ToggleGamePause()
 
 void IGameController::AddTeamscore(int Team, int Score)
 {
+	if(IsWarmup())
+		return;
+
 	m_aTeamscore[Team] += Score;
 }
 
@@ -179,6 +182,9 @@ void IGameController::SetPlayersReadyState(bool ReadyState)
 
 bool IGameController::DoWincheckRound()
 {
+	if(IsWarmup())
+		return false;
+
 	if(IsTeamplay())
 	{
 		// check score win condition
@@ -473,7 +479,7 @@ void IGameController::SetGameState(EGameState GameState, int Timer)
 		if(m_GameState == IGS_END_ROUND)
 			break;
 		// only possible when game is running or over
-		// if(m_GameState == IGS_GAME_RUNNING || m_GameState == IGS_END_ROUND || m_GameState == IGS_GAME_PAUSED)
+		if(m_GameState == IGS_GAME_RUNNING || m_GameState == IGS_END_ROUND || m_GameState == IGS_GAME_PAUSED)
 		{
 			m_GameState = GameState;
 			m_GameStateTimer = Timer * Server()->TickSpeed();

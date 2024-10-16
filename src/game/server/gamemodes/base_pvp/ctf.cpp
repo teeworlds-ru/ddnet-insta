@@ -399,6 +399,9 @@ void CGameControllerBaseCTF::Snap(int SnappingClient)
 
 bool CGameControllerBaseCTF::DoWincheckRound()
 {
+	if(IsWarmup())
+		return false;
+
 	CGameControllerPvp::DoWincheckRound();
 
 	// check score win condition

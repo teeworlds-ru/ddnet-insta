@@ -48,7 +48,30 @@ void CGameControllerPvp::OnInit()
 
 void CGameControllerPvp::OnRoundStart()
 {
-	dbg_msg("ddnet-insta", "starting new round ...");
+	dbg_msg(
+		"ddnet-insta",
+		"new round start! Current game state: %s",
+		GameStateToStr(GameState()));
+
+	int StartGameState = GameState();
+
+	// ddnet-insta
+	m_GameStartTick = Server()->Tick();
+	SetGameState(IGS_GAME_RUNNING);
+	m_GameStartTick = Server()->Tick();
+	m_SuddenDeath = 0;
+
+	// only auto start round if we are in casual mode and there is no tournament running
+	// otherwise set infinite warmup and wait for !restart
+	if(StartGameState == IGS_END_ROUND && (!g_Config.m_SvCasualRounds || g_Config.m_SvTournament))
+	{
+		SendChat(-1, TEAM_ALL, "Starting warmup phase. Call a restart vote to start a new game.");
+		SetGameState(IGS_WARMUP_GAME, TIMER_INFINITE);
+	}
+	else
+	{
+		SetGameState(IGS_START_COUNTDOWN_ROUND_START);
+	}
 
 	// for(CPlayer *pPlayer : GameServer()->m_apPlayers)
 	// {
