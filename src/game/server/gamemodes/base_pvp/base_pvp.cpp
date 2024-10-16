@@ -386,13 +386,30 @@ bool CGameControllerPvp::IsLoser(const CPlayer *pPlayer)
 	return !IsWinner(pPlayer, 0, 0);
 }
 
-bool CGameControllerPvp::IsStatTrack()
+bool CGameControllerPvp::IsStatTrack(char *pReason, int SizeOfReason)
 {
+	if(pReason)
+		pReason[0] = '\0';
+
+	if(IsWarmup())
+	{
+		if(pReason)
+			str_copy(pReason, "warmup", SizeOfReason);
+		return false;
+	}
+
 	int MinPlayers = IsTeamPlay() ? 3 : 2;
 	int Count = NumConnectedIps();
 	bool Track = Count >= MinPlayers;
 	if(g_Config.m_SvDebugStats)
 		dbg_msg("stats", "connected unique ips=%d (%d+ needed to track) tracking=%d", Count, MinPlayers, Track);
+
+	if(!Track)
+	{
+		if(pReason)
+			str_copy(pReason, "not enough players", SizeOfReason);
+	}
+
 	return Track;
 }
 

@@ -287,11 +287,20 @@ public:
 			This is used to protect against farming. Define for example a minium amount of in game players
 			required to count the stats.
 
+		Arguments:
+			pReason - reason buffer for stat track being off
+			SizeOfReason - reason buffer size
+
 		Returns:
 			true - count stats
 			false - do not count stats
 	*/
-	virtual bool IsStatTrack() { return true; }
+	virtual bool IsStatTrack(char *pReason = nullptr, int SizeOfReason = 0)
+	{
+		if(pReason)
+			pReason[0] = '\0';
+		return true;
+	}
 
 	/*
 		Function: SaveStatsOnRoundEnd
