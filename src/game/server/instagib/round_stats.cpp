@@ -289,8 +289,8 @@ void IGameController::PublishRoundEndStatsStrFile(const char *pStr)
 
 void IGameController::PublishRoundEndStatsStrDiscord(const char *pStr)
 {
-	char aPayload[2048];
-	char aStatsStr[2000];
+	char aPayload[4048];
+	char aStatsStr[4000];
 	str_format(
 		aPayload,
 		sizeof(aPayload),
@@ -323,7 +323,7 @@ void IGameController::PublishRoundEndStatsStrHttp(const char *pStr)
 
 void IGameController::PublishRoundEndStats()
 {
-	char aStats[1024];
+	char aStats[8192];
 	aStats[0] = '\0';
 	if(g_Config.m_SvRoundStatsDiscordWebhook[0] != '\0')
 	{
