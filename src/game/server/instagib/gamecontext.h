@@ -4,11 +4,16 @@
 
 #ifndef IN_CLASS_IGAMECONTEXT
 
+#include <string>
+#include <vector>
+
 class CGameContext
 {
 #endif // IN_CLASS_IGAMECONTEXT
 
 public:
+	std::vector<std::string> m_vMapPool;
+
 	const char *ServerInfoPlayerScoreKind() override { return "points"; }
 
 	// bang commands
@@ -58,6 +63,9 @@ public:
 	static void ConShuffleTeams(IConsole::IResult *pResult, void *pUserData);
 	static void ConSwapTeams(IConsole::IResult *pResult, void *pUserData);
 	static void ConSwapTeamsRandom(IConsole::IResult *pResult, void *pUserData);
+	static void ConAddMapToPool(IConsole::IResult *pResult, void *pUserData);
+	static void ConClearMapPool(IConsole::IResult *pResult, void *pUserData);
+	static void ConRandomMapFromPool(IConsole::IResult *pResult, void *pUserData);
 
 	// chat
 	static void ConReadyChange(IConsole::IResult *pResult, void *pUserData);
