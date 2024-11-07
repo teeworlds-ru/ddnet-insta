@@ -7,7 +7,11 @@
 #include <string>
 #include <vector>
 
-class CGameContext
+#include <engine/console.h>
+#include <engine/http.h>
+#include <engine/server.h>
+
+class CGameContext : public IGameServer
 {
 #endif // IN_CLASS_IGAMECONTEXT
 
