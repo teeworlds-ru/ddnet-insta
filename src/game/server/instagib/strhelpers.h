@@ -22,4 +22,21 @@ bool str_contains_ip(const char *pStr);
  */
 void str_expand_timestamps(const char *pStr, char *pBuf, size_t SizeOfBuf);
 
+/**
+ * Escapes one csv value. And returns the result.
+ * If no escaping is required it returns the raw result.
+ * If escaping is required it will put the value in quotes.
+ *
+ * It is following pythons excel standard like ddnet's CsvWrite()
+ *
+ * @ingroup Strings
+ *
+ * @param pBuffer buffer used to store the new escaped value (but look at the return value instead)
+ * @param BufferSize size of temporary buffer
+ * @param pString Input value to be escaped
+ *
+ * @remark Guarantees that the return value is zero-terminated
+ */
+char *str_escape_csv(char *pBuffer, int BufferSize, const char *pString);
+
 #endif

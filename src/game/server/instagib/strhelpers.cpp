@@ -81,7 +81,39 @@ void str_expand_timestamps(const char *pStr, char *pBuf, size_t SizeOfBuf)
 		}
 		pBuf[WriteIndex++] = pStr[ReadIndex];
 	}
+	// the timestamp can expand out of the buffer
+	if(WriteIndex >= (int)SizeOfBuf)
+		WriteIndex = (int)(SizeOfBuf - 1);
 	pBuf[WriteIndex] = '\0';
+}
+
+char *str_escape_csv(char *pBuffer, int BufferSize, const char *pString)
+{
+	if(!str_find(pString, "\"") && !str_find(pString, ","))
+	{
+		str_copy(pBuffer, pString, BufferSize);
+		return pBuffer;
+	}
+
+	int WriteIndex = 0;
+	pBuffer[WriteIndex++] = '"';
+	for(int ReadIndex = 0; pString[ReadIndex] && WriteIndex < (BufferSize - 1); ReadIndex++)
+	{
+		if(pString[ReadIndex] == '"')
+		{
+			pBuffer[WriteIndex++] = '"';
+			pBuffer[WriteIndex++] = '"';
+			continue;
+		}
+		pBuffer[WriteIndex++] = pString[ReadIndex];
+	}
+	if(WriteIndex >= BufferSize)
+		WriteIndex = BufferSize - 1;
+	pBuffer[WriteIndex++] = '"';
+	if(WriteIndex >= BufferSize)
+		WriteIndex = BufferSize - 1;
+	pBuffer[WriteIndex] = '\0';
+	return pBuffer;
 }
 
 // int test_thing()

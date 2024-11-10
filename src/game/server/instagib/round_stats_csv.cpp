@@ -1,13 +1,10 @@
 #include <engine/shared/config.h>
 
-#include "../entities/character.h"
-#include "../gamecontext.h"
-#include "../gamecontroller.h"
-#include "../gamemodes/DDRace.h"
-#include "../gamemodes/instagib/gctf/gctf.h"
-#include "../gamemodes/instagib/ictf/ictf.h"
-#include "../gamemodes/mod.h"
-#include "../player.h"
+#include <game/server/entities/character.h>
+#include <game/server/gamecontext.h>
+#include <game/server/gamecontroller.h>
+#include <game/server/instagib/strhelpers.h>
+#include <game/server/player.h>
 
 #include "round_stats_player.h"
 
@@ -82,13 +79,18 @@ void IGameController::GetRoundEndStatsStrCsv(char *pBuf, size_t Size)
 
 		// dbg_msg("debug", "RedIndex=%d BlueIndex=%d pRed=%p pBlue=%p", RedIndex, BlueIndex, pRed, pBlue);
 
+		char aEscapedNameRed[512];
+		char aEscapedNameBlue[512];
+		str_escape_csv(aEscapedNameRed, sizeof(aEscapedNameRed), pRed->m_pName);
+		str_escape_csv(aEscapedNameBlue, sizeof(aEscapedNameBlue), pBlue->m_pName);
+
 		str_format(
 			aBuf,
 			sizeof(aBuf),
 			"%s, %d, %s, %d\n",
-			pRed ? pRed->m_pName : "",
+			pRed ? aEscapedNameRed : "",
 			pRed ? pRed->m_Score : 0,
-			pBlue ? pBlue->m_pName : "",
+			pBlue ? aEscapedNameBlue : "",
 			pBlue ? pBlue->m_Score : 0);
 		str_append(pBuf, aBuf, Size);
 
