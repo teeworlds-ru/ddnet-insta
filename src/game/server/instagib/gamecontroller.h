@@ -458,6 +458,8 @@ public:
 
 	void OnEndRoundInsta();
 	void GetRoundEndStatsStrCsv(char *pBuf, size_t Size);
+	void GetRoundEndStatsStrCsvTeamPlay(char *pBuf, size_t Size);
+	void GetRoundEndStatsStrCsvNoTeamPlay(char *pBuf, size_t Size);
 	void PsvRowPlayer(const CPlayer *pPlayer, char *pBuf, size_t Size);
 	void GetRoundEndStatsStrJson(char *pBuf, size_t Size);
 	void GetRoundEndStatsStrPsv(char *pBuf, size_t Size);

@@ -19,15 +19,22 @@ static bool AddSepPlayer(char *pBuf, int Size)
 	return true;
 }
 
-static bool AddSep(char *pBuf, int Size)
+static bool AddSep(char *pBuf, int Size, bool TeamPlay)
 {
 	int BufLen = str_length(pBuf);
 	if(BufLen >= Size - 1)
 		return false;
 
-	//                | map             | red_score | blue_score |
-	//                | ctf5_solofng    | 999999    | 999999     |
-	str_append(pBuf, "+-----------------+-----------+------------+\n", Size - BufLen);
+	//                | map             | gametype |
+	//                | ctf5_solofng    | bolofng  |
+	str_append(pBuf, "+-----------------+----------+", Size - BufLen);
+	if(TeamPlay)
+	{
+		//                 red_score | blue_score |
+		//                 999999    | 999999     |
+		str_append(pBuf, "-----------+------------+", Size - BufLen);
+	}
+	str_append(pBuf, "\n", Size - BufLen);
 	return true;
 }
 
@@ -39,14 +46,25 @@ void IGameController::GetRoundEndStatsStrAsciiTable(char *pBuf, size_t SizeOfBuf
 	int ScoreRed = m_aTeamscore[TEAM_RED];
 	int ScoreBlue = m_aTeamscore[TEAM_BLUE];
 
-	if(!AddSep(pBuf, SizeOfBuf))
+	if(!AddSep(pBuf, SizeOfBuf, IsTeamPlay()))
 		return;
-	str_append(pBuf, "| map             | red_score | blue_score |\n", SizeOfBuf);
-	if(!AddSep(pBuf, SizeOfBuf))
+	str_append(pBuf, "| map             | gametype |", SizeOfBuf);
+	if(IsTeamPlay())
+		str_append(pBuf, " red_score | blue_score |", SizeOfBuf);
+	str_append(pBuf, "\n", SizeOfBuf);
+	if(!AddSep(pBuf, SizeOfBuf, IsTeamPlay()))
 		return;
-	str_format(aRow, sizeof(aRow), "| %-15s | %-9d | %-10d |\n", g_Config.m_SvMap, ScoreRed, ScoreBlue);
+	str_format(aRow, sizeof(aRow), "| %-15s | %-8s |", g_Config.m_SvMap, m_pGameType);
 	str_append(pBuf, aRow, SizeOfBuf);
-	if(!AddSep(pBuf, SizeOfBuf))
+
+	if(IsTeamPlay())
+	{
+		str_format(aRow, sizeof(aRow), " %-9d | %-10d |", ScoreRed, ScoreBlue);
+		str_append(pBuf, aRow, SizeOfBuf);
+	}
+
+	str_append(pBuf, "\n", SizeOfBuf);
+	if(!AddSep(pBuf, SizeOfBuf, IsTeamPlay()))
 		return;
 	str_append(pBuf, "\n", SizeOfBuf);
 

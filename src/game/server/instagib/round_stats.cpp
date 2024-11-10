@@ -86,10 +86,14 @@ void IGameController::GetRoundEndStatsStrJson(char *pBuf, size_t Size)
 		Writer.WriteIntValue(ScoreLimit);
 		Writer.WriteAttribute("time_limit");
 		Writer.WriteIntValue(TimeLimit);
-		Writer.WriteAttribute("score_red");
-		Writer.WriteIntValue(ScoreRed);
-		Writer.WriteAttribute("score_blue");
-		Writer.WriteIntValue(ScoreBlue);
+
+		if(IsTeamPlay())
+		{
+			Writer.WriteAttribute("score_red");
+			Writer.WriteIntValue(ScoreRed);
+			Writer.WriteAttribute("score_blue");
+			Writer.WriteIntValue(ScoreBlue);
+		}
 
 		Writer.WriteAttribute("players");
 		Writer.BeginArray();
@@ -105,8 +109,11 @@ void IGameController::GetRoundEndStatsStrJson(char *pBuf, size_t Size)
 			Writer.BeginObject();
 			Writer.WriteAttribute("id");
 			Writer.WriteIntValue(pPlayer->GetCid());
-			Writer.WriteAttribute("team");
-			Writer.WriteStrValue(pPlayer->GetTeamStr());
+			if(IsTeamPlay())
+			{
+				Writer.WriteAttribute("team");
+				Writer.WriteStrValue(pPlayer->GetTeamStr());
+			}
 			Writer.WriteAttribute("name");
 			Writer.WriteStrValue(Server()->ClientName(pPlayer->GetCid()));
 			Writer.WriteAttribute("score");
@@ -198,7 +205,8 @@ void IGameController::GetRoundEndStatsStrPsv(char *pBuf, size_t Size)
 	str_format(aBuf, sizeof(aBuf), "(Length: %d min %d sec, Scorelimit: %d, Timelimit: %d)\n\n", GameTimeMinutes, GameTimeSeconds, ScoreLimit, TimeLimit);
 	str_append(pBuf, aBuf, Size);
 
-	str_append(pBuf, "**Red Team:**\n", Size);
+	if(IsTeamPlay())
+		str_append(pBuf, "**Red Team:**\n", Size);
 	if(pRedClan)
 	{
 		str_format(aBuf, sizeof(aBuf), "Clan: **%s**\n", pRedClan);
@@ -212,33 +220,31 @@ void IGameController::GetRoundEndStatsStrPsv(char *pBuf, size_t Size)
 		PsvRowPlayer(pPlayer, pBuf, Size);
 	}
 
-	str_append(pBuf, "**Blue Team:**\n", Size);
-	if(pBlueClan)
+	if(IsTeamPlay())
 	{
-		str_format(aBuf, sizeof(aBuf), "Clan: **%s**\n", pBlueClan);
+		str_append(pBuf, "**Blue Team:**\n", Size);
+		if(pBlueClan)
+		{
+			str_format(aBuf, sizeof(aBuf), "Clan: **%s**\n", pBlueClan);
+			str_append(pBuf, aBuf, Size);
+		}
+		for(const CPlayer *pPlayer : GameServer()->m_apPlayers)
+		{
+			if(!pPlayer || pPlayer->GetTeam() != TEAM_BLUE)
+				continue;
+
+			PsvRowPlayer(pPlayer, pBuf, Size);
+		}
+
+		str_append(pBuf, "---------------------\n", Size);
+
+		str_format(aBuf, sizeof(aBuf), "**Red: %d | Blue %d**\n", ScoreRed, ScoreBlue);
 		str_append(pBuf, aBuf, Size);
 	}
-	for(const CPlayer *pPlayer : GameServer()->m_apPlayers)
-	{
-		if(!pPlayer || pPlayer->GetTeam() != TEAM_BLUE)
-			continue;
-
-		PsvRowPlayer(pPlayer, pBuf, Size);
-	}
-
-	str_append(pBuf, "---------------------\n", Size);
-	str_format(aBuf, sizeof(aBuf), "**Red: %d | Blue %d**\n", ScoreRed, ScoreBlue);
-	str_append(pBuf, aBuf, Size);
 }
 
 void IGameController::GetRoundEndStatsStrHttp(char *pBuf, size_t Size)
 {
-	if(!IsTeamPlay())
-	{
-		dbg_msg("ddnet-insta", "failed to build stats (no teams not implemented)");
-		return;
-	}
-
 	if(g_Config.m_SvRoundStatsFormatHttp == 0)
 		GetRoundEndStatsStrCsv(pBuf, Size);
 	if(g_Config.m_SvRoundStatsFormatHttp == 1)
@@ -253,12 +259,6 @@ void IGameController::GetRoundEndStatsStrHttp(char *pBuf, size_t Size)
 
 void IGameController::GetRoundEndStatsStrDiscord(char *pBuf, size_t Size)
 {
-	if(!IsTeamPlay())
-	{
-		dbg_msg("ddnet-insta", "failed to build stats (no teams not implemented)");
-		return;
-	}
-
 	if(g_Config.m_SvRoundStatsFormatDiscord == 0)
 		GetRoundEndStatsStrCsv(pBuf, Size);
 	if(g_Config.m_SvRoundStatsFormatDiscord == 1)
@@ -273,12 +273,6 @@ void IGameController::GetRoundEndStatsStrDiscord(char *pBuf, size_t Size)
 
 void IGameController::GetRoundEndStatsStrFile(char *pBuf, size_t Size)
 {
-	if(!IsTeamPlay())
-	{
-		dbg_msg("ddnet-insta", "failed to build stats (no teams not implemented)");
-		return;
-	}
-
 	if(g_Config.m_SvRoundStatsFormatFile == 0)
 		GetRoundEndStatsStrCsv(pBuf, Size);
 	if(g_Config.m_SvRoundStatsFormatFile == 1)
