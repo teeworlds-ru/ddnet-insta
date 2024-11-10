@@ -1,8 +1,10 @@
+#include <base/logger.h>
 #include <engine/shared/config.h>
 #include <engine/shared/http.h>
 #include <engine/shared/json.h>
 #include <engine/shared/jsonwriter.h>
 #include <game/generated/protocol.h>
+#include <game/server/instagib/strhelpers.h>
 
 #include <base/system.h>
 
@@ -289,6 +291,21 @@ void IGameController::GetRoundEndStatsStrFile(char *pBuf, size_t Size)
 
 void IGameController::PublishRoundEndStatsStrFile(const char *pStr)
 {
+	char aFile[IO_MAX_PATH_LENGTH];
+	// expand "%t" placeholders to timestamps in the filename
+	str_expand_timestamps(g_Config.m_SvRoundStatsOutputFile, aFile, sizeof(aFile));
+
+	IOHANDLE FileHandle = GameServer()->Storage()->OpenFile(aFile, IOFLAG_WRITE, IStorage::TYPE_SAVE_OR_ABSOLUTE);
+	if(!FileHandle)
+	{
+		dbg_msg("ddnet-insta", "failed to write to file '%s'", aFile);
+		return;
+	}
+
+	io_write(FileHandle, pStr, str_length(pStr));
+	io_close(FileHandle);
+
+	dbg_msg("ddnet-insta", "written round stats to file '%s'", aFile);
 }
 
 void IGameController::PublishRoundEndStatsStrDiscord(const char *pStr)

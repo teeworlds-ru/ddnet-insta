@@ -64,6 +64,26 @@ bool str_contains_ip(const char *pStr)
 	return false;
 }
 
+void str_expand_timestamps(const char *pStr, char *pBuf, size_t SizeOfBuf)
+{
+	char aDate[64];
+	str_timestamp(aDate, sizeof(aDate));
+	int WriteIndex = 0;
+	for(int ReadIndex = 0; pStr[ReadIndex] && WriteIndex < (int)(SizeOfBuf - 1); ReadIndex++)
+	{
+		if(pStr[ReadIndex] == '%' && pStr[ReadIndex + 1] == 't')
+		{
+			ReadIndex++;
+			pBuf[WriteIndex] = '\0';
+			str_append(pBuf, aDate, SizeOfBuf);
+			WriteIndex += str_length(aDate);
+			continue;
+		}
+		pBuf[WriteIndex++] = pStr[ReadIndex];
+	}
+	pBuf[WriteIndex] = '\0';
+}
+
 // int test_thing()
 // {
 // 	char aMsg[512];
