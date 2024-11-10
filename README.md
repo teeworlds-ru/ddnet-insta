@@ -334,7 +334,18 @@ And these configs determin where the stats will be sent to.
 
 ## csv - comma separated values (format 0)
 
-NOT IMPLEMENTED YET
+The first two rows are special. The first is a csv header.
+The second one is the red and blue team score.
+After that each row is two players each. Red player first and blue player second.
+If player names include commas their name will be quoted (see the example player `foo,bar`).
+So this is how the result of a 2x2 could look like:
+
+```
+red_name, red_score, blue_name, blue_score
+red, 24, blue, 3
+"foo,bar", 15, (1)ChillerDrago, 2
+ChillerDragon, 0, ChillerDragon.*, 1
+```
 
 ## psv - pipe separated values (format 1)
 
