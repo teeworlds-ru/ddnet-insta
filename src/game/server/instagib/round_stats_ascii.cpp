@@ -1,0 +1,86 @@
+#include <base/system.h>
+#include <engine/shared/config.h>
+#include <game/server/entities/character.h>
+#include <game/server/gamecontext.h>
+#include <game/server/instagib/strhelpers.h>
+#include <game/server/player.h>
+
+#include <game/server/gamecontroller.h>
+
+static bool AddSepPlayer(char *pBuf, int Size)
+{
+	int BufLen = str_length(pBuf);
+	if(BufLen >= Size - 1)
+		return false;
+
+	//                | id  | team | name            | score  | kills  | deaths | ratio  | flag_grabs | flag_captures |
+	//                | 128 | blue | ChillerDragon.* | 999999 | 999999 | 999999 | 300.5% | 999999     | 999999        |
+	str_append(pBuf, "+-----+------+-----------------+--------+--------+--------+--------+------------+---------------+\n", Size - BufLen);
+	return true;
+}
+
+static bool AddSep(char *pBuf, int Size)
+{
+	int BufLen = str_length(pBuf);
+	if(BufLen >= Size - 1)
+		return false;
+
+	//                | map             | red_score | blue_score |
+	//                | ctf5_solofng    | 999999    | 999999     |
+	str_append(pBuf, "+-----------------+-----------+------------+\n", Size - BufLen);
+	return true;
+}
+
+void IGameController::GetRoundEndStatsStrAsciiTable(char *pBuf, size_t SizeOfBuf)
+{
+	pBuf[0] = '\0';
+	char aRow[2048];
+
+	int ScoreRed = m_aTeamscore[TEAM_RED];
+	int ScoreBlue = m_aTeamscore[TEAM_BLUE];
+
+	if(!AddSep(pBuf, SizeOfBuf))
+		return;
+	str_append(pBuf, "| map             | red_score | blue_score |\n", SizeOfBuf);
+	if(!AddSep(pBuf, SizeOfBuf))
+		return;
+	str_format(aRow, sizeof(aRow), "| %-15s | %-9d | %-10d |\n", g_Config.m_SvMap, ScoreRed, ScoreBlue);
+	str_append(pBuf, aRow, SizeOfBuf);
+	if(!AddSep(pBuf, SizeOfBuf))
+		return;
+	str_append(pBuf, "\n", SizeOfBuf);
+
+	if(!AddSepPlayer(pBuf, SizeOfBuf))
+		return;
+	str_append(pBuf, "| id  | team | name            | score  | kills  | deaths | ratio  | flag_grabs | flag_captures |\n", SizeOfBuf);
+	if(!AddSepPlayer(pBuf, SizeOfBuf))
+		return;
+
+	for(const CPlayer *pPlayer : GameServer()->m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+		if(pPlayer->GetTeam() < TEAM_RED)
+			continue;
+		if(pPlayer->GetTeam() > TEAM_BLUE)
+			continue;
+
+		str_format(
+			aRow,
+			sizeof(aRow),
+			"| %-3d | %-4s | %-15s | %-6d | %-6d | %-6d | %-5.1f%% | %-10d | %-13d |\n",
+			pPlayer->GetCid(),
+			pPlayer->GetTeamStr(),
+			Server()->ClientName(pPlayer->GetCid()),
+			pPlayer->m_Score.value_or(0),
+			pPlayer->m_Kills,
+			pPlayer->m_Deaths,
+			CalcKillDeathRatio(pPlayer->m_Kills, pPlayer->m_Deaths),
+			pPlayer->m_Stats.m_FlagGrabs,
+			pPlayer->m_Stats.m_FlagCaptures);
+
+		str_append(pBuf, aRow, SizeOfBuf);
+	}
+
+	AddSepPlayer(pBuf, SizeOfBuf);
+}

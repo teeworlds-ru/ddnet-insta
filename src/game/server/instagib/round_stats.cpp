@@ -36,7 +36,7 @@ void IGameController::OnEndRoundInsta()
 	}
 }
 
-static float CalcKillDeathRatio(int Kills, int Deaths)
+float IGameController::CalcKillDeathRatio(int Kills, int Deaths) const
 {
 	if(!Kills)
 		return 0;
@@ -231,10 +231,6 @@ void IGameController::GetRoundEndStatsStrPsv(char *pBuf, size_t Size)
 	str_append(pBuf, aBuf, Size);
 }
 
-void IGameController::GetRoundEndStatsStrAsciiTable(char *pBuf, size_t Size)
-{
-}
-
 void IGameController::GetRoundEndStatsStrHttp(char *pBuf, size_t Size)
 {
 	if(!IsTeamPlay())
@@ -247,6 +243,8 @@ void IGameController::GetRoundEndStatsStrHttp(char *pBuf, size_t Size)
 		GetRoundEndStatsStrCsv(pBuf, Size);
 	if(g_Config.m_SvRoundStatsFormatHttp == 1)
 		GetRoundEndStatsStrPsv(pBuf, Size);
+	if(g_Config.m_SvRoundStatsFormatFile == 2)
+		GetRoundEndStatsStrAsciiTable(pBuf, Size);
 	else if(g_Config.m_SvRoundStatsFormatHttp == 4)
 		GetRoundEndStatsStrJson(pBuf, Size);
 	else
@@ -265,6 +263,8 @@ void IGameController::GetRoundEndStatsStrDiscord(char *pBuf, size_t Size)
 		GetRoundEndStatsStrCsv(pBuf, Size);
 	if(g_Config.m_SvRoundStatsFormatDiscord == 1)
 		GetRoundEndStatsStrPsv(pBuf, Size);
+	if(g_Config.m_SvRoundStatsFormatFile == 2)
+		GetRoundEndStatsStrAsciiTable(pBuf, Size);
 	else if(g_Config.m_SvRoundStatsFormatDiscord == 4)
 		GetRoundEndStatsStrJson(pBuf, Size);
 	else
@@ -283,6 +283,8 @@ void IGameController::GetRoundEndStatsStrFile(char *pBuf, size_t Size)
 		GetRoundEndStatsStrCsv(pBuf, Size);
 	if(g_Config.m_SvRoundStatsFormatFile == 1)
 		GetRoundEndStatsStrPsv(pBuf, Size);
+	if(g_Config.m_SvRoundStatsFormatFile == 2)
+		GetRoundEndStatsStrAsciiTable(pBuf, Size);
 	else if(g_Config.m_SvRoundStatsFormatFile == 4)
 		GetRoundEndStatsStrJson(pBuf, Size);
 	else

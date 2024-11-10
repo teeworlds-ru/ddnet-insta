@@ -2819,6 +2819,7 @@ if(SERVER)
     instagib/rcon_commands.h
     instagib/rcon_configs.cpp
     instagib/round_stats.cpp
+    instagib/round_stats_ascii.cpp
     instagib/round_stats_csv.cpp
     instagib/round_stats_player.h
     instagib/sql_colums_all.h

@@ -1,4 +1,5 @@
 #include "strhelpers.h"
+#include "base/system.h"
 
 const char *str_find_digit(const char *Haystack)
 {
@@ -75,7 +76,7 @@ void str_expand_timestamps(const char *pStr, char *pBuf, size_t SizeOfBuf)
 		{
 			ReadIndex++;
 			pBuf[WriteIndex] = '\0';
-			str_append(pBuf, aDate, SizeOfBuf);
+			str_append(pBuf, aDate, SizeOfBuf - str_length(pBuf));
 			WriteIndex += str_length(aDate);
 			continue;
 		}
