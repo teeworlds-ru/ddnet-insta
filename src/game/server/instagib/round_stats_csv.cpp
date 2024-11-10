@@ -1,12 +1,12 @@
 #include <engine/shared/config.h>
 
+#include <game/generated/protocol.h>
 #include <game/server/entities/character.h>
 #include <game/server/gamecontext.h>
 #include <game/server/gamecontroller.h>
 #include <game/server/instagib/strhelpers.h>
 #include <game/server/player.h>
 
-#include "game/generated/protocol.h"
 #include "round_stats_player.h"
 
 void IGameController::GetRoundEndStatsStrCsv(char *pBuf, size_t Size)
