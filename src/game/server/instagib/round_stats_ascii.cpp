@@ -65,17 +65,19 @@ void IGameController::GetRoundEndStatsStrAsciiTable(char *pBuf, size_t SizeOfBuf
 		if(pPlayer->GetTeam() > TEAM_BLUE)
 			continue;
 
+		char aRatio[16];
+		str_format(aRatio, sizeof(aRatio), "%.1f%%", CalcKillDeathRatio(pPlayer->m_Kills, pPlayer->m_Deaths));
 		str_format(
 			aRow,
 			sizeof(aRow),
-			"| %-3d | %-4s | %-15s | %-6d | %-6d | %-6d | %-5.1f%% | %-10d | %-13d |\n",
+			"| %-3d | %-4s | %-15s | %-6d | %-6d | %-6d | %-6s | %-10d | %-13d |\n",
 			pPlayer->GetCid(),
 			pPlayer->GetTeamStr(),
 			Server()->ClientName(pPlayer->GetCid()),
 			pPlayer->m_Score.value_or(0),
 			pPlayer->m_Kills,
 			pPlayer->m_Deaths,
-			CalcKillDeathRatio(pPlayer->m_Kills, pPlayer->m_Deaths),
+			aRatio,
 			pPlayer->m_Stats.m_FlagGrabs,
 			pPlayer->m_Stats.m_FlagCaptures);
 
