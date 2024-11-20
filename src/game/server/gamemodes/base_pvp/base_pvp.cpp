@@ -8,6 +8,7 @@
 #include <game/server/entities/flag.h>
 #include <game/server/gamecontroller.h>
 #include <game/server/instagib/sql_stats.h>
+#include <game/server/instagib/version.h>
 #include <game/server/player.h>
 #include <game/server/score.h>
 #include <game/version.h>
@@ -1153,7 +1154,7 @@ void CGameControllerPvp::OnPlayerConnect(CPlayer *pPlayer)
 		else if(g_Config.m_SvTournamentJoinMsgs == 2)
 			SendChatSpectators(aBuf, CGameContext::FLAG_SIX);
 
-		GameServer()->SendChatTarget(ClientId, "DDNet-insta https://github.com/ddnet-insta/ddnet-insta/");
+		GameServer()->SendChatTarget(ClientId, "DDNet-insta " DDNET_INSTA_VERSIONSTR " https://github.com/ddnet-insta/ddnet-insta/");
 		GameServer()->SendChatTarget(ClientId, "DDraceNetwork Mod. Version: " GAME_VERSION);
 
 		GameServer()->AlertOnSpecialInstagibConfigs(ClientId);
