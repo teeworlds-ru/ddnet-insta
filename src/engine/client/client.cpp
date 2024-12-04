@@ -86,7 +86,7 @@ static const ColorRGBA gs_ClientNetworkErrPrintColor{1.0f, 0.25f, 0.25f, 1.0f};
 CClient::CClient() :
 	m_DemoPlayer(&m_SnapshotDelta, true, [&]() { UpdateDemoIntraTimers(); }),
 	m_InputtimeMarginGraph(128),
-	m_GametimeMarginGraph(128),
+	m_aGametimeMarginGraphs{128, 128},
 	m_FpsGraph(4096)
 {
 	m_StateStartTime = time_get();
@@ -262,9 +262,9 @@ void CClient::SendMapRequest()
 	}
 }
 
-void CClient::RconAuth(const char *pName, const char *pPassword)
+void CClient::RconAuth(const char *pName, const char *pPassword, bool Dummy)
 {
-	if(RconAuthed())
+	if(m_aRconAuthed[Dummy] != 0)
 		return;
 
 	if(pName != m_aRconUsername)
@@ -276,7 +276,7 @@ void CClient::RconAuth(const char *pName, const char *pPassword)
 	{
 		CMsgPacker Msg7(protocol7::NETMSG_RCON_AUTH, true, true);
 		Msg7.AddString(pPassword);
-		SendMsgActive(&Msg7, MSGFLAG_VITAL);
+		SendMsg(Dummy, &Msg7, MSGFLAG_VITAL);
 		return;
 	}
 
@@ -284,7 +284,7 @@ void CClient::RconAuth(const char *pName, const char *pPassword)
 	Msg.AddString(pName);
 	Msg.AddString(pPassword);
 	Msg.AddInt(1);
-	SendMsgActive(&Msg, MSGFLAG_VITAL);
+	SendMsg(Dummy, &Msg, MSGFLAG_VITAL);
 }
 
 void CClient::Rcon(const char *pCmd)
@@ -634,7 +634,7 @@ void CClient::Connect(const char *pAddress, const char *pPassword)
 	SetState(IClient::STATE_CONNECTING);
 
 	m_InputtimeMarginGraph.Init(-150.0f, 150.0f);
-	m_GametimeMarginGraph.Init(-150.0f, 150.0f);
+	m_aGametimeMarginGraphs[CONN_MAIN].Init(-150.0f, 150.0f);
 
 	GenerateTimeoutCodes(aConnectAddrs, NumConnectAddrs);
 }
@@ -753,6 +753,8 @@ void CClient::DummyConnect()
 		m_aNetClient[CONN_DUMMY].Connect7(m_aNetClient[CONN_MAIN].ServerAddress(), 1);
 	else
 		m_aNetClient[CONN_DUMMY].Connect(m_aNetClient[CONN_MAIN].ServerAddress(), 1);
+
+	m_aGametimeMarginGraphs[CONN_DUMMY].Init(-150.0f, 150.0f);
 }
 
 void CClient::DummyDisconnect(const char *pReason)
@@ -760,12 +762,7 @@ void CClient::DummyDisconnect(const char *pReason)
 	m_aNetClient[CONN_DUMMY].Disconnect(pReason);
 	g_Config.m_ClDummy = 0;
 
-	if(!m_aRconAuthed[0] && m_aRconAuthed[1])
-	{
-		RconAuth(m_aRconUsername, m_aRconPassword);
-	}
 	m_aRconAuthed[1] = 0;
-
 	m_aapSnapshots[1][SNAP_CURRENT] = 0;
 	m_aapSnapshots[1][SNAP_PREV] = 0;
 	m_aReceivedSnapshots[1] = 0;
@@ -903,7 +900,13 @@ void CClient::DebugRender()
 		{
 			if(m_SnapshotDelta.GetDataRate(i))
 			{
-				str_format(aBuffer, sizeof(aBuffer), "%5d %20s: %8d %8d %8d", i, GameClient()->GetItemName(i), m_SnapshotDelta.GetDataRate(i) / 8, m_SnapshotDelta.GetDataUpdates(i),
+				str_format(
+					aBuffer,
+					sizeof(aBuffer),
+					"%5d %20s: %8" PRIu64 " %8" PRIu64 " %8" PRIu64,
+					i,
+					GameClient()->GetItemName(i),
+					m_SnapshotDelta.GetDataRate(i) / 8, m_SnapshotDelta.GetDataUpdates(i),
 					(m_SnapshotDelta.GetDataRate(i) / m_SnapshotDelta.GetDataUpdates(i)) / 8);
 				Graphics()->QuadsText(2, 100 + y * 12, 16, aBuffer);
 				y++;
@@ -916,14 +919,28 @@ void CClient::DebugRender()
 				int Type = m_aapSnapshots[g_Config.m_ClDummy][IClient::SNAP_CURRENT]->m_pAltSnap->GetExternalItemType(i);
 				if(Type == UUID_INVALID)
 				{
-					str_format(aBuffer, sizeof(aBuffer), "%5d %20s: %8d %8d %8d", i, "Unknown UUID", m_SnapshotDelta.GetDataRate(i) / 8, m_SnapshotDelta.GetDataUpdates(i),
+					str_format(
+						aBuffer,
+						sizeof(aBuffer),
+						"%5d %20s: %8" PRIu64 " %8" PRIu64 " %8" PRIu64,
+						i,
+						"Unknown UUID",
+						m_SnapshotDelta.GetDataRate(i) / 8,
+						m_SnapshotDelta.GetDataUpdates(i),
 						(m_SnapshotDelta.GetDataRate(i) / m_SnapshotDelta.GetDataUpdates(i)) / 8);
 					Graphics()->QuadsText(2, 100 + y * 12, 16, aBuffer);
 					y++;
 				}
 				else if(Type != i)
 				{
-					str_format(aBuffer, sizeof(aBuffer), "%5d %20s: %8d %8d %8d", Type, GameClient()->GetItemName(Type), m_SnapshotDelta.GetDataRate(i) / 8, m_SnapshotDelta.GetDataUpdates(i),
+					str_format(
+						aBuffer,
+						sizeof(aBuffer),
+						"%5d %20s: %8" PRIu64 " %8" PRIu64 " %8" PRIu64,
+						Type,
+						GameClient()->GetItemName(Type),
+						m_SnapshotDelta.GetDataRate(i) / 8,
+						m_SnapshotDelta.GetDataUpdates(i),
 						(m_SnapshotDelta.GetDataRate(i) / m_SnapshotDelta.GetDataUpdates(i)) / 8);
 					Graphics()->QuadsText(2, 100 + y * 12, 16, aBuffer);
 					y++;
@@ -948,8 +965,8 @@ void CClient::DebugRender()
 		m_FpsGraph.Render(Graphics(), TextRender(), x, sp * 5, w, h, "FPS");
 		m_InputtimeMarginGraph.Scale(5 * time_freq());
 		m_InputtimeMarginGraph.Render(Graphics(), TextRender(), x, sp * 6 + h, w, h, "Prediction Margin");
-		m_GametimeMarginGraph.Scale(5 * time_freq());
-		m_GametimeMarginGraph.Render(Graphics(), TextRender(), x, sp * 7 + h * 2, w, h, "Gametime Margin");
+		m_aGametimeMarginGraphs[g_Config.m_ClDummy].Scale(5 * time_freq());
+		m_aGametimeMarginGraphs[g_Config.m_ClDummy].Render(Graphics(), TextRender(), x, sp * 7 + h * 2, w, h, "Gametime Margin");
 	}
 }
 
@@ -1772,6 +1789,9 @@ void CClient::ProcessServerPacket(CNetChunk *pPacket, int Conn, bool Dummy)
 			if(!Unpacker.Error())
 			{
 				m_aRconAuthed[Conn] = ResultInt;
+
+				if(m_aRconAuthed[Conn])
+					RconAuth(m_aRconUsername, m_aRconPassword, g_Config.m_ClDummy ^ 1);
 			}
 			if(Conn == CONN_MAIN)
 			{
@@ -2043,12 +2063,15 @@ void CClient::ProcessServerPacket(CNetChunk *pPacket, int Conn, bool Dummy)
 						m_aapSnapshots[Conn][SNAP_CURRENT] = m_aSnapshotStorage[Conn].m_pLast;
 						m_aPrevGameTick[Conn] = m_aapSnapshots[Conn][SNAP_PREV]->m_Tick;
 						m_aCurGameTick[Conn] = m_aapSnapshots[Conn][SNAP_CURRENT]->m_Tick;
-						if(!Dummy)
+						if(Conn == CONN_MAIN)
 						{
 							m_LocalStartTime = time_get();
 #if defined(CONF_VIDEORECORDER)
 							IVideo::SetLocalStartTime(m_LocalStartTime);
 #endif
+						}
+						if(!Dummy)
+						{
 							GameClient()->OnNewSnapshot();
 						}
 						SetState(IClient::STATE_ONLINE);
@@ -2064,7 +2087,7 @@ void CClient::ProcessServerPacket(CNetChunk *pPacket, int Conn, bool Dummy)
 						int64_t Now = m_aGameTime[Conn].Get(time_get());
 						int64_t TickStart = GameTick * time_freq() / GameTickSpeed();
 						int64_t TimeLeft = (TickStart - Now) * 1000 / time_freq();
-						m_aGameTime[Conn].Update(&m_GametimeMarginGraph, (GameTick - 1) * time_freq() / GameTickSpeed(), TimeLeft, CSmoothTime::ADJUSTDIRECTION_DOWN);
+						m_aGameTime[Conn].Update(&m_aGametimeMarginGraphs[Conn], (GameTick - 1) * time_freq() / GameTickSpeed(), TimeLeft, CSmoothTime::ADJUSTDIRECTION_DOWN);
 					}
 
 					if(m_aReceivedSnapshots[Conn] > GameTickSpeed() && !m_aCodeRunAfterJoin[Conn])
@@ -4376,7 +4399,7 @@ void CClient::RegisterCommands()
 	m_pConsole->Register("demo_slice_start", "", CFGFLAG_CLIENT, Con_DemoSliceBegin, this, "Mark the beginning of a demo cut");
 	m_pConsole->Register("demo_slice_end", "", CFGFLAG_CLIENT, Con_DemoSliceEnd, this, "Mark the end of a demo cut");
 	m_pConsole->Register("demo_play", "", CFGFLAG_CLIENT, Con_DemoPlay, this, "Play/pause the current demo");
-	m_pConsole->Register("demo_speed", "i[speed]", CFGFLAG_CLIENT, Con_DemoSpeed, this, "Set current demo speed");
+	m_pConsole->Register("demo_speed", "f[speed]", CFGFLAG_CLIENT, Con_DemoSpeed, this, "Set current demo speed");
 
 	m_pConsole->Register("save_replay", "?i[length] ?r[filename]", CFGFLAG_CLIENT, Con_SaveReplay, this, "Save a replay of the last defined amount of seconds");
 	m_pConsole->Register("benchmark_quit", "i[seconds] r[file]", CFGFLAG_CLIENT | CFGFLAG_STORE, Con_BenchmarkQuit, this, "Benchmark frame times for number of seconds to file, then quit");

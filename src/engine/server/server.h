@@ -305,7 +305,6 @@ public:
 	int ClientCountry(int ClientId) const override;
 	bool ClientSlotEmpty(int ClientId) const override;
 	bool ClientIngame(int ClientId) const override;
-	bool ClientAuthed(int ClientId) const override;
 	int Port() const override;
 	int MaxClients() const override;
 	int ClientCount() const override;
@@ -413,6 +412,8 @@ public:
 	static void ConAddSqlServer(IConsole::IResult *pResult, void *pUserData);
 	static void ConDumpSqlServers(IConsole::IResult *pResult, void *pUserData);
 
+	static void ConReloadAnnouncement(IConsole::IResult *pResult, void *pUserData);
+
 	static void ConchainSpecialInfoupdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 	static void ConchainMaxclientsperipUpdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
 	static void ConchainCommandAccessUpdate(IConsole::IResult *pResult, void *pUserData, IConsole::FCommandCallback pfnCallback, void *pCallbackUserData);
@@ -446,7 +447,7 @@ public:
 	void GetClientAddr(int ClientId, NETADDR *pAddr) const override;
 	int m_aPrevStates[MAX_CLIENTS];
 	const char *GetAnnouncementLine() override;
-	void ReadAnnouncementsFile(const char *pFileName) override;
+	void ReadAnnouncementsFile();
 
 	int *GetIdMap(int ClientId) override;
 

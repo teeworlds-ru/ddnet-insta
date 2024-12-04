@@ -1875,13 +1875,18 @@ bool CGameContext::OnClientDDNetVersionKnown(int ClientId)
 	return false;
 }
 
+bool CheckClientId2(int ClientId)
+{
+	return ClientId >= 0 && ClientId < MAX_CLIENTS;
+}
+
 void *CGameContext::PreProcessMsg(int *pMsgId, CUnpacker *pUnpacker, int ClientId)
 {
 	if(Server()->IsSixup(ClientId) && *pMsgId < OFFSET_UUID)
 	{
 		void *pRawMsg = m_NetObjHandler7.SecureUnpackMsg(*pMsgId, pUnpacker);
 		if(!pRawMsg)
-			return 0;
+			return nullptr;
 
 		CPlayer *pPlayer = m_apPlayers[ClientId];
 		static char s_aRawMsg[1024];
@@ -1892,18 +1897,21 @@ void *CGameContext::PreProcessMsg(int *pMsgId, CUnpacker *pUnpacker, int ClientI
 			// Should probably use a placement new to start the lifetime of the object to avoid future weirdness
 			::CNetMsg_Cl_Say *pMsg = (::CNetMsg_Cl_Say *)s_aRawMsg;
 
-			if(pMsg7->m_Target >= 0)
+			if(pMsg7->m_Mode == protocol7::CHAT_WHISPER)
 			{
+				if(!CheckClientId2(pMsg7->m_Target) || !Server()->ClientIngame(pMsg7->m_Target))
+					return nullptr;
 				if(ProcessSpamProtection(ClientId))
-					return 0;
+					return nullptr;
 
-				// Should we maybe recraft the message so that it can go through the usual path?
 				WhisperId(ClientId, pMsg7->m_Target, pMsg7->m_pMessage);
-				return 0;
+				return nullptr;
 			}
-
-			pMsg->m_Team = pMsg7->m_Mode == protocol7::CHAT_TEAM;
-			pMsg->m_pMessage = pMsg7->m_pMessage;
+			else
+			{
+				pMsg->m_Team = pMsg7->m_Mode == protocol7::CHAT_TEAM;
+				pMsg->m_pMessage = pMsg7->m_pMessage;
+			}
 		}
 		else if(*pMsgId == protocol7::NETMSGTYPE_CL_STARTINFO)
 		{
@@ -1936,7 +1944,7 @@ void *CGameContext::PreProcessMsg(int *pMsgId, CUnpacker *pUnpacker, int ClientI
 			protocol7::CNetMsg_Cl_SkinChange *pMsg = (protocol7::CNetMsg_Cl_SkinChange *)pRawMsg;
 			if(g_Config.m_SvSpamprotection && pPlayer->m_LastChangeInfo &&
 				pPlayer->m_LastChangeInfo + Server()->TickSpeed() * g_Config.m_SvInfoChangeDelay > Server()->Tick())
-				return 0;
+				return nullptr;
 
 			// ddnet-insta
 			if(!m_pController->IsSkinChangeAllowed())
@@ -1959,7 +1967,7 @@ void *CGameContext::PreProcessMsg(int *pMsgId, CUnpacker *pUnpacker, int ClientI
 
 			Server()->SendPackMsg(&Msg, MSGFLAG_VITAL | MSGFLAG_NORECORD, -1);
 
-			return 0;
+			return nullptr;
 		}
 		else if(*pMsgId == protocol7::NETMSGTYPE_CL_SETSPECTATORMODE)
 		{
@@ -1987,7 +1995,6 @@ void *CGameContext::PreProcessMsg(int *pMsgId, CUnpacker *pUnpacker, int ClientI
 
 			str_format(s_aRawMsg + sizeof(*pMsg), sizeof(s_aRawMsg) - sizeof(*pMsg), "/%s %s", pMsg7->m_pName, pMsg7->m_pArguments);
 			pMsg->m_pMessage = s_aRawMsg + sizeof(*pMsg);
-			dbg_msg("debug", "line='%s'", s_aRawMsg + sizeof(*pMsg));
 			pMsg->m_Team = 0;
 
 			*pMsgId = NETMSGTYPE_CL_SAY;
@@ -2005,7 +2012,7 @@ void *CGameContext::PreProcessMsg(int *pMsgId, CUnpacker *pUnpacker, int ClientI
 				Console()->SetAccessLevel(Authed == AUTHED_ADMIN ? IConsole::ACCESS_LEVEL_ADMIN : Authed == AUTHED_MOD ? IConsole::ACCESS_LEVEL_MOD : IConsole::ACCESS_LEVEL_HELPER);
 				Console()->ExecuteLine(s_aRawMsg, ClientId, false);
 				Console()->SetAccessLevel(IConsole::ACCESS_LEVEL_ADMIN);
-				return 0;
+				return nullptr;
 			}
 
 			pMsg->m_pValue = pMsg7->m_pValue;
@@ -2100,6 +2107,9 @@ void CGameContext::OnMessage(int MsgId, CUnpacker *pUnpacker, int ClientId)
 		case NETMSGTYPE_CL_SHOWDISTANCE:
 			OnShowDistanceNetMessage(static_cast<CNetMsg_Cl_ShowDistance *>(pRawMsg), ClientId);
 			break;
+		case NETMSGTYPE_CL_CAMERAINFO:
+			OnCameraInfoNetMessage(static_cast<CNetMsg_Cl_CameraInfo *>(pRawMsg), ClientId);
+			break;
 		case NETMSGTYPE_CL_SETSPECTATORMODE:
 			OnSetSpectatorModeNetMessage(static_cast<CNetMsg_Cl_SetSpectatorMode *>(pRawMsg), ClientId);
 			break;
@@ -2183,25 +2193,25 @@ void CGameContext::OnSayNetMessage(const CNetMsg_Cl_Say *pMsg, int ClientId, con
 		if(str_startswith_nocase(pMsg->m_pMessage + 1, "w "))
 		{
 			char aWhisperMsg[256];
-			str_copy(aWhisperMsg, pMsg->m_pMessage + 3, 256);
+			str_copy(aWhisperMsg, pMsg->m_pMessage + 3);
 			Whisper(pPlayer->GetCid(), aWhisperMsg);
 		}
 		else if(str_startswith_nocase(pMsg->m_pMessage + 1, "whisper "))
 		{
 			char aWhisperMsg[256];
-			str_copy(aWhisperMsg, pMsg->m_pMessage + 9, 256);
+			str_copy(aWhisperMsg, pMsg->m_pMessage + 9);
 			Whisper(pPlayer->GetCid(), aWhisperMsg);
 		}
 		else if(str_startswith_nocase(pMsg->m_pMessage + 1, "c "))
 		{
 			char aWhisperMsg[256];
-			str_copy(aWhisperMsg, pMsg->m_pMessage + 3, 256);
+			str_copy(aWhisperMsg, pMsg->m_pMessage + 3);
 			Converse(pPlayer->GetCid(), aWhisperMsg);
 		}
 		else if(str_startswith_nocase(pMsg->m_pMessage + 1, "converse "))
 		{
 			char aWhisperMsg[256];
-			str_copy(aWhisperMsg, pMsg->m_pMessage + 10, 256);
+			str_copy(aWhisperMsg, pMsg->m_pMessage + 10);
 			Converse(pPlayer->GetCid(), aWhisperMsg);
 		}
 		else
@@ -2627,6 +2637,12 @@ void CGameContext::OnShowDistanceNetMessage(const CNetMsg_Cl_ShowDistance *pMsg,
 {
 	CPlayer *pPlayer = m_apPlayers[ClientId];
 	pPlayer->m_ShowDistance = vec2(pMsg->m_X, pMsg->m_Y);
+}
+
+void CGameContext::OnCameraInfoNetMessage(const CNetMsg_Cl_CameraInfo *pMsg, int ClientId)
+{
+	CPlayer *pPlayer = m_apPlayers[ClientId];
+	pPlayer->m_CameraInfo.Write(pMsg);
 }
 
 void CGameContext::OnSetSpectatorModeNetMessage(const CNetMsg_Cl_SetSpectatorMode *pMsg, int ClientId)
@@ -3708,7 +3724,6 @@ void CGameContext::OnConsoleInit()
 	Console()->Register("set_team_all", "i[team-id]", CFGFLAG_SERVER, ConSetTeamAll, this, "Set team of all players to team");
 	Console()->Register("hot_reload", "", CFGFLAG_SERVER | CMDFLAG_TEST, ConHotReload, this, "Reload the map while preserving the state of tees and teams");
 	Console()->Register("reload_censorlist", "", CFGFLAG_SERVER, ConReloadCensorlist, this, "Reload the censorlist");
-	Console()->Register("reload_announcement", "", CFGFLAG_SERVER, ConReloadAnnouncement, this, "Reload the announcements");
 
 	Console()->Register("add_vote", "s[name] r[command]", CFGFLAG_SERVER, ConAddVote, this, "Add a voting option");
 	Console()->Register("remove_vote", "r[name]", CFGFLAG_SERVER, ConRemoveVote, this, "remove a voting option");
@@ -4110,11 +4125,16 @@ void CGameContext::OnInit(const void *pPersistentData)
 
 		for(int i = 0; i < MAX_CLIENTS; i++)
 		{
-			int Level = Server()->GetAuthedState(i);
-			if(Level)
+			if(Server()->ClientSlotEmpty(i))
 			{
-				m_TeeHistorian.RecordAuthInitial(i, Level, Server()->GetAuthName(i));
+				continue;
 			}
+			const int Level = Server()->GetAuthedState(i);
+			if(Level == AUTHED_NO)
+			{
+				continue;
+			}
+			m_TeeHistorian.RecordAuthInitial(i, Level, Server()->GetAuthName(i));
 		}
 	}
 
@@ -4560,7 +4580,7 @@ void CGameContext::OnSetAuthed(int ClientId, int Level)
 	}
 	if(m_TeeHistorianActive)
 	{
-		if(Level)
+		if(Level != AUTHED_NO)
 		{
 			m_TeeHistorian.RecordAuthLogin(ClientId, Level, Server()->GetAuthName(ClientId));
 		}
@@ -4653,11 +4673,6 @@ void CGameContext::ResetTuning()
 	SendTuningParams(-1);
 }
 
-bool CheckClientId2(int ClientId)
-{
-	return ClientId >= 0 && ClientId < MAX_CLIENTS;
-}
-
 void CGameContext::Whisper(int ClientId, char *pStr)
 {
 	if(ProcessSpamProtection(ClientId))
@@ -4665,7 +4680,7 @@ void CGameContext::Whisper(int ClientId, char *pStr)
 
 	pStr = str_skip_whitespaces(pStr);
 
-	char *pName;
+	const char *pName;
 	int Victim;
 	bool Error = false;
 
@@ -4702,14 +4717,16 @@ void CGameContext::Whisper(int ClientId, char *pStr)
 
 		if(!Error)
 		{
-			// write null termination
-			*pDst = 0;
-
+			*pDst = '\0';
 			pStr++;
 
 			for(Victim = 0; Victim < MAX_CLIENTS; Victim++)
-				if(str_comp(pName, Server()->ClientName(Victim)) == 0)
+			{
+				if(Server()->ClientIngame(Victim) && str_comp(pName, Server()->ClientName(Victim)) == 0)
+				{
 					break;
+				}
+			}
 		}
 	}
 	else
@@ -4717,20 +4734,23 @@ void CGameContext::Whisper(int ClientId, char *pStr)
 		pName = pStr;
 		while(true)
 		{
-			if(pStr[0] == 0)
+			if(pStr[0] == '\0')
 			{
 				Error = true;
 				break;
 			}
 			if(pStr[0] == ' ')
 			{
-				pStr[0] = 0;
+				pStr[0] = '\0';
 				for(Victim = 0; Victim < MAX_CLIENTS; Victim++)
-					if(str_comp(pName, Server()->ClientName(Victim)) == 0)
+				{
+					if(Server()->ClientIngame(Victim) && str_comp(pName, Server()->ClientName(Victim)) == 0)
+					{
 						break;
+					}
+				}
 
 				pStr[0] = ' ';
-
 				if(Victim < MAX_CLIENTS)
 					break;
 			}
@@ -4743,7 +4763,7 @@ void CGameContext::Whisper(int ClientId, char *pStr)
 		Error = true;
 	}
 
-	*pStr = 0;
+	*pStr = '\0';
 	pStr++;
 
 	if(Error)
@@ -4752,7 +4772,7 @@ void CGameContext::Whisper(int ClientId, char *pStr)
 		return;
 	}
 
-	if(Victim >= MAX_CLIENTS || !CheckClientId2(Victim))
+	if(!CheckClientId2(Victim))
 	{
 		char aBuf[256];
 		str_format(aBuf, sizeof(aBuf), "No player with name \"%s\" found", pName);
@@ -4765,14 +4785,10 @@ void CGameContext::Whisper(int ClientId, char *pStr)
 
 void CGameContext::WhisperId(int ClientId, int VictimId, const char *pMessage)
 {
-	if(!CheckClientId2(ClientId))
-		return;
+	dbg_assert(CheckClientId2(ClientId) && m_apPlayers[ClientId] != nullptr, "ClientId invalid");
+	dbg_assert(CheckClientId2(VictimId) && m_apPlayers[VictimId] != nullptr, "VictimId invalid");
 
-	if(!CheckClientId2(VictimId))
-		return;
-
-	if(m_apPlayers[ClientId])
-		m_apPlayers[ClientId]->m_LastWhisperTo = VictimId;
+	m_apPlayers[ClientId]->m_LastWhisperTo = VictimId;
 
 	char aCensoredMessage[256];
 	CensorMessage(aCensoredMessage, pMessage, sizeof(aCensoredMessage));
