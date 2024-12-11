@@ -355,6 +355,19 @@ public:
 			return the new flags value that should be snapped to the SnappingClient
 	*/
 	virtual int SnapPlayerFlags7(int SnappingClient, const CPlayer *pPlayer, int PlayerFlags7) { return PlayerFlags7; };
+
+	/*
+		Function: SnapPlayer6
+			Alter snap values for 0.6 snapshots.
+			See also `SnapPlayerFlags7()`
+
+		Arguments:
+			SnappingClient - Client Id of the player that will receive the snapshot
+			pPlayer - CPlayer that is being snapped
+			pClientInfo - (in and output) info that is being snappend which is already pre filled by ddnet and can be altered.
+			pPlayerInfo - (in and output) info that is being snappend which is already pre filled by ddnet and can be altered.
+	*/
+	virtual void SnapPlayer6(int SnappingClient, const CPlayer *pPlayer, CNetObj_ClientInfo *pClientInfo, CNetObj_PlayerInfo *pPlayerInfo){};
 	virtual void OnSnapDDNetCharacter(class CCharacter *pChr, CNetObj_DDNetCharacter *pDDNetCharacter, int SnappingClient){};
 	virtual CClientMask FreezeDamageIndicatorMask(class CCharacter *pChr);
 	virtual int SnapPlayerScore(class CPlayer *pPlayer, int SnappingClient, int DDRaceScore);

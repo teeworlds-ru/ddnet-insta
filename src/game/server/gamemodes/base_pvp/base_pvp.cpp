@@ -191,6 +191,26 @@ int CGameControllerPvp::SnapPlayerFlags7(int SnappingClient, const CPlayer *pPla
 	return PlayerFlags7;
 }
 
+void CGameControllerPvp::SnapPlayer6(int SnappingClient, const CPlayer *pPlayer, CNetObj_ClientInfo *pClientInfo, CNetObj_PlayerInfo *pPlayerInfo)
+{
+	if(!IsGameRunning() &&
+		GameServer()->m_World.m_Paused &&
+		GameState() != IGameController::IGS_END_ROUND &&
+		pPlayer->GetTeam() != TEAM_SPECTATORS &&
+		(!IsPlayerReadyMode() || pPlayer->m_IsReadyToPlay))
+	{
+		char aReady[512];
+		char aName[64];
+		static const int MaxNameLen = MAX_NAME_LENGTH - (str_length("\xE2\x9C\x93") + 2);
+		str_truncate(aName, sizeof(aName), Server()->ClientName(pPlayer->GetCid()), MaxNameLen);
+		str_format(aReady, sizeof(aReady), "\xE2\x9C\x93 %s", aName);
+		// 0.7 puts the checkmark at the end
+		// we put it in the beginning because ddnet scoreboard cuts off long names
+		// such as WWWWWWWWWW... which would also hide the checkmark in the end
+		StrToInts(&pClientInfo->m_Name0, 4, aReady);
+	}
+}
+
 bool CGameControllerPvp::IsGrenadeGameType() const
 {
 	// TODO: this should be done with some cleaner spawnweapons/available weapons enum flag thing

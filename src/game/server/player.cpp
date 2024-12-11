@@ -378,22 +378,7 @@ void CPlayer::Snap(int SnappingClient)
 		}
 
 		// ddnet-insta
-		if(!GameServer()->m_pController->IsGameRunning() &&
-			GameServer()->m_World.m_Paused &&
-			GameServer()->m_pController->GameState() != IGameController::IGS_END_ROUND &&
-			GetTeam() != TEAM_SPECTATORS &&
-			(!GameServer()->m_pController->IsPlayerReadyMode() || m_IsReadyToPlay))
-		{
-			char aReady[512];
-			char aName[64];
-			static const int MaxNameLen = MAX_NAME_LENGTH - (str_length("\xE2\x9C\x93") + 2);
-			str_truncate(aName, sizeof(aName), Server()->ClientName(m_ClientId), MaxNameLen);
-			str_format(aReady, sizeof(aReady), "\xE2\x9C\x93 %s", aName);
-			// 0.7 puts the checkmark at the end
-			// we put it in the beginning because ddnet scoreboard cuts off long names
-			// such as WWWWWWWWWW... which would also hide the checkmark in the end
-			StrToInts(&pClientInfo->m_Name0, 4, aReady);
-		}
+		GameServer()->m_pController->SnapPlayer6(SnappingClient, this, pClientInfo, pPlayerInfo);
 	}
 	else
 	{
