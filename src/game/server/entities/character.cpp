@@ -1368,7 +1368,7 @@ void CCharacter::Snap(int SnappingClient)
 	pDDNetCharacter->m_TargetY = m_Core.m_Input.m_TargetY;
 
 	// ddnet-insta
-	GameServer()->m_pController->OnSnapDDNetCharacter(this, pDDNetCharacter, SnappingClient);
+	GameServer()->m_pController->SnapDDNetCharacter(SnappingClient, this, pDDNetCharacter);
 }
 
 void CCharacter::PostSnap()

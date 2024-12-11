@@ -117,7 +117,7 @@ void CGameControllerPvp::ResetPlayer(class CPlayer *pPlayer)
 	pPlayer->m_Score = 0; // ddnet-insta
 }
 
-int CGameControllerPvp::SnapPlayerScore(class CPlayer *pPlayer, int SnappingClient, int DDRaceScore)
+int CGameControllerPvp::SnapPlayerScore(int SnappingClient, CPlayer *pPlayer, int DDRaceScore)
 {
 	int Score = pPlayer->m_Score.value_or(0);
 	// display round score if the game ended
@@ -139,7 +139,7 @@ int CGameControllerPvp::SnapPlayerScore(class CPlayer *pPlayer, int SnappingClie
 	return Score;
 }
 
-int CGameControllerPvp::GameInfoExFlags(int SnappingClient, int DDRaceFlags)
+int CGameControllerPvp::SnapGameInfoExFlags(int SnappingClient, int DDRaceFlags)
 {
 	int Flags =
 		GAMEINFOFLAG_PREDICT_VANILLA | // ddnet-insta
@@ -174,12 +174,12 @@ int CGameControllerPvp::GameInfoExFlags(int SnappingClient, int DDRaceFlags)
 	return Flags;
 }
 
-int CGameControllerPvp::GameInfoExFlags2(int SnappingClient, int DDRaceFlags)
+int CGameControllerPvp::SnapGameInfoExFlags2(int SnappingClient, int DDRaceFlags)
 {
 	return GAMEINFOFLAG2_HUD_AMMO | GAMEINFOFLAG2_HUD_HEALTH_ARMOR;
 }
 
-int CGameControllerPvp::SnapPlayerFlags7(int SnappingClient, const CPlayer *pPlayer, int PlayerFlags7)
+int CGameControllerPvp::SnapPlayerFlags7(int SnappingClient, CPlayer *pPlayer, int PlayerFlags7)
 {
 	if(pPlayer->m_IsDead && (!pPlayer->GetCharacter() || !pPlayer->GetCharacter()->IsAlive()))
 		PlayerFlags7 |= protocol7::PLAYERFLAG_DEAD;
@@ -191,7 +191,7 @@ int CGameControllerPvp::SnapPlayerFlags7(int SnappingClient, const CPlayer *pPla
 	return PlayerFlags7;
 }
 
-void CGameControllerPvp::SnapPlayer6(int SnappingClient, const CPlayer *pPlayer, CNetObj_ClientInfo *pClientInfo, CNetObj_PlayerInfo *pPlayerInfo)
+void CGameControllerPvp::SnapPlayer6(int SnappingClient, CPlayer *pPlayer, CNetObj_ClientInfo *pClientInfo, CNetObj_PlayerInfo *pPlayerInfo)
 {
 	if(!IsGameRunning() &&
 		GameServer()->m_World.m_Paused &&

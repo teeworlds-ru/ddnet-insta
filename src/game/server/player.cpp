@@ -358,7 +358,7 @@ void CPlayer::Snap(int SnappingClient)
 	if(SnappingClient != m_ClientId && g_Config.m_SvHideScore)
 		Score = -9999;
 
-	Score = GameServer()->m_pController->SnapPlayerScore(this, SnappingClient, Score); // ddnet-insta
+	Score = GameServer()->m_pController->SnapPlayerScore(SnappingClient, this, Score); // ddnet-insta
 
 	if(!Server()->IsSixup(SnappingClient))
 	{
