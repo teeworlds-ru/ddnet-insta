@@ -117,28 +117,6 @@ void CGameControllerPvp::ResetPlayer(class CPlayer *pPlayer)
 	pPlayer->m_Score = 0; // ddnet-insta
 }
 
-int CGameControllerPvp::SnapPlayerScore(int SnappingClient, CPlayer *pPlayer, int DDRaceScore)
-{
-	int Score = pPlayer->m_Score.value_or(0);
-	// display round score if the game ended
-	// otherwise you can not see who actually won
-	if(g_Config.m_SvSaveServer && GameState() != IGS_END_ROUND)
-	{
-		Score += pPlayer->m_SavedStats.m_Points;
-
-		// // yes this is cursed
-		// // but during the final scoreboard we already saved and reset the stats
-		// // so we manually merged the save stats
-		// // but the player still has his round score
-		// // so the round score is counted twice
-		// if(GameState() == IGS_END_ROUND)
-		// {
-		// 	Score -= pPlayer->m_Score.value_or(0);
-		// }
-	}
-	return Score;
-}
-
 int CGameControllerPvp::SnapGameInfoExFlags(int SnappingClient, int DDRaceFlags)
 {
 	int Flags =
@@ -209,6 +187,34 @@ void CGameControllerPvp::SnapPlayer6(int SnappingClient, CPlayer *pPlayer, CNetO
 		// such as WWWWWWWWWW... which would also hide the checkmark in the end
 		StrToInts(&pClientInfo->m_Name0, 4, aReady);
 	}
+}
+
+void CGameControllerPvp::SnapDDNetPlayer(int SnappingClient, CPlayer *pPlayer, CNetObj_DDNetPlayer *pDDNetPlayer)
+{
+	if(g_Config.m_SvHideAdmins && Server()->GetAuthedState(SnappingClient) == AUTHED_NO)
+		pDDNetPlayer->m_AuthLevel = AUTHED_NO;
+}
+
+int CGameControllerPvp::SnapPlayerScore(int SnappingClient, CPlayer *pPlayer, int DDRaceScore)
+{
+	int Score = pPlayer->m_Score.value_or(0);
+	// display round score if the game ended
+	// otherwise you can not see who actually won
+	if(g_Config.m_SvSaveServer && GameState() != IGS_END_ROUND)
+	{
+		Score += pPlayer->m_SavedStats.m_Points;
+
+		// // yes this is cursed
+		// // but during the final scoreboard we already saved and reset the stats
+		// // so we manually merged the save stats
+		// // but the player still has his round score
+		// // so the round score is counted twice
+		// if(GameState() == IGS_END_ROUND)
+		// {
+		// 	Score -= pPlayer->m_Score.value_or(0);
+		// }
+	}
+	return Score;
 }
 
 bool CGameControllerPvp::IsGrenadeGameType() const

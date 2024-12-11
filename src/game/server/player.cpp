@@ -432,9 +432,6 @@ void CPlayer::Snap(int SnappingClient)
 		return;
 
 	pDDNetPlayer->m_AuthLevel = Server()->GetAuthedState(m_ClientId);
-	// ddnet-insta
-	if(g_Config.m_SvHideAdmins && Server()->GetAuthedState(SnappingClient) == AUTHED_NO)
-		pDDNetPlayer->m_AuthLevel = AUTHED_NO;
 	pDDNetPlayer->m_Flags = 0;
 	if(m_Afk)
 		pDDNetPlayer->m_Flags |= EXPLAYERFLAG_AFK;
@@ -469,6 +466,9 @@ void CPlayer::Snap(int SnappingClient)
 		pSpecChar->m_X = m_pCharacter->Core()->m_Pos.x;
 		pSpecChar->m_Y = m_pCharacter->Core()->m_Pos.y;
 	}
+
+	// ddnet-insta
+	GameServer()->m_pController->SnapDDNetPlayer(SnappingClient, this, pDDNetPlayer);
 }
 
 void CPlayer::FakeSnap()

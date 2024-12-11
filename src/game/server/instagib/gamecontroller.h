@@ -386,6 +386,7 @@ public:
 	*/
 	virtual int SnapPlayerScore(int SnappingClient, CPlayer *pPlayer, int DDRaceScore);
 	virtual void SnapDDNetCharacter(int SnappingClient, CCharacter *pChr, CNetObj_DDNetCharacter *pDDNetCharacter){};
+	virtual void SnapDDNetPlayer(int SnappingClient, CPlayer *pPlayer, CNetObj_DDNetPlayer *pDDNetPlayer){};
 	virtual int SnapRoundStartTick(int SnappingClient);
 	virtual int SnapTimeLimit(int SnappingClient);
 	virtual CClientMask FreezeDamageIndicatorMask(CCharacter *pChr);
