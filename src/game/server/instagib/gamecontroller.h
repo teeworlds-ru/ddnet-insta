@@ -341,6 +341,20 @@ public:
 	virtual void OnPlayerReadyChange(class CPlayer *pPlayer); // 0.7 ready change
 	virtual int GameInfoExFlags(int SnappingClient, int DDRaceFlags) { return DDRaceFlags; };
 	virtual int GameInfoExFlags2(int SnappingClient, int DDRaceFlags) { return DDRaceFlags; };
+
+	/*
+		Function: SnapPlayerFlags7
+			Set custom player flags for 0.7 connections.
+
+		Arguments:
+			SnappingClient - Client Id of the player that will receive the snapshot
+			pPlayer - CPlayer that is being snapped
+			PlayerFlags7 - the flags that were already set for that player by ddnet
+
+		Returns:
+			return the new flags value that should be snapped to the SnappingClient
+	*/
+	virtual int SnapPlayerFlags7(int SnappingClient, const CPlayer *pPlayer, int PlayerFlags7) { return PlayerFlags7; };
 	virtual void OnSnapDDNetCharacter(class CCharacter *pChr, CNetObj_DDNetCharacter *pDDNetCharacter, int SnappingClient){};
 	virtual CClientMask FreezeDamageIndicatorMask(class CCharacter *pChr);
 	virtual int SnapPlayerScore(class CPlayer *pPlayer, int SnappingClient, int DDRaceScore);

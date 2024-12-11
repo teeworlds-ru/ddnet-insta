@@ -176,7 +176,19 @@ int CGameControllerPvp::GameInfoExFlags(int SnappingClient, int DDRaceFlags)
 
 int CGameControllerPvp::GameInfoExFlags2(int SnappingClient, int DDRaceFlags)
 {
-	return GAMEINFOFLAG2_HUD_AMMO | GAMEINFOFLAG2_HUD_HEALTH_ARMOR; // ddnet-insta
+	return GAMEINFOFLAG2_HUD_AMMO | GAMEINFOFLAG2_HUD_HEALTH_ARMOR;
+}
+
+int CGameControllerPvp::SnapPlayerFlags7(int SnappingClient, const CPlayer *pPlayer, int PlayerFlags7)
+{
+	if(pPlayer->m_IsDead && (!pPlayer->GetCharacter() || !pPlayer->GetCharacter()->IsAlive()))
+		PlayerFlags7 |= protocol7::PLAYERFLAG_DEAD;
+	// hack to let 0.7 players vote as spectators
+	if(g_Config.m_SvSpectatorVotes && g_Config.m_SvSpectatorVotesSixup && pPlayer->GetTeam() == TEAM_SPECTATORS)
+		PlayerFlags7 |= protocol7::PLAYERFLAG_DEAD;
+	if(g_Config.m_SvHideAdmins && Server()->GetAuthedState(SnappingClient) == AUTHED_NO)
+		PlayerFlags7 &= ~(protocol7::PLAYERFLAG_ADMIN);
+	return PlayerFlags7;
 }
 
 bool CGameControllerPvp::IsGrenadeGameType() const

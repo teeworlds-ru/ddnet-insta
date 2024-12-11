@@ -413,15 +413,8 @@ void CPlayer::Snap(int SnappingClient)
 		pPlayerInfo->m_Score = Score; // ddnet-insta moved milliseconds code to SnapPlayerScore()
 		pPlayerInfo->m_Latency = Latency;
 
-		// ddnet-insta dead players
-		if(m_IsDead && (!GetCharacter() || !GetCharacter()->IsAlive()))
-			pPlayerInfo->m_PlayerFlags |= protocol7::PLAYERFLAG_DEAD;
-		// ddnet-insta hack to let 0.7 players vote as spectators
-		if(g_Config.m_SvSpectatorVotes && g_Config.m_SvSpectatorVotesSixup && GetTeam() == TEAM_SPECTATORS)
-			pPlayerInfo->m_PlayerFlags |= protocol7::PLAYERFLAG_DEAD;
-		// ddnet-insta hide admins
-		if(g_Config.m_SvHideAdmins && Server()->GetAuthedState(SnappingClient) == AUTHED_NO)
-			pPlayerInfo->m_PlayerFlags &= ~(protocol7::PLAYERFLAG_ADMIN);
+		// ddnet-insta
+		pPlayerInfo->m_PlayerFlags = GameServer()->m_pController->SnapPlayerFlags7(SnappingClient, this, pPlayerInfo->m_PlayerFlags);
 	}
 
 	if(m_ClientId == SnappingClient && (m_Team == TEAM_SPECTATORS || m_Paused))

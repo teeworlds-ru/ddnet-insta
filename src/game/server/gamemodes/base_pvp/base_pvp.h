@@ -35,6 +35,7 @@ public:
 	int GetAutoTeam(int NotThisId) override;
 	int GameInfoExFlags(int SnappingClient, int DDRaceFlags) override;
 	int GameInfoExFlags2(int SnappingClient, int DDRaceFlags) override;
+	int SnapPlayerFlags7(int SnappingClient, const CPlayer *pPlayer, int PlayerFlags7) override;
 	int GetDefaultWeapon(class CPlayer *pPlayer) override { return m_DefaultWeapon; }
 	int GetPlayerTeam(class CPlayer *pPlayer, bool Sixup) override;
 	void OnUpdateSpectatorVotesConfig() override;
