@@ -17,8 +17,6 @@ bool CCharacter::IsTouchingTile(int Tile)
 {
 	if(!Collision()->GameLayer())
 		return false;
-	if(!Collision()->FrontLayer())
-		return false;
 
 	float Prox = GetProximityRadius() / 3.f;
 	int Left = (m_Pos.x - Prox) / 32;
@@ -29,8 +27,15 @@ bool CCharacter::IsTouchingTile(int Tile)
 	if((Collision()->GetIndex(Right, Up) == Tile ||
 		   Collision()->GetIndex(Right, Down) == Tile ||
 		   Collision()->GetIndex(Left, Up) == Tile ||
-		   Collision()->GetIndex(Left, Down) == Tile ||
-		   Collision()->GetFrontIndex(Right, Up) == Tile ||
+		   Collision()->GetIndex(Left, Down) == Tile))
+	{
+		return true;
+	}
+
+	if(!Collision()->FrontLayer())
+		return false;
+
+	if((Collision()->GetFrontIndex(Right, Up) == Tile ||
 		   Collision()->GetFrontIndex(Right, Down) == Tile ||
 		   Collision()->GetFrontIndex(Left, Up) == Tile ||
 		   Collision()->GetFrontIndex(Left, Down) == Tile))
