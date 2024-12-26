@@ -33,7 +33,9 @@
 
 struct CServerProcess
 {
-	PROCESS m_Process;
+#if !defined(CONF_PLATFORM_ANDROID)
+	PROCESS m_Process = INVALID_PROCESS;
+#endif
 };
 
 // component to fetch keypresses, override all other input
@@ -476,8 +478,6 @@ protected:
 
 	// found in menus_start.cpp
 	void RenderStartMenu(CUIRect MainView);
-	bool m_EditorHotkeyWasPressed = true;
-	float m_EditorHotKeyChecktime = 0.0f;
 
 	// found in menus_ingame.cpp
 	STextContainerIndex m_MotdTextContainerIndex;
@@ -669,7 +669,9 @@ public:
 	bool IsActive() const { return m_MenuActive; }
 	void SetActive(bool Active);
 
+	void RunServer();
 	void KillServer();
+	bool IsServerRunning() const;
 
 	virtual void OnInit() override;
 	void OnConsoleInit() override;
