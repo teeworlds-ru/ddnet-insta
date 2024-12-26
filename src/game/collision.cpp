@@ -12,7 +12,6 @@
 #include <game/collision.h>
 #include <game/layers.h>
 #include <game/mapitems.h>
-#include <game/mapitems_insta.h>
 
 #include <engine/shared/config.h>
 
@@ -320,11 +319,6 @@ int CCollision::GetTile(int x, int y) const
 	int Nx = clamp(x / 32, 0, m_Width - 1);
 	int Ny = clamp(y / 32, 0, m_Height - 1);
 	int pos = Ny * m_Width + Nx;
-
-	// ddnet-insta
-	if((m_pTiles[pos].m_Index >= TILE_FNG_SPIKE_GOLD && m_pTiles[pos].m_Index <= TILE_FNG_SPIKE_BLUE) ||
-		(m_pTiles[pos].m_Index >= TILE_FNG_SPIKE_GREEN && m_pTiles[pos].m_Index <= TILE_FNG_SPIKE_PURPLE))
-		return m_pTiles[pos].m_Index;
 
 	if(m_pTiles[pos].m_Index >= TILE_SOLID && m_pTiles[pos].m_Index <= TILE_NOLASER)
 		return m_pTiles[pos].m_Index;
