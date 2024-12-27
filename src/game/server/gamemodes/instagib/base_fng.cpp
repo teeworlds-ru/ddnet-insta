@@ -419,6 +419,15 @@ bool CGameControllerBaseFng::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &F
 
 		pKiller->IncrementScore();
 		AddTeamscore(pKiller->GetTeam(), 1);
+
+		// do damage Hit sound
+		CClientMask Mask = CClientMask().set(From);
+		for(int i = 0; i < MAX_CLIENTS; i++)
+		{
+			if(GameServer()->m_apPlayers[i] && GameServer()->m_apPlayers[i]->GetTeam() == TEAM_SPECTATORS && GameServer()->m_apPlayers[i]->m_SpectatorId == From)
+				Mask.set(i);
+		}
+		GameServer()->CreateSound(pKiller->m_ViewPos, SOUND_HIT, Mask);
 	}
 
 	if(IsStatTrack())
