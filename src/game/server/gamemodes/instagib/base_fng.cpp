@@ -287,6 +287,21 @@ void CGameControllerBaseFng::OnSpike(class CCharacter *pChr, int SpikeTile)
 				}
 			}
 		}
+
+		// do sacrifice flag sound
+		if(g_Config.m_SvFngSpikeSound)
+		{
+			CClientMask Mask = CClientMask().set(pKiller->GetCid());
+			for(int i = 0; i < MAX_CLIENTS; i++)
+			{
+				if(!GameServer()->m_apPlayers[i])
+					continue;
+
+				if(GameServer()->m_apPlayers[i]->GetTeam() == TEAM_SPECTATORS && GameServer()->m_apPlayers[i]->m_SpectatorId == pKiller->GetCid())
+					Mask.set(i);
+			}
+			GameServer()->CreateSound(pKiller->m_ViewPos, SOUND_CTF_CAPTURE, Mask);
+		}
 	}
 
 	if(LastToucherId == -1)
