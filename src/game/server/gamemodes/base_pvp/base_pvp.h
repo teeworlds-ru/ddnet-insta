@@ -103,6 +103,16 @@ public:
 
 	// generic helpers
 
+	// plays the satisfying hit sound
+	// that is used in teeworlds when a projectile causes damage
+	// in ddnet-insta it is used the same way in CTF/DM
+	// but also for instagib weapons
+	//
+	// the sound name is SOUND_HIT
+	// and it is only audible to the player who caused the damage
+	// and to the spectators of that player
+	void DoDamageHitSound(int KillerId);
+
 	bool IsSpawnProtected(CPlayer *pVictim, CPlayer *pKiller) const;
 
 	// returns the amount of tee's that are not spectators
