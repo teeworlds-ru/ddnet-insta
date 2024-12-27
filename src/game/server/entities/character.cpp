@@ -2301,7 +2301,8 @@ bool CCharacter::Freeze(int Seconds)
 		return false;
 	if(m_FreezeTime == 0 || m_Core.m_FreezeStart < Server()->Tick() - Server()->TickSpeed())
 	{
-		m_Armor = 0;
+		// m_Armor = 0; // ddnet-insta do not set m_Armor use SetArmorProgress instead
+		GameServer()->m_pController->SetArmorProgressEmpty(this); // ddnet-insta
 		m_FreezeTime = Seconds * Server()->TickSpeed();
 		m_Core.m_FreezeStart = Server()->Tick();
 		return true;
@@ -2318,7 +2319,8 @@ bool CCharacter::UnFreeze()
 {
 	if(m_FreezeTime > 0)
 	{
-		m_Armor = 10;
+		// m_Armor = 10; // ddnet-insta do not set m_Armor use SetArmorProgress instead
+		GameServer()->m_pController->SetArmorProgressFull(this); // ddnet-insta
 		if(!m_Core.m_aWeapons[m_Core.m_ActiveWeapon].m_Got)
 			m_Core.m_ActiveWeapon = WEAPON_GUN;
 		m_FreezeTime = 0;
