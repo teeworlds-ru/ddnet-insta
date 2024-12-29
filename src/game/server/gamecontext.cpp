@@ -31,6 +31,7 @@
 
 #include "entities/character.h"
 #include "gamemodes/DDRace.h"
+#include "gamemodes/ddrace/block/block.h"
 #include "gamemodes/instagib/bolofng/bolofng.h"
 #include "gamemodes/instagib/boomfng/boomfng.h"
 #include "gamemodes/instagib/fng/fng.h"
@@ -4061,6 +4062,8 @@ void CGameContext::OnInit(const void *pPersistentData)
 		m_pController = new CGameControllerDM(this);
 	else if(!str_comp_nocase(Config()->m_SvGametype, "ctf"))
 		m_pController = new CGameControllerCTF(this);
+	else if(!str_comp_nocase(Config()->m_SvGametype, "block"))
+		m_pController = new CGameControllerBlock(this);
 	else
 	{
 		if(str_comp_nocase(Config()->m_SvGametype, "ddnet"))

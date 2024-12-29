@@ -2751,6 +2751,8 @@ if(SERVER)
     gamemodes/base_pvp/ctf.h
     gamemodes/base_pvp/player.cpp
     gamemodes/base_pvp/player.h
+    gamemodes/ddrace/block/block.cpp
+    gamemodes/ddrace/block/block.h
     gamemodes/instagib/base_fng.cpp
     gamemodes/instagib/base_fng.h
     gamemodes/instagib/base_instagib.cpp
