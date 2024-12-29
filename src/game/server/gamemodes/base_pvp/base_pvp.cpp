@@ -972,6 +972,15 @@ bool CGameControllerPvp::IsSpawnProtected(CPlayer *pVictim, CPlayer *pKiller) co
 
 bool CGameControllerPvp::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From, int &Weapon, CCharacter &Character)
 {
+	// only weapons that push the tee around are considerd a touch
+	// gun and laser do not push (as long as there is no explosive guns/lasers)
+	// and shotgun only pushes in ddrace gametypes
+	if(Weapon != WEAPON_GUN && Weapon != WEAPON_LASER)
+	{
+		if(!m_IsVanillaGameType || Weapon != WEAPON_SHOTGUN)
+			Character.GetPlayer()->UpdateLastToucher(From);
+	}
+
 	CPlayer *pPlayer = Character.GetPlayer();
 	if(Character.m_IsGodmode)
 		return true;

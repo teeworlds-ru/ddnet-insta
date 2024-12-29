@@ -39,6 +39,7 @@ void CGameControllerBlock::OnCharacterSpawn(class CCharacter *pChr)
 
 void CGameControllerBlock::Tick()
 {
+	// TODO: this code is duplicated with fly
 	for(CPlayer *pPlayer : GameServer()->m_apPlayers)
 	{
 		if(!pPlayer)
@@ -89,12 +90,4 @@ int CGameControllerBlock::OnCharacterDeath(class CCharacter *pVictim, class CPla
 
 	// do not count the kill
 	return 0;
-}
-
-// warning this does not call the base pvp take damage method
-// so it has to reimplement all the relevant functionality
-bool CGameControllerBlock::OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From, int &Weapon, CCharacter &Character)
-{
-	Character.GetPlayer()->UpdateLastToucher(From);
-	return false;
 }

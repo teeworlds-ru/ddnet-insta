@@ -11,7 +11,6 @@ public:
 
 	void OnCharacterSpawn(class CCharacter *pChr) override;
 	void Tick() override;
-	bool OnCharacterTakeDamage(vec2 &Force, int &Dmg, int &From, int &Weapon, CCharacter &Character) override;
 	int OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon) override;
 };
 #endif

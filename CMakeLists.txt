@@ -2806,6 +2806,8 @@ if(SERVER)
     gamemodes/vanilla/dm/dm.cpp
     gamemodes/vanilla/dm/dm.h
     gamemodes/vanilla/dm/sql_columns.h
+    gamemodes/vanilla/fly/fly.cpp
+    gamemodes/vanilla/fly/fly.h
     gameworld.cpp
     gameworld.h
     instagib/chat_commands.cpp
