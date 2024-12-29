@@ -476,6 +476,22 @@ public:
 	int IsGameCountdown() const { return m_GameState == IGS_START_COUNTDOWN_ROUND_START || m_GameState == IGS_START_COUNTDOWN_UNPAUSE; }
 	int m_GameStateTimer;
 
+	enum EWinType
+	{
+		// First player or team to reach sv_scorelimit wins.
+		WIN_BY_SCORE,
+
+		// Last player or team to stay alive wins.
+		WIN_BY_SURVIVAL,
+	};
+
+	EWinType m_WinType = WIN_BY_SCORE;
+
+	// What is the determining factor to win the game.
+	// Most game modes require reaching the sv_scorelimit.
+	// But some also just look at who stays alive until the end.
+	EWinType WinType() const { return m_WinType; }
+
 	// custom ddnet-insta timers
 	int m_UnpauseStartTick = 0;
 
