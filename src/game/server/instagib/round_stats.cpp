@@ -47,18 +47,25 @@ float IGameController::CalcKillDeathRatio(int Kills, int Deaths) const
 
 void IGameController::PsvRowPlayer(const CPlayer *pPlayer, char *pBuf, size_t Size)
 {
-	char aBuf[512];
+	char aRow[512];
+	char aBuf[128];
 	str_format(
-		aBuf,
-		sizeof(aBuf),
-		"Id: %d | Name: %s | Score: %d | Kills: %d | Deaths: %d | Ratio: %.2f\n",
+		aRow,
+		sizeof(aRow),
+		"Id: %d | Name: %s | Score: %d | Kills: %d | Deaths: %d | Ratio: %.2f",
 		pPlayer->GetCid(),
 		Server()->ClientName(pPlayer->GetCid()),
 		pPlayer->m_Score.value_or(0),
 		pPlayer->m_Kills,
 		pPlayer->m_Deaths,
 		CalcKillDeathRatio(pPlayer->m_Kills, pPlayer->m_Deaths));
-	str_append(pBuf, aBuf, Size);
+	if(WinType() == WIN_BY_SURVIVAL)
+	{
+		str_format(aBuf, sizeof(aBuf), " | Alive: %s", pPlayer->m_IsDead ? "no" : "yes");
+		str_append(aRow, aBuf, sizeof(aRow));
+	}
+	str_append(aRow, "\n", sizeof(aRow));
+	str_append(pBuf, aRow, Size);
 }
 
 void IGameController::GetRoundEndStatsStrJson(char *pBuf, size_t Size)
@@ -230,10 +237,30 @@ void IGameController::GetRoundEndStatsStrPsv(char *pBuf, size_t Size)
 		{
 			if(!pPlayer || pPlayer->GetTeam() != TEAM_BLUE)
 				continue;
+			if(pPlayer->m_IsDead)
+				continue;
 
 			PsvRowPlayer(pPlayer, pBuf, Size);
 		}
+	}
 
+	if(WinType() == WIN_BY_SURVIVAL)
+	{
+		if(IsTeamPlay())
+			str_append(pBuf, "**Dead Players:**\n", Size);
+		for(const CPlayer *pPlayer : GameServer()->m_apPlayers)
+		{
+			if(!pPlayer || pPlayer->GetTeam() != TEAM_SPECTATORS)
+				continue;
+			if(!pPlayer->m_IsDead)
+				continue;
+
+			PsvRowPlayer(pPlayer, pBuf, Size);
+		}
+	}
+
+	if(IsTeamPlay())
+	{
 		str_append(pBuf, "---------------------\n", Size);
 
 		str_format(aBuf, sizeof(aBuf), "**Red: %d | Blue %d**\n", ScoreRed, ScoreBlue);
