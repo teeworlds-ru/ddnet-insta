@@ -119,6 +119,11 @@ void IGameController::GetRoundEndStatsStrJson(char *pBuf, size_t Size)
 				Writer.WriteAttribute("team");
 				Writer.WriteStrValue(pPlayer->GetTeamStr());
 			}
+			if(WinType() == WIN_BY_SURVIVAL)
+			{
+				Writer.WriteAttribute("alive");
+				Writer.WriteBoolValue(!pPlayer->m_IsDead);
+			}
 			Writer.WriteAttribute("name");
 			Writer.WriteStrValue(Server()->ClientName(pPlayer->GetCid()));
 			Writer.WriteAttribute("score");
@@ -236,8 +241,6 @@ void IGameController::GetRoundEndStatsStrPsv(char *pBuf, size_t Size)
 		for(const CPlayer *pPlayer : GameServer()->m_apPlayers)
 		{
 			if(!pPlayer || pPlayer->GetTeam() != TEAM_BLUE)
-				continue;
-			if(pPlayer->m_IsDead)
 				continue;
 
 			PsvRowPlayer(pPlayer, pBuf, Size);
