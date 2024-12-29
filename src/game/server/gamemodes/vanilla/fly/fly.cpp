@@ -35,7 +35,7 @@ void CGameControllerFly::Tick()
 	// keep last to
 	// make sure the pvp ticks set the hooking toucher
 	// even if we did reset it this tick
-	CGameControllerPvp::Tick();
+	CGameControllerCTF::Tick();
 }
 
 int CGameControllerFly::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int Weapon)
