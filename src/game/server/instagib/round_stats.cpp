@@ -277,7 +277,7 @@ void IGameController::GetRoundEndStatsStrHttp(char *pBuf, size_t Size)
 		GetRoundEndStatsStrCsv(pBuf, Size);
 	if(g_Config.m_SvRoundStatsFormatHttp == 1)
 		GetRoundEndStatsStrPsv(pBuf, Size);
-	if(g_Config.m_SvRoundStatsFormatFile == 2)
+	if(g_Config.m_SvRoundStatsFormatHttp == 2)
 		GetRoundEndStatsStrAsciiTable(pBuf, Size);
 	else if(g_Config.m_SvRoundStatsFormatHttp == 4)
 		GetRoundEndStatsStrJson(pBuf, Size);
