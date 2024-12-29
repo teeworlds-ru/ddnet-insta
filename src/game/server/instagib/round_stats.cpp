@@ -101,9 +101,7 @@ void IGameController::GetRoundEndStatsStrJson(char *pBuf, size_t Size)
 		{
 			if(!pPlayer)
 				continue;
-			if(pPlayer->GetTeam() < TEAM_RED)
-				continue;
-			if(pPlayer->GetTeam() > TEAM_BLUE)
+			if(!IsPlaying(pPlayer))
 				continue;
 
 			Writer.BeginObject();

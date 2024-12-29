@@ -226,6 +226,23 @@ public:
 	virtual int PointsForWin(const CPlayer *pPlayer) { return 1; }
 
 	/*
+		Function: IsPlaying
+			Should return true if the player is playing. But the player does not have to
+			be alive. And might be currently in team spectators (for example LMS/zCatch).
+
+			Should return false if the player is intentionally spectating
+			and not participating in the game at all.
+
+			This replaces the pPlayer->m_Team == TEAM_SPECTATORS check because it supports
+			also dead players and any other situtations where players that are technically not
+			just watching the game end up in the spectator team for a short period of time.
+
+		Arguments:
+			pPlayer - the player to check
+	*/
+	virtual bool IsPlaying(const CPlayer *pPlayer);
+
+	/*
 		Function: OnShowStatsAll
 			called from the main thread when a SQL worker finished querying stats from the database
 

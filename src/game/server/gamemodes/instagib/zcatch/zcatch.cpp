@@ -133,6 +133,15 @@ bool CGameControllerZcatch::IsLoser(const CPlayer *pPlayer)
 	return pPlayer->m_IsDead;
 }
 
+bool CGameControllerZcatch::IsPlaying(const CPlayer *pPlayer)
+{
+	// in zCatch in game players and spectators that are waiting to join
+	// are considered active players
+	//
+	// only spectators that are alive are considered pure spectators
+	return CGameControllerInstagib::IsPlaying(pPlayer) || pPlayer->m_IsDead;
+}
+
 int CGameControllerZcatch::PointsForWin(const CPlayer *pPlayer)
 {
 	int Points = pPlayer->m_vVictimIds.size() * 2;
