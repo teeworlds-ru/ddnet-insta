@@ -1140,8 +1140,25 @@ void CCharacter::SnapCharacter(int SnappingClient, int Id)
 		AmmoCount = 10;
 	}
 
-	if(m_pPlayer->GetCid() == SnappingClient || SnappingClient == SERVER_DEMO_CLIENT ||
-		(!g_Config.m_SvStrictSpectateMode && m_pPlayer->GetCid() == GameServer()->m_apPlayers[SnappingClient]->m_SpectatorId))
+	bool Send = m_pPlayer->GetCid() == SnappingClient || SnappingClient == SERVER_DEMO_CLIENT;
+
+	switch (g_Config.m_SvStrictSpectateMode) {
+	case 0:
+	{
+		Send |= true;
+	}
+		break;
+	case 1:
+	{
+		Send |= m_pPlayer->GetCid() == GameServer()->m_apPlayers[SnappingClient]->m_SpectatorId;
+	}
+		break;
+	case 2:
+	default:
+		break;
+	}
+
+	if(Send)
 	{
 		Health = m_Health;
 		Armor = m_Armor;
