@@ -1504,6 +1504,9 @@ void CGameControllerPvp::DoDamageHitSound(int KillerId)
 
 void CGameControllerPvp::MakeLaserTextPoints(vec2 Pos, int Points, int Seconds)
 {
+	if(!g_Config.m_SvLaserTextPoints)
+		return;
+
 	char aText[16];
 	if(Points >= 0)
 		str_format(aText, sizeof(aText), "+%d", Points);

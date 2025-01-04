@@ -69,6 +69,7 @@ MACRO_CONFIG_INT(SvFngHammer, sv_fng_hammer, 1, 0, 1, CFGFLAG_SERVER, "(fng only
 MACRO_CONFIG_INT(SvFngSpikeSound, sv_fng_spike_sound, 1, 0, 1, CFGFLAG_SERVER, "(fng only) play flag capture sound when sacrificing an enemy into the spikes")
 MACRO_CONFIG_INT(SvPunishFreezeDisconnect, sv_punish_freeze_disconnect, 1, 0, 60, CFGFLAG_SERVER, "(fng) 0=off otherwise bantime in minutes when leaving server while being frozen")
 MACRO_CONFIG_INT(SvSaveServer, sv_save_server, 0, 0, 1, CFGFLAG_SERVER, "display all time score in scoreboard based on the player name")
+MACRO_CONFIG_INT(SvLaserTextPoints, sv_laser_text_points, 1, 0, 1, CFGFLAG_SERVER, "display laser text in the world on scoring (only fng for now)")
 
 /*
 
