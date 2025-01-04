@@ -17,8 +17,8 @@ public:
 class CLaserText : public CEntity
 {
 public:
-	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText);
-	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText, float CharPointOffset, float CharOffsetFactor);
+	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, const char *pText);
+	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, const char *pText, float CharPointOffset, float CharOffsetFactor);
 	~CLaserText() override;
 
 	void Reset() override;

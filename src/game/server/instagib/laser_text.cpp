@@ -262,7 +262,7 @@ static const bool asciiTable[256][5][3] = {
 	{{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}} // ascii 255
 };
 
-CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTicks, char *pText) :
+CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTicks, const char *pText) :
 	CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
 {
 	m_Pos = Pos;
@@ -304,7 +304,7 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 	}
 }
 
-CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText, float CharPointOffset, float CharOffsetFactor) :
+CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, const char *pText, float CharPointOffset, float CharOffsetFactor) :
 	CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
 {
 	m_Pos = Pos;
