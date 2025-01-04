@@ -4,6 +4,8 @@
 
 #include <game/server/entity.h>
 
+#define MAX_LASER_TEXT_LEN 32
+
 class CLaserChar : public CEntity
 {
 public:
@@ -15,8 +17,8 @@ public:
 class CLaserText : public CEntity
 {
 public:
-	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText, int TextLen);
-	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText, int TextLen, float CharPointOffset, float CharOffsetFactor);
+	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText);
+	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText, float CharPointOffset, float CharOffsetFactor);
 	~CLaserText() override;
 
 	void Reset() override;
@@ -36,7 +38,7 @@ private:
 	int m_CurTicks;
 	int m_StartTick;
 
-	char *m_pText;
+	char m_aText[MAX_LASER_TEXT_LEN + 1];
 	int m_TextLen;
 
 	CLaserChar **m_ppChars;

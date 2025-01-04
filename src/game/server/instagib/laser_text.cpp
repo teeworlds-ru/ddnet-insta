@@ -1,6 +1,5 @@
 // https://github.com/Jupeyy/teeworlds-fng2-mod/blob/fng_06/src/game/server/laserText.cpp
 #include "laser_text.h"
-#include <cstring>
 #include <game/generated/protocol.h>
 #include <game/server/gamecontext.h>
 
@@ -263,7 +262,7 @@ static const bool asciiTable[256][5][3] = {
 	{{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}} // ascii 255
 };
 
-CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTicks, char *pText, int pTextLen) :
+CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTicks, char *pText) :
 	CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
 {
 	m_Pos = Pos;
@@ -274,9 +273,8 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 	m_StartTick = Server()->Tick();
 	m_AliveTicks = pAliveTicks;
 
-	m_TextLen = pTextLen;
-	m_pText = new char[pTextLen];
-	memcpy(m_pText, pText, pTextLen);
+	str_copy(m_aText, pText, sizeof(m_aText));
+	m_TextLen = str_length(m_aText);
 
 	m_CharNum = 0;
 
@@ -286,7 +284,7 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 		{
 			for(int j = 0; j < 3; ++j)
 			{
-				if(asciiTable[static_cast<unsigned char>(m_pText[i])][n][j])
+				if(asciiTable[static_cast<unsigned char>(m_aText[i])][n][j])
 				{
 					++m_CharNum;
 				}
@@ -302,11 +300,11 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 	int CharCount = 0;
 	for(int i = 0; i < m_TextLen; ++i)
 	{
-		MakeLaser(m_pText[i], i, CharCount);
+		MakeLaser(m_aText[i], i, CharCount);
 	}
 }
 
-CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText, int TextLen, float CharPointOffset, float CharOffsetFactor) :
+CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText, float CharPointOffset, float CharOffsetFactor) :
 	CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
 {
 	m_Pos = Pos;
@@ -317,9 +315,8 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTic
 	m_StartTick = Server()->Tick();
 	m_AliveTicks = AliveTicks;
 
-	m_TextLen = TextLen;
-	m_pText = new char[TextLen];
-	memcpy(m_pText, pText, TextLen);
+	str_copy(m_aText, pText, sizeof(m_aText));
+	m_TextLen = str_length(m_aText);
 
 	m_CharNum = 0;
 
@@ -329,7 +326,7 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTic
 		{
 			for(int j = 0; j < 3; ++j)
 			{
-				if(asciiTable[(unsigned char)m_pText[i]][n][j])
+				if(asciiTable[(unsigned char)m_aText[i]][n][j])
 				{
 					++m_CharNum;
 				}
@@ -345,13 +342,12 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTic
 	int CharCount = 0;
 	for(int i = 0; i < m_TextLen; ++i)
 	{
-		MakeLaser(m_pText[i], i, CharCount);
+		MakeLaser(m_aText[i], i, CharCount);
 	}
 }
 
 CLaserText::~CLaserText()
 {
-	delete[] m_pText;
 	for(int i = 0; i < m_CharNum; ++i)
 	{
 		delete m_ppChars[i];

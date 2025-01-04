@@ -292,13 +292,13 @@ inline void CGameControllerBaseFng::UpdateScoresAndDisplayPoints(CPlayer *pKille
 
 void CGameControllerBaseFng::MakeLaserTextPoints(vec2 pPos, int pOwner, int pPoints, int Seconds)
 {
-	char Text[10];
+	char aText[12];
 	if(pPoints >= 0)
-		str_format(Text, 10, "+%d", pPoints);
+		str_format(aText, sizeof(aText), "+%d", pPoints);
 	else
-		str_format(Text, 10, "%d", pPoints);
+		str_format(aText, sizeof(aText), "%d", pPoints);
 	pPos.y -= 20.0 * 2.5;
-	new CLaserText(&GameServer()->m_World, pPos, pOwner, Server()->TickSpeed() * Seconds, Text, (int)(strlen(Text)));
+	new CLaserText(&GameServer()->m_World, pPos, pOwner, Server()->TickSpeed() * Seconds, aText);
 }
 
 void CGameControllerBaseFng::SnapDDNetCharacter(int SnappingClient, CCharacter *pChr, CNetObj_DDNetCharacter *pDDNetCharacter)
