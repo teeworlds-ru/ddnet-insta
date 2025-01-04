@@ -1085,10 +1085,8 @@ int CGameControllerPvp::GetDefaultWeaponBasedOnSpawnWeapons() const
 	{
 	case SPAWN_WEAPON_LASER:
 		return WEAPON_LASER;
-		break;
 	case SPAWN_WEAPON_GRENADE:
 		return WEAPON_GRENADE;
-		break;
 	default:
 		dbg_msg("zcatch", "invalid sv_spawn_weapons");
 		break;
