@@ -17,8 +17,8 @@ public:
 class CLaserText : public CEntity
 {
 public:
-	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, const char *pText);
-	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, const char *pText, float CharPointOffset, float CharOffsetFactor);
+	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int AliveTicks, const char *pText);
+	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int AliveTicks, const char *pText, float CharPointOffset, float CharOffsetFactor);
 	~CLaserText() override;
 
 	void Reset() override;
@@ -32,13 +32,11 @@ private:
 
 	void MakeLaser(char Char, int CharOffset, int &CharCount);
 
-	int m_Owner;
-
 	int m_AliveTicks;
 	int m_CurTicks;
 	int m_StartTick;
 
-	char m_aText[MAX_LASER_TEXT_LEN + 1];
+	char m_aText[MAX_LASER_TEXT_LEN];
 	int m_TextLen;
 
 	CLaserChar **m_ppChars;

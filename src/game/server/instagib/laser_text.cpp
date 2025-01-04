@@ -262,11 +262,10 @@ static const bool asciiTable[256][5][3] = {
 	{{false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}, {false, false, false}} // ascii 255
 };
 
-CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTicks, const char *pText) :
+CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int pAliveTicks, const char *pText) :
 	CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
 {
 	m_Pos = Pos;
-	m_Owner = Owner;
 	GameWorld()->InsertEntity(this);
 
 	m_CurTicks = Server()->Tick();
@@ -304,11 +303,10 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 	}
 }
 
-CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, const char *pText, float CharPointOffset, float CharOffsetFactor) :
+CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int AliveTicks, const char *pText, float CharPointOffset, float CharOffsetFactor) :
 	CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
 {
 	m_Pos = Pos;
-	m_Owner = Owner;
 	GameWorld()->InsertEntity(this);
 
 	m_CurTicks = Server()->Tick();

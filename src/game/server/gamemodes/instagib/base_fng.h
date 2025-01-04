@@ -35,6 +35,5 @@ public:
 
 	void OnSpike(class CCharacter *pChr, int SpikeTile);
 	void OnWrongSpike(class CPlayer *pPlayer);
-	void MakeLaserTextPoints(vec2 pPos, int pOwner, int pPoints, int Seconds);
 };
 #endif // GAME_SERVER_GAMEMODES_INSTAGIB_BASE_FNG_H
