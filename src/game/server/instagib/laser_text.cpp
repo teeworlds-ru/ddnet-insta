@@ -275,8 +275,8 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 	m_AliveTicks = pAliveTicks;
 
 	m_TextLen = pTextLen;
-	m_Text = new char[pTextLen];
-	memcpy(m_Text, pText, pTextLen);
+	m_pText = new char[pTextLen];
+	memcpy(m_pText, pText, pTextLen);
 
 	m_CharNum = 0;
 
@@ -286,7 +286,7 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 		{
 			for(int j = 0; j < 3; ++j)
 			{
-				if(asciiTable[static_cast<unsigned char>(m_Text[i])][n][j])
+				if(asciiTable[static_cast<unsigned char>(m_pText[i])][n][j])
 				{
 					++m_CharNum;
 				}
@@ -294,7 +294,7 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 		}
 	}
 
-	m_Chars = new CLaserChar *[m_CharNum];
+	m_ppChars = new CLaserChar *[m_CharNum];
 
 	m_PosOffsetCharPoints = 15.0;
 	m_PosOffsetChars = m_PosOffsetCharPoints * 3.5;
@@ -302,11 +302,11 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 	int CharCount = 0;
 	for(int i = 0; i < m_TextLen; ++i)
 	{
-		makeLaser(m_Text[i], i, CharCount);
+		MakeLaser(m_pText[i], i, CharCount);
 	}
 }
 
-CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTicks, char *pText, int pTextLen, float pCharPointOffset, float pCharOffsetFactor) :
+CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int AliveTicks, char *pText, int TextLen, float CharPointOffset, float CharOffsetFactor) :
 	CEntity(pGameWorld, CGameWorld::ENTTYPE_LASER)
 {
 	m_Pos = Pos;
@@ -315,11 +315,11 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 
 	m_CurTicks = Server()->Tick();
 	m_StartTick = Server()->Tick();
-	m_AliveTicks = pAliveTicks;
+	m_AliveTicks = AliveTicks;
 
-	m_TextLen = pTextLen;
-	m_Text = new char[pTextLen];
-	memcpy(m_Text, pText, pTextLen);
+	m_TextLen = TextLen;
+	m_pText = new char[TextLen];
+	memcpy(m_pText, pText, TextLen);
 
 	m_CharNum = 0;
 
@@ -329,7 +329,7 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 		{
 			for(int j = 0; j < 3; ++j)
 			{
-				if(asciiTable[(unsigned char)m_Text[i]][n][j])
+				if(asciiTable[(unsigned char)m_pText[i]][n][j])
 				{
 					++m_CharNum;
 				}
@@ -337,26 +337,26 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 		}
 	}
 
-	m_Chars = new CLaserChar *[m_CharNum];
+	m_ppChars = new CLaserChar *[m_CharNum];
 
-	m_PosOffsetCharPoints = pCharPointOffset;
-	m_PosOffsetChars = m_PosOffsetCharPoints * pCharOffsetFactor;
+	m_PosOffsetCharPoints = CharPointOffset;
+	m_PosOffsetChars = m_PosOffsetCharPoints * CharOffsetFactor;
 
 	int CharCount = 0;
 	for(int i = 0; i < m_TextLen; ++i)
 	{
-		makeLaser(m_Text[i], i, CharCount);
+		MakeLaser(m_pText[i], i, CharCount);
 	}
 }
 
 CLaserText::~CLaserText()
 {
-	delete[] m_Text;
+	delete[] m_pText;
 	for(int i = 0; i < m_CharNum; ++i)
 	{
-		delete m_Chars[i];
+		delete m_ppChars[i];
 	}
-	delete[] m_Chars;
+	delete[] m_ppChars;
 }
 
 void CLaserText::Reset()
@@ -391,37 +391,37 @@ static char NeighboursVert(const bool pCharVert[3], int pVertOff)
 	return Neighbours;
 }
 
-static unsigned char NeighboursHor(const bool pCharHor[5][3], int pHorOff, int pVertOff)
+static unsigned char NeighboursHor(const bool aaCharHor[5][3], int HorOff, int VertOff)
 {
 	char Neighbours = 0;
-	if(pHorOff > 0)
+	if(HorOff > 0)
 	{
-		if(pCharHor[pHorOff - 1][pVertOff])
+		if(aaCharHor[HorOff - 1][VertOff])
 			++Neighbours;
 	}
-	if(pHorOff < 4)
+	if(HorOff < 4)
 	{
-		if(pCharHor[pHorOff + 1][pVertOff])
+		if(aaCharHor[HorOff + 1][VertOff])
 			++Neighbours;
 	}
 
 	return Neighbours;
 }
 
-void CLaserText::makeLaser(char pChar, int pCharOffset, int &CharCount)
+void CLaserText::MakeLaser(char Char, int CharOffset, int &CharCount)
 {
-	unsigned short Tail[5][3];
-	unsigned char NeighbourCount[5][3] = {};
+	unsigned short aaTail[5][3];
+	unsigned char aaNeighbourCount[5][3] = {};
 
 	for(int n = 0; n < 5; ++n)
 	{
 		for(int j = 0; j < 3; ++j)
 		{
-			Tail[n][j] = (asciiTable[static_cast<unsigned char>(pChar)][n][j]) ? 0 : static_cast<unsigned short>(-1);
-			if(asciiTable[static_cast<unsigned char>(pChar)][n][j])
+			aaTail[n][j] = (asciiTable[static_cast<unsigned char>(Char)][n][j]) ? 0 : static_cast<unsigned short>(-1);
+			if(asciiTable[static_cast<unsigned char>(Char)][n][j])
 			{
-				NeighbourCount[n][j] += NeighboursVert(asciiTable[static_cast<unsigned char>(pChar)][n], j);
-				NeighbourCount[n][j] += NeighboursHor(asciiTable[static_cast<unsigned char>(pChar)], n, j);
+				aaNeighbourCount[n][j] += NeighboursVert(asciiTable[static_cast<unsigned char>(Char)][n], j);
+				aaNeighbourCount[n][j] += NeighboursHor(asciiTable[static_cast<unsigned char>(Char)], n, j);
 			}
 		}
 	}
@@ -430,7 +430,7 @@ void CLaserText::makeLaser(char pChar, int pCharOffset, int &CharCount)
 	{
 		for(int j = 0; j < 3; ++j)
 		{
-			if(!asciiTable[static_cast<unsigned char>(pChar)][n][j])
+			if(!asciiTable[static_cast<unsigned char>(Char)][n][j])
 				continue;
 
 			int x = j, y = n;
@@ -441,18 +441,18 @@ void CLaserText::makeLaser(char pChar, int pCharOffset, int &CharCount)
 			{ //  d = -1 (left/up), d = 1 (right/down)
 				if(j + d >= 0 && j + d < 3)
 				{ // Horizontal neighbors
-					if(asciiTable[static_cast<unsigned char>(pChar)][n][j + d])
+					if(asciiTable[static_cast<unsigned char>(Char)][n][j + d])
 					{
-						if(Tail[n][j + d] != 0 && Tail[n][j + d] != (n << 8 | (j + d)))
+						if(aaTail[n][j + d] != 0 && aaTail[n][j + d] != (n << 8 | (j + d)))
 						{
 							ForceLine = true;
-							Tail[n][j] = (n << 8 | (j + d));
+							aaTail[n][j] = (n << 8 | (j + d));
 							x = j + d;
 							y = n;
 						}
-						else if(NeighbourCount[n][j + d] > MaxNeighbour)
+						else if(aaNeighbourCount[n][j + d] > MaxNeighbour)
 						{
-							MaxNeighbour = NeighbourCount[n][j + d];
+							MaxNeighbour = aaNeighbourCount[n][j + d];
 							x = j + d;
 							y = n;
 						}
@@ -460,18 +460,18 @@ void CLaserText::makeLaser(char pChar, int pCharOffset, int &CharCount)
 				}
 				if(n + d >= 0 && n + d < 5)
 				{
-					if(asciiTable[static_cast<unsigned char>(pChar)][n + d][j])
+					if(asciiTable[static_cast<unsigned char>(Char)][n + d][j])
 					{
-						if(Tail[n + d][j] != 0 && Tail[n + d][j] != ((n + d) << 8 | j))
+						if(aaTail[n + d][j] != 0 && aaTail[n + d][j] != ((n + d) << 8 | j))
 						{
 							ForceLine = true;
-							Tail[n][j] = ((n + d) << 8 | j);
+							aaTail[n][j] = ((n + d) << 8 | j);
 							x = j;
 							y = n + d;
 						}
-						else if(NeighbourCount[n + d][j] > MaxNeighbour)
+						else if(aaNeighbourCount[n + d][j] > MaxNeighbour)
 						{
-							MaxNeighbour = NeighbourCount[n + d][j];
+							MaxNeighbour = aaNeighbourCount[n + d][j];
 							x = j;
 							y = n + d;
 						}
@@ -481,14 +481,14 @@ void CLaserText::makeLaser(char pChar, int pCharOffset, int &CharCount)
 
 			if(!ForceLine)
 			{
-				Tail[n][j] = (y << 8 | x);
+				aaTail[n][j] = (y << 8 | x);
 			}
 
-			CLaserChar *pObj = (m_Chars[CharCount] = new CLaserChar(GameWorld()));
-			pObj->m_Pos.x = m_Pos.x + pCharOffset * m_PosOffsetChars + j * m_PosOffsetCharPoints;
+			CLaserChar *pObj = (m_ppChars[CharCount] = new CLaserChar(GameWorld()));
+			pObj->m_Pos.x = m_Pos.x + CharOffset * m_PosOffsetChars + j * m_PosOffsetCharPoints;
 			pObj->m_Pos.y = m_Pos.y + n * m_PosOffsetCharPoints;
-			pObj->m_Frompos.x = m_Pos.x + pCharOffset * m_PosOffsetChars + x * m_PosOffsetCharPoints;
-			pObj->m_Frompos.y = m_Pos.y + y * m_PosOffsetCharPoints;
+			pObj->m_FromPos.x = m_Pos.x + CharOffset * m_PosOffsetChars + x * m_PosOffsetCharPoints;
+			pObj->m_FromPos.y = m_Pos.y + y * m_PosOffsetCharPoints;
 
 			++CharCount;
 		}
@@ -502,14 +502,14 @@ void CLaserText::Snap(int SnappingClient)
 
 	for(int i = 0; i < m_CharNum; ++i)
 	{
-		CNetObj_Laser *pObj = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_Chars[i]->getID(), sizeof(CNetObj_Laser)));
+		CNetObj_Laser *pObj = static_cast<CNetObj_Laser *>(Server()->SnapNewItem(NETOBJTYPE_LASER, m_ppChars[i]->GetId(), sizeof(CNetObj_Laser)));
 		if(!pObj)
 			return;
 
-		pObj->m_X = m_Chars[i]->m_Pos.x;
-		pObj->m_Y = m_Chars[i]->m_Pos.y;
-		pObj->m_FromX = m_Chars[i]->m_Frompos.x;
-		pObj->m_FromY = m_Chars[i]->m_Frompos.y;
+		pObj->m_X = m_ppChars[i]->m_Pos.x;
+		pObj->m_Y = m_ppChars[i]->m_Pos.y;
+		pObj->m_FromX = m_ppChars[i]->m_FromPos.x;
+		pObj->m_FromY = m_ppChars[i]->m_FromPos.y;
 		pObj->m_StartTick = Server()->Tick();
 	}
 }
