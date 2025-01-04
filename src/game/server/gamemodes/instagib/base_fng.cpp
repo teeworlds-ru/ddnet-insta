@@ -286,8 +286,8 @@ inline void CGameControllerBaseFng::UpdateScoresAndDisplayPoints(CPlayer *pKille
 	pKiller->AddScore(playerScore - 1);
 	AddTeamscore(pKiller->GetTeam(), TeamScore);
 
-	if(pKiller->IsPlaying())
-		MakeLaserTextPoints(pKiller->GetCharacter()->GetPos(), pKiller->GetCid(), TeamScore, 3);
+	if(pKiller->IsPlaying()) // NOLINT(clang-analyzer-unix.Malloc)
+		MakeLaserTextPoints(pKiller->GetCharacter()->GetPos(), pKiller->GetCid(), TeamScore, 3); // NOLINT(clang-analyzer-unix.Malloc)
 }
 
 void CGameControllerBaseFng::MakeLaserTextPoints(vec2 pPos, int pOwner, int pPoints, int Seconds)
@@ -298,8 +298,9 @@ void CGameControllerBaseFng::MakeLaserTextPoints(vec2 pPos, int pOwner, int pPoi
 	else
 		str_format(aText, sizeof(aText), "%d", pPoints);
 	pPos.y -= 20.0 * 2.5;
+
 	new CLaserText(&GameServer()->m_World, pPos, pOwner, Server()->TickSpeed() * Seconds, aText);
-}
+} // NOLINT(clang-analyzer-unix.Malloc)
 
 void CGameControllerBaseFng::SnapDDNetCharacter(int SnappingClient, CCharacter *pChr, CNetObj_DDNetCharacter *pDDNetCharacter)
 {
