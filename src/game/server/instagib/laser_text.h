@@ -18,15 +18,7 @@ class CLaserText : public CEntity
 public:
 	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTicks, char *pText, int pTextLen);
 	CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTicks, char *pText, int pTextLen, float pCharPointOffset, float pCharOffsetFactor);
-	~CLaserText() override
-	{
-		delete[] m_Text;
-		for(int i = 0; i < m_CharNum; ++i)
-		{
-			delete m_Chars[i];
-		}
-		delete[] m_Chars;
-	}
+	~CLaserText() override;
 
 	void Reset() override;
 	void Tick() override;

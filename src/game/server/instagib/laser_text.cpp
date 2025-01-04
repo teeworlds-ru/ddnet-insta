@@ -349,15 +349,25 @@ CLaserText::CLaserText(CGameWorld *pGameWorld, vec2 Pos, int Owner, int pAliveTi
 	}
 }
 
+CLaserText::~CLaserText()
+{
+	delete[] m_Text;
+	for(int i = 0; i < m_CharNum; ++i)
+	{
+		delete m_Chars[i];
+	}
+	delete[] m_Chars;
+}
+
 void CLaserText::Reset()
 {
-	GameServer()->m_World.RemoveEntity(this);
+	m_MarkedForDestroy = true;
 }
 
 void CLaserText::Tick()
 {
 	if(++m_CurTicks - m_StartTick > m_AliveTicks)
-		GameServer()->m_World.RemoveEntity(this);
+		Reset();
 }
 
 void CLaserText::TickPaused()
