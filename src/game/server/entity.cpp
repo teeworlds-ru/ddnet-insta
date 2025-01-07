@@ -89,24 +89,39 @@ bool CEntity::GetNearestAirPosPlayer(vec2 PlayerPos, vec2 *pOutPos)
 
 bool NetworkClipped(const CGameContext *pGameServer, int SnappingClient, vec2 CheckPos)
 {
-	if(SnappingClient == SERVER_DEMO_CLIENT || pGameServer->m_apPlayers[SnappingClient]->m_ShowAll)
+	const bool Ingame = pGameServer->m_apPlayers[SnappingClient]->GetTeam() != TEAM_SPECTATORS;
+
+	if(SnappingClient == SERVER_DEMO_CLIENT || (pGameServer->m_apPlayers[SnappingClient]->m_ShowAll && !Ingame))
 		return false;
 
+	// ddnet-insta: snap default if player is ingame
+	vec2 &ShowDistance = pGameServer->m_apPlayers[SnappingClient]->m_ShowDistance;
+
+	// https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/server/entity.cpp#L44
+	if(Ingame)
+		ShowDistance = vec2(1000, 800);
+
 	float dx = pGameServer->m_apPlayers[SnappingClient]->m_ViewPos.x - CheckPos.x;
-	if(absolute(dx) > pGameServer->m_apPlayers[SnappingClient]->m_ShowDistance.x)
+	if(absolute(dx) > ShowDistance.x)
 		return true;
 
 	float dy = pGameServer->m_apPlayers[SnappingClient]->m_ViewPos.y - CheckPos.y;
-	return absolute(dy) > pGameServer->m_apPlayers[SnappingClient]->m_ShowDistance.y;
+	return absolute(dy) > ShowDistance.y;
 }
 
 bool NetworkClippedLine(const CGameContext *pGameServer, int SnappingClient, vec2 StartPos, vec2 EndPos)
 {
-	if(SnappingClient == SERVER_DEMO_CLIENT || pGameServer->m_apPlayers[SnappingClient]->m_ShowAll)
+	const bool Ingame = pGameServer->m_apPlayers[SnappingClient]->GetTeam() != TEAM_SPECTATORS;
+
+	if(SnappingClient == SERVER_DEMO_CLIENT || (pGameServer->m_apPlayers[SnappingClient]->m_ShowAll && !Ingame))
 		return false;
 
 	vec2 &ViewPos = pGameServer->m_apPlayers[SnappingClient]->m_ViewPos;
 	vec2 &ShowDistance = pGameServer->m_apPlayers[SnappingClient]->m_ShowDistance;
+
+	// https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/server/entity.cpp#L44
+	if(Ingame)
+		ShowDistance = vec2(1000, 800);
 
 	vec2 DistanceToLine, ClosestPoint;
 	if(closest_point_on_line(StartPos, EndPos, ViewPos, ClosestPoint))
