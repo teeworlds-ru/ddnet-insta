@@ -1,6 +1,9 @@
 /* (c) Magnus Auvinen. See licence.txt in the root of the distribution for more information. */
 /* If you are missing that file, acquire a complete release at teeworlds.com.                */
 
+// ddnet-insta
+#include <engine/shared/config.h>
+
 #include "entity.h"
 #include "gamecontext.h"
 #include "player.h"
@@ -89,16 +92,17 @@ bool CEntity::GetNearestAirPosPlayer(vec2 PlayerPos, vec2 *pOutPos)
 
 bool NetworkClipped(const CGameContext *pGameServer, int SnappingClient, vec2 CheckPos)
 {
-	const bool Ingame = pGameServer->m_apPlayers[SnappingClient]->GetTeam() != TEAM_SPECTATORS;
+	// ddnet-insta
+	const bool ForceDefaultView = !g_Config.m_SvAllowZoom && pGameServer->m_apPlayers[SnappingClient]->GetTeam() != TEAM_SPECTATORS;
 
-	if(SnappingClient == SERVER_DEMO_CLIENT || (pGameServer->m_apPlayers[SnappingClient]->m_ShowAll && !Ingame))
+	if(SnappingClient == SERVER_DEMO_CLIENT || (pGameServer->m_apPlayers[SnappingClient]->m_ShowAll && !ForceDefaultView))
 		return false;
 
 	// ddnet-insta: snap default if player is ingame
 	vec2 &ShowDistance = pGameServer->m_apPlayers[SnappingClient]->m_ShowDistance;
 
 	// https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/server/entity.cpp#L44
-	if(Ingame)
+	if(ForceDefaultView)
 		ShowDistance = vec2(1000, 800);
 
 	float dx = pGameServer->m_apPlayers[SnappingClient]->m_ViewPos.x - CheckPos.x;
@@ -111,16 +115,17 @@ bool NetworkClipped(const CGameContext *pGameServer, int SnappingClient, vec2 Ch
 
 bool NetworkClippedLine(const CGameContext *pGameServer, int SnappingClient, vec2 StartPos, vec2 EndPos)
 {
-	const bool Ingame = pGameServer->m_apPlayers[SnappingClient]->GetTeam() != TEAM_SPECTATORS;
+	// ddnet-insta
+	const bool ForceDefaultView = !g_Config.m_SvAllowZoom && pGameServer->m_apPlayers[SnappingClient]->GetTeam() != TEAM_SPECTATORS;
 
-	if(SnappingClient == SERVER_DEMO_CLIENT || (pGameServer->m_apPlayers[SnappingClient]->m_ShowAll && !Ingame))
+	if(SnappingClient == SERVER_DEMO_CLIENT || (pGameServer->m_apPlayers[SnappingClient]->m_ShowAll && !ForceDefaultView))
 		return false;
 
 	vec2 &ViewPos = pGameServer->m_apPlayers[SnappingClient]->m_ViewPos;
 	vec2 &ShowDistance = pGameServer->m_apPlayers[SnappingClient]->m_ShowDistance;
 
 	// https://github.com/teeworlds/teeworlds/blob/93f5bf632a3859e97d527fc93a26b6dced767fbc/src/game/server/entity.cpp#L44
-	if(Ingame)
+	if(ForceDefaultView)
 		ShowDistance = vec2(1000, 800);
 
 	vec2 DistanceToLine, ClosestPoint;
