@@ -961,5 +961,25 @@ void IGameController::DoTeamChange(CPlayer *pPlayer, int Team, bool DoChatMsg)
 	str_format(aBuf, sizeof(aBuf), "team_join player='%d:%s' m_Team=%d", ClientId, Server()->ClientName(ClientId), Team);
 	GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
 
-	// OnPlayerInfoChange(pPlayer);
+	OnPlayerInfoChange(pPlayer);
+}
+
+
+void IGameController::OnPlayerInfoChange(class CPlayer *pP)
+{
+	const int aTeamColors[2] = {65387, 10223467};
+	if(IsTeamplay())
+	{
+		pP->m_TeeInfos.m_UseCustomColor = 1;
+		if(pP->GetTeam() >= TEAM_RED && pP->GetTeam() <= TEAM_BLUE)
+		{
+			pP->m_TeeInfos.m_ColorBody = aTeamColors[pP->GetTeam()];
+			pP->m_TeeInfos.m_ColorFeet = aTeamColors[pP->GetTeam()];
+		}
+		else
+		{
+			pP->m_TeeInfos.m_ColorBody = 12895054;
+			pP->m_TeeInfos.m_ColorFeet = 12895054;
+		}
+	}
 }

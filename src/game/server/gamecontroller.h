@@ -122,6 +122,7 @@ public:
 
 	virtual void OnPlayerConnect(class CPlayer *pPlayer);
 	virtual void OnPlayerDisconnect(class CPlayer *pPlayer, const char *pReason);
+	virtual void OnPlayerInfoChange(class CPlayer *pPlayer);
 
 	virtual void OnReset();
 
