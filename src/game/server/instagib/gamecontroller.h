@@ -55,6 +55,39 @@ public:
 	virtual void OnInit(){};
 
 	/*
+		Function: ForceNetworkClipping
+			Will be called on snap. Can be used to force remove entities from the snapshot.
+			But can not be used to force add entities to the snapshot.
+
+		Arguments:
+			pEntity - entity that will or will not be included in the snapshot
+			SnappingClient - ClientId of the player receiving the snapshot
+			CheckPos - position of the entity
+
+		Returns:
+			true - to not include this entity in the snapshot for SnappingClient
+			false - to let the ddnet code decide if clipping happens or not
+	*/
+	virtual bool ForceNetworkClipping(const CEntity *pEntity, int SnappingClient, vec2 CheckPos) { return false; }
+
+	/*
+		Function: ForceNetworkClippingLine
+			Will be called on snap. Can be used to force remove entities from the snapshot.
+			But can not be used to force add entities to the snapshot.
+
+		Arguments:
+			pEntity - entity that will or will not be included in the snapshot
+			SnappingClient - ClientId of the player receiving the snapshot
+			StartPos - start position of the line the entity is located at
+			EndPos - end position of the line the enitity is located at
+
+		Returns:
+			true - to not include this entity in the snapshot for SnappingClient
+			false - to let the ddnet code decide if clipping happens or not
+	*/
+	virtual bool ForceNetworkClippingLine(const CEntity *pEntity, int SnappingClient, vec2 StartPos, vec2 EndPos) { return false; }
+
+	/*
 		Function: OnRoundStart
 			Will be called after OnInit when the server first launches
 			Will also be called on the beginning of every round
