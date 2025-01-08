@@ -816,7 +816,12 @@ int CGameControllerPvp::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 				pKiller->GetCharacter()->m_ReloadTimer = 10;
 			}
 		}
-		if(!(IsFngGameType() && !SuicideOrWorld))
+
+		bool IsSpreeEnd = true;
+		// only getting spiked can end sprees in fng
+		if(IsFngGameType() && SuicideOrWorld)
+			IsSpreeEnd = false;
+		if(IsSpreeEnd)
 			EndSpree(pVictim->GetPlayer(), pKiller);
 	}
 	return 0;
