@@ -258,6 +258,7 @@ Below is a list of all the settings that were added in ddnet-insta.
 + `sv_killingspree_kills` How many kills are needed to be on a killing-spree (0=off)
 + `sv_damage_needed_for_kill` Damage needed to kill
 + `sv_allow_zoom` allow ddnet clients to use the client side zoom feature
++ `sv_strict_snap_distance` only send players close by (helps against zoom cheats)
 + `sv_anticamper` Toggle to enable/disable Anticamper
 + `sv_anticamper_freeze` If a player should freeze on camping (and how long) or die
 + `sv_anticamper_time` How long to wait till the player dies/freezes
