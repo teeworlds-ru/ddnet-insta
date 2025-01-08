@@ -250,6 +250,8 @@ void CGameControllerPvp::OnFlagCapture(class CFlag *pFlag, float Time, int TimeT
 
 bool CGameControllerPvp::ForceNetworkClipping(const CEntity *pEntity, int SnappingClient, vec2 CheckPos)
 {
+	if(!g_Config.m_SvStrictSnapDistance)
+		return false;
 	if(SnappingClient < 0 || SnappingClient >= MAX_CLIENTS)
 		return false;
 
@@ -272,6 +274,8 @@ bool CGameControllerPvp::ForceNetworkClipping(const CEntity *pEntity, int Snappi
 
 bool CGameControllerPvp::ForceNetworkClippingLine(const CEntity *pEntity, int SnappingClient, vec2 StartPos, vec2 EndPos)
 {
+	if(!g_Config.m_SvStrictSnapDistance)
+		return false;
 	if(SnappingClient < 0 || SnappingClient >= MAX_CLIENTS)
 		return false;
 
