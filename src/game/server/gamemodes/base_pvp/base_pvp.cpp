@@ -782,14 +782,22 @@ int CGameControllerPvp::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 	if(GameServer()->GetDDRaceTeam(pVictim->GetPlayer()->GetCid()))
 		return 0;
 
-	if(SuicideOrWorld)
-		pVictim->GetPlayer()->DecrementScore();
-	else
+	// zCatch score can never be decremented
+	// and only be incremented by wins
+	// https://github.com/ddnet-insta/ddnet-insta/issues/191
+	if(!IsZcatchGameType())
 	{
-		if(IsTeamplay() && pVictim->GetPlayer()->GetTeam() == pKiller->GetTeam())
-			pKiller->DecrementScore(); // teamkill
+		if(SuicideOrWorld)
+		{
+			pVictim->GetPlayer()->DecrementScore();
+		}
 		else
-			pKiller->IncrementScore(); // normal kill
+		{
+			if(IsTeamplay() && pVictim->GetPlayer()->GetTeam() == pKiller->GetTeam())
+				pKiller->DecrementScore(); // teamkill
+			else
+				pKiller->IncrementScore(); // normal kill
+		}
 	}
 
 	// update spectator modes for dead players in survival
