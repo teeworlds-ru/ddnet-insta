@@ -767,6 +767,8 @@ int CGameControllerPvp::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 {
 	CGameControllerDDRace::OnCharacterDeath(pVictim, pKiller, Weapon);
 
+	const bool SuicideOrWorld = Weapon == WEAPON_SELF || Weapon == WEAPON_WORLD;
+
 	// do scoreing
 	if(!pKiller || Weapon == WEAPON_GAME)
 		return 0;
@@ -780,8 +782,8 @@ int CGameControllerPvp::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 	if(GameServer()->GetDDRaceTeam(pVictim->GetPlayer()->GetCid()))
 		return 0;
 
-	if(pKiller == pVictim->GetPlayer())
-		pVictim->GetPlayer()->DecrementScore(); // suicide or world
+	if(SuicideOrWorld)
+		pVictim->GetPlayer()->DecrementScore();
 	else
 	{
 		if(IsTeamplay() && pVictim->GetPlayer()->GetTeam() == pKiller->GetTeam())
@@ -814,7 +816,8 @@ int CGameControllerPvp::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 				pKiller->GetCharacter()->m_ReloadTimer = 10;
 			}
 		}
-		EndSpree(pVictim->GetPlayer(), pKiller);
+		if(!(IsFngGameType() && !SuicideOrWorld))
+			EndSpree(pVictim->GetPlayer(), pKiller);
 	}
 	return 0;
 }
