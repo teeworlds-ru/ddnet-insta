@@ -767,7 +767,7 @@ int CGameControllerPvp::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 {
 	CGameControllerDDRace::OnCharacterDeath(pVictim, pKiller, Weapon);
 
-	const bool SuicideOrWorld = Weapon != WEAPON_SELF && Weapon != WEAPON_WORLD;
+	const bool SuicideOrWorld = Weapon == WEAPON_SELF || Weapon == WEAPON_WORLD;
 
 	// do scoreing
 	if(!pKiller || Weapon == WEAPON_GAME)
@@ -816,7 +816,7 @@ int CGameControllerPvp::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 				pKiller->GetCharacter()->m_ReloadTimer = 10;
 			}
 		}
-		if(SuicideOrWorld)
+		if(!(IsFngGameType() && !SuicideOrWorld))
 			EndSpree(pVictim->GetPlayer(), pKiller);
 	}
 	return 0;
