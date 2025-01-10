@@ -1668,3 +1668,14 @@ int CGameControllerPvp::GetFirstAlivePlayerId()
 			return pPlayer->GetCid();
 	return -1;
 }
+
+void CGameControllerPvp::KillAllPlayers()
+{
+	for(CPlayer *pPlayer : GameServer()->m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+
+		pPlayer->KillCharacter();
+	}
+}

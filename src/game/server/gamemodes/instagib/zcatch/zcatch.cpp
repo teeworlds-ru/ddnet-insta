@@ -91,6 +91,13 @@ void CGameControllerZcatch::SetCatchGameState(ECatchGameState State)
 		m_CatchGameState = ECatchGameState::RELEASE_GAME;
 		return;
 	}
+	if(State != m_CatchGameState)
+	{
+		if(State == ECatchGameState::RUNNING)
+			KillAllPlayers();
+		ReleaseAllPlayers();
+	}
+
 	m_CatchGameState = State;
 }
 
@@ -99,8 +106,9 @@ bool CGameControllerZcatch::IsWinner(const CPlayer *pPlayer, char *pMessage, int
 	if(pMessage && SizeOfMessage)
 		pMessage[0] = '\0';
 
-	// you can only win on round end
-	if(GameState() != IGS_END_ROUND)
+	// you can only win as last alive player
+	// used for disconnect IsWinner check
+	if(NumNonDeadActivePlayers() > 1)
 		return false;
 	if(pPlayer->GetTeam() == TEAM_SPECTATORS)
 		return false;
@@ -111,11 +119,11 @@ bool CGameControllerZcatch::IsWinner(const CPlayer *pPlayer, char *pMessage, int
 	// where everyone else is currently in a death screen
 	if(!pPlayer->m_Spree)
 		return false;
-	// you can not win a round with less than 5 kills
+	// you can not win a round with less than 4 kills
 	// if players leave after the game started
 	// before they got killed by the leading player
 	// the leading player has to wait for new players to join
-	if(pPlayer->m_KillsThatCount < MIN_ZCATCH_PLAYERS)
+	if(pPlayer->m_KillsThatCount < MIN_ZCATCH_KILLS)
 		return false;
 	// there are no winners in release games even if the round ends
 	if(!IsCatchGameRunning())
@@ -123,14 +131,15 @@ bool CGameControllerZcatch::IsWinner(const CPlayer *pPlayer, char *pMessage, int
 
 	if(pMessage)
 		str_copy(pMessage, "+1 win was saved on your name (see /rank_wins).", SizeOfMessage);
-	return !pPlayer->m_IsDead;
+
+	return true;
 }
 
 bool CGameControllerZcatch::IsLoser(const CPlayer *pPlayer)
 {
 	// you can only win running games
 	// so you can also only lose running games
-	if(IsGameRunning())
+	if(IsCatchGameRunning())
 		return false;
 
 	// rage quit as dead player is counted as a loss
@@ -152,8 +161,8 @@ int CGameControllerZcatch::PointsForWin(const CPlayer *pPlayer)
 	int Kills = pPlayer->m_KillsThatCount;
 	int Points = 0;
 	// 0 points should not be possible on round end
-	// because you can only end it with 5 or more kills
-	if(Kills < 5) // 1-4
+	// because you can only end it with 4 or more kills
+	if(Kills < 4) // 1-3
 		Points = 0;
 	else if(Kills <= 6) // 5-6
 		Points = 1;
@@ -483,10 +492,10 @@ void CGameControllerZcatch::DoTeamChange(CPlayer *pPlayer, int Team, bool DoChat
 
 	CGameControllerInstagib::DoTeamChange(pPlayer, Team, DoChatMsg);
 
-	CheckGameState();
+	CheckChangeGameState();
 }
 
-void CGameControllerZcatch::CheckGameState()
+bool CGameControllerZcatch::CheckChangeGameState()
 {
 	int ActivePlayers = NumActivePlayers();
 
@@ -494,18 +503,20 @@ void CGameControllerZcatch::CheckGameState()
 	{
 		SendChatTarget(-1, "Enough players connected. Starting game!");
 		SetCatchGameState(ECatchGameState::RUNNING);
+		return true;
 	}
 	else if(ActivePlayers < MIN_ZCATCH_PLAYERS && CatchGameState() == ECatchGameState::RUNNING)
 	{
 		CPlayer *pBestPlayer = PlayerWithMostKillsThatCount();
-
 		// not enough players alive to win the round
-		if(!pBestPlayer || pBestPlayer->m_KillsThatCount + NumNonDeadActivePlayers() < MIN_ZCATCH_PLAYERS)
+		if(!pBestPlayer || pBestPlayer->m_KillsThatCount + NumNonDeadActivePlayers() < MIN_ZCATCH_KILLS)
 		{
 			SendChatTarget(-1, "Not enough players connected anymore. Starting release game.");
 			SetCatchGameState(ECatchGameState::WAITING_FOR_PLAYERS);
+			return true;
 		}
 	}
+	return false;
 }
 
 int CGameControllerZcatch::GetAutoTeam(int NotThisId)
@@ -532,10 +543,9 @@ void CGameControllerZcatch::OnPlayerConnect(CPlayer *pPlayer)
 	}
 
 	CGameControllerInstagib::OnPlayerConnect(pPlayer);
-	CheckGameState();
 
 	int KillerId = GetHighestSpreeClientId();
-	if(KillerId != -1)
+	if(KillerId != -1 && IsCatchGameRunning() && IsGameRunning())
 	{
 		// avoid team change message by pre setting it
 		pPlayer->SetTeamRaw(TEAM_SPECTATORS);
@@ -559,10 +569,13 @@ void CGameControllerZcatch::OnPlayerConnect(CPlayer *pPlayer)
 	SetCatchColors(pPlayer);
 	SendSkinBodyColor7(pPlayer->GetCid(), pPlayer->m_TeeInfos.m_ColorBody);
 
-	if(CatchGameState() == ECatchGameState::WAITING_FOR_PLAYERS)
-		SendChatTarget(pPlayer->GetCid(), "Waiting for more players to start the round.");
-	else if(CatchGameState() == ECatchGameState::RELEASE_GAME)
-		SendChatTarget(pPlayer->GetCid(), "This is a release game.");
+	if(!CheckChangeGameState())
+	{
+		if(CatchGameState() == ECatchGameState::WAITING_FOR_PLAYERS)
+			SendChatTarget(pPlayer->GetCid(), "Waiting for more players to start the round.");
+		else if(CatchGameState() == ECatchGameState::RELEASE_GAME)
+			SendChatTarget(pPlayer->GetCid(), "This is a release game.");
+	}
 }
 
 void CGameControllerZcatch::OnPlayerDisconnect(class CPlayer *pDisconnectingPlayer, const char *pReason)
@@ -578,6 +591,8 @@ void CGameControllerZcatch::OnPlayerDisconnect(class CPlayer *pDisconnectingPlay
 
 		pPlayer->m_vVictimIds.erase(std::remove(pPlayer->m_vVictimIds.begin(), pPlayer->m_vVictimIds.end(), pDisconnectingPlayer->GetCid()), pPlayer->m_vVictimIds.end());
 	}
+
+	CheckChangeGameState();
 }
 
 bool CGameControllerZcatch::OnEntity(int Index, int x, int y, int Layer, int Flags, bool Initial, int Number)
@@ -608,27 +623,35 @@ bool CGameControllerZcatch::DoWincheckRound()
 			}
 		}
 		if(!GotWinner)
+		{
+			SendChatTarget(-1, "Nobody won. Starting release game.");
+			SetCatchGameState(ECatchGameState::WAITING_FOR_PLAYERS);
 			return false;
+		}
 
 		EndRound();
-
-		for(CPlayer *pPlayer : GameServer()->m_apPlayers)
-		{
-			if(!pPlayer)
-				continue;
-
-			// only release players that actually died
-			// not all spectators
-			if(pPlayer->m_IsDead)
-			{
-				pPlayer->m_IsDead = false;
-				pPlayer->SetTeamNoKill(TEAM_RED);
-			}
-		}
+		ReleaseAllPlayers();
 
 		return true;
 	}
 	return false;
+}
+
+void CGameControllerZcatch::ReleaseAllPlayers()
+{
+	for(CPlayer *pPlayer : GameServer()->m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+
+		// only release players that actually died
+		// not all spectators
+		if(pPlayer->m_IsDead)
+		{
+			pPlayer->m_IsDead = false;
+			pPlayer->SetTeamNoKill(TEAM_RED);
+		}
+	}
 }
 
 CPlayer *CGameControllerZcatch::PlayerWithMostKillsThatCount()

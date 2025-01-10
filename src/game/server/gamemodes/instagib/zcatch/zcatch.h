@@ -85,6 +85,7 @@ public:
 };
 
 #define MIN_ZCATCH_PLAYERS 5
+#define MIN_ZCATCH_KILLS 4
 
 class CGameControllerZcatch : public CGameControllerInstagib
 {
@@ -144,8 +145,9 @@ public:
 	ECatchGameState m_CatchGameState = ECatchGameState::WAITING_FOR_PLAYERS;
 	ECatchGameState CatchGameState() const;
 	void SetCatchGameState(ECatchGameState State);
+	void ReleaseAllPlayers();
 
-	void CheckGameState();
+	bool CheckChangeGameState();
 	bool IsCatchGameRunning() const;
 
 	// colors

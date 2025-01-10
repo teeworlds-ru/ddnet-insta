@@ -148,6 +148,9 @@ public:
 	// returns -1 if no player is alive
 	int GetFirstAlivePlayerId();
 
+	// kills the tee of all connected players
+	void KillAllPlayers();
+
 	/*
 		m_pExtraColums
 
