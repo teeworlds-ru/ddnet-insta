@@ -69,6 +69,7 @@ public:
 	void AddMapToRandomPool(const char *pMap) override;
 	void ClearRandomMapPool() override;
 	const char *GetRandomMapFromPool() override;
+	static void ConRedirect(IConsole::IResult *pResult, void *pUser);
 
 private:
 	friend class CServerLogger;
