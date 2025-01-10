@@ -430,15 +430,12 @@ bool CGameControllerZcatch::OnSetTeamNetMessage(const CNetMsg_Cl_SetTeam *pMsg, 
 bool CGameControllerZcatch::CanJoinTeam(int Team, int NotThisId, char *pErrorReason, int ErrorReasonSize)
 {
 	CPlayer *pPlayer = GameServer()->m_apPlayers[NotThisId];
-	if(!pPlayer)
-		return false;
-
-	if(pPlayer->m_IsDead && Team != TEAM_SPECTATORS)
+	if(pPlayer && pPlayer->m_IsDead && Team != TEAM_SPECTATORS)
 	{
 		str_format(pErrorReason, ErrorReasonSize, "Wait until '%s' dies", Server()->ClientName(pPlayer->m_KillerId));
 		return false;
 	}
-	return true;
+	return CGameControllerInstagib::CanJoinTeam(Team, NotThisId, pErrorReason, ErrorReasonSize);
 }
 
 void CGameControllerZcatch::UpdateCatchTicks(class CPlayer *pPlayer)
