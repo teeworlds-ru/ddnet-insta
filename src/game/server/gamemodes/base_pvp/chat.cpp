@@ -142,15 +142,41 @@ bool CGameControllerPvp::OnBangCommand(int ClientId, const char *pCmd, int NumAr
 	if(!pPlayer)
 		return false;
 
+	if(!g_Config.m_SvBangCommands)
+	{
+		SendChatTarget(ClientId, "This command is currently disabled.");
+		return false;
+	}
+
 	if(!str_comp_nocase(pCmd, "set") || !str_comp_nocase(pCmd, "sett") || !str_comp_nocase(pCmd, "settings") || !str_comp_nocase(pCmd, "config"))
 	{
 		GameServer()->ShowCurrentInstagibConfigsMotd(ClientId, true);
 		return true;
 	}
+	else if(!str_comp_nocase(pCmd, "gamestate"))
+	{
+		if(NumArgs > 0)
+		{
+			if(!str_comp_nocase(ppArgs[0], "on"))
+				pPlayer->m_GameStateBroadcast = true;
+			else if(!str_comp_nocase(ppArgs[0], "off"))
+				pPlayer->m_GameStateBroadcast = false;
+			else
+				SendChatTarget(ClientId, "usage: !gamestate [on|off]");
+		}
+		else
+			pPlayer->m_GameStateBroadcast = !pPlayer->m_GameStateBroadcast;
+	}
 
 	if(pPlayer->GetTeam() == TEAM_SPECTATORS && !g_Config.m_SvSpectatorVotes)
 	{
 		SendChatTarget(ClientId, "Spectators aren't allowed to vote.");
+		return false;
+	}
+
+	if(g_Config.m_SvBangCommands < 2)
+	{
+		SendChatTarget(ClientId, "Chat votes are disabled please use the vote menu.");
 		return false;
 	}
 
@@ -198,20 +224,6 @@ bool CGameControllerPvp::OnBangCommand(int ClientId, const char *pCmd, int NumAr
 	else if(!str_comp_nocase(pCmd, "swap_random"))
 	{
 		GameServer()->ComCallSwapTeamsRandomVote(ClientId);
-	}
-	else if(!str_comp_nocase(pCmd, "gamestate"))
-	{
-		if(NumArgs > 0)
-		{
-			if(!str_comp_nocase(ppArgs[0], "on"))
-				pPlayer->m_GameStateBroadcast = true;
-			else if(!str_comp_nocase(ppArgs[0], "off"))
-				pPlayer->m_GameStateBroadcast = false;
-			else
-				SendChatTarget(ClientId, "usage: !gamestate [on|off]");
-		}
-		else
-			pPlayer->m_GameStateBroadcast = !pPlayer->m_GameStateBroadcast;
 	}
 	else
 	{

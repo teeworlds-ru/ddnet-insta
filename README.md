@@ -227,6 +227,7 @@ Below is a list of all the settings that were added in ddnet-insta.
 + `sv_gametype` Game type (gctf, ictf, gdm, idm, gtdm, itdm, zcatch, bolofng, solofng, boomfng, fng)
 + `sv_spectator_votes` Allow spectators to vote
 + `sv_spectator_votes_sixup` Allow 0.7 players to vote as spec if sv_spectator_vote is 1 (hacky dead spec)
++ `sv_bang_commands` chat cmds like !1vs1 0=off 1=read only no votes 2=all commands
 + `sv_countdown_unpause` Number of seconds to freeze the game in a countdown before match continues after pause
 + `sv_countdown_round_start` Number of seconds to freeze the game in a countdown before match starts (0 enables only for survival gamemodes, -1 disables)
 + `sv_scorelimit` Score limit (0 disables)
