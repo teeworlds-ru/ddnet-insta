@@ -75,12 +75,24 @@ void CGameControllerPvp::OnRoundStart()
 		SetGameState(IGS_START_COUNTDOWN_ROUND_START);
 	}
 
-	// for(CPlayer *pPlayer : GameServer()->m_apPlayers)
-	// {
-	// 	if(!pPlayer)
-	// 		continue;
+	// yes the config says round end and the code is round start
+	// that is because every round start means there was a round end before
+	// so it is correct
 	//
-	// }
+	// round end is too early because then players do not see the final scoreboard
+	if(g_Config.m_SvRedirectAndShutdownOnRoundEnd)
+	{
+		for(int i = 0; i < MAX_CLIENTS; i++)
+			if(Server()->ClientIngame(i))
+				Server()->RedirectClient(i, g_Config.m_SvRedirectAndShutdownOnRoundEnd);
+
+		// add a 3 second delay to make sure the server can fully finish the round end
+		// everything is shutdown and saved correctly
+		//
+		// and also give the clients some time to receive the redirect message
+		// in case there is some network overload or hiccups
+		m_TicksUntilShutdown = Server()->TickSpeed() * 3;
+	}
 }
 
 CGameControllerPvp::~CGameControllerPvp()
@@ -930,6 +942,15 @@ void CGameControllerPvp::CheckForceUnpauseGame()
 void CGameControllerPvp::Tick()
 {
 	CGameControllerDDRace::Tick();
+
+	if(m_TicksUntilShutdown)
+	{
+		m_TicksUntilShutdown--;
+		if(m_TicksUntilShutdown < 1)
+		{
+			Server()->ShutdownServer();
+		}
+	}
 
 	if(Config()->m_SvPlayerReadyMode && GameServer()->m_World.m_Paused)
 	{

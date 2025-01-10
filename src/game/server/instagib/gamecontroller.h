@@ -624,6 +624,12 @@ public:
 	*/
 	int64_t m_GamePauseStartTime;
 
+	// if it is greater than 0 it means in that many
+	// ticks the server will be shutdown
+	//
+	// depends on the base pvp controller to tick
+	int m_TicksUntilShutdown = 0;
+
 	bool IsSkinChangeAllowed() const { return m_AllowSkinChange; }
 	int GameFlags() const { return m_GameFlags; }
 
