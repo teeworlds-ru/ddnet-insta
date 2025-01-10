@@ -94,7 +94,7 @@ public:
 
 	int m_aBodyColors[MAX_CLIENTS] = {0};
 
-	void KillPlayer(class CPlayer *pVictim, class CPlayer *pKiller);
+	void KillPlayer(class CPlayer *pVictim, class CPlayer *pKiller, bool KillCounts);
 	void OnCaught(class CPlayer *pVictim, class CPlayer *pKiller);
 	void ReleasePlayer(class CPlayer *pPlayer, const char *pMsg);
 

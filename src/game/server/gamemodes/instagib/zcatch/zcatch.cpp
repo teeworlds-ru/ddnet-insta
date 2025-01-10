@@ -64,6 +64,12 @@ void CGameControllerZcatch::OnShowRoundStats(const CSqlStatsPlayer *pStats, clas
 
 	str_format(aBuf, sizeof(aBuf), "~ Seconds caught: %d", pStats->m_TicksCaught / Server()->TickSpeed());
 	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	str_format(aBuf, sizeof(aBuf), "~ Kills that give points on win: %d", pRequestingPlayer->m_KillsThatCount);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	str_format(aBuf, sizeof(aBuf), "~ Kills that can be released: %d", pRequestingPlayer->m_vVictimIds.size());
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
 }
 
 CGameControllerZcatch::ECatchGameState CGameControllerZcatch::CatchGameState() const
@@ -137,7 +143,7 @@ bool CGameControllerZcatch::IsPlaying(const CPlayer *pPlayer)
 
 int CGameControllerZcatch::PointsForWin(const CPlayer *pPlayer)
 {
-	int Kills = pPlayer->m_vVictimIds.size();
+	int Kills = pPlayer->m_KillsThatCount;
 	int Points = 0;
 	if(Kills < 5) // 1-4
 		Points = 0;
@@ -284,10 +290,12 @@ bool CGameControllerZcatch::OnSelfkill(int ClientId)
 	str_format(aBuf, sizeof(aBuf), "You released '%s' (%d players left)", Server()->ClientName(pVictim->GetCid()), pPlayer->m_vVictimIds.size());
 	SendChatTarget(ClientId, aBuf);
 
+	pPlayer->m_KillsThatCount--;
+
 	return true;
 }
 
-void CGameControllerZcatch::KillPlayer(class CPlayer *pVictim, class CPlayer *pKiller)
+void CGameControllerZcatch::KillPlayer(class CPlayer *pVictim, class CPlayer *pKiller, bool KillCounts)
 {
 	if(!pKiller)
 		return;
@@ -318,7 +326,11 @@ void CGameControllerZcatch::KillPlayer(class CPlayer *pVictim, class CPlayer *pK
 
 	int Found = count(pKiller->m_vVictimIds.begin(), pKiller->m_vVictimIds.end(), pVictim->GetCid());
 	if(!Found)
+	{
 		pKiller->m_vVictimIds.emplace_back(pVictim->GetCid());
+		if(KillCounts)
+			pKiller->m_KillsThatCount++;
+	}
 }
 
 void CGameControllerZcatch::OnCaught(class CPlayer *pVictim, class CPlayer *pKiller)
@@ -341,12 +353,13 @@ void CGameControllerZcatch::OnCaught(class CPlayer *pVictim, class CPlayer *pKil
 		return;
 	}
 
-	KillPlayer(pVictim, pKiller);
+	KillPlayer(pVictim, pKiller, true);
 }
 
 int CGameControllerZcatch::OnCharacterDeath(class CCharacter *pVictim, class CPlayer *pKiller, int WeaponId)
 {
 	CGameControllerInstagib::OnCharacterDeath(pVictim, pKiller, WeaponId);
+	pVictim->GetPlayer()->m_KillsThatCount = 0;
 
 	// TODO: revisit this edge case when zcatch is done
 	//       a killer leaving while the bullet is flying
@@ -504,7 +517,7 @@ void CGameControllerZcatch::OnPlayerConnect(CPlayer *pPlayer)
 	{
 		// avoid team change message by pre setting it
 		pPlayer->SetTeamRaw(TEAM_SPECTATORS);
-		KillPlayer(pPlayer, GameServer()->m_apPlayers[KillerId]);
+		KillPlayer(pPlayer, GameServer()->m_apPlayers[KillerId], false);
 
 		char aBuf[512];
 		str_format(aBuf, sizeof(aBuf), "'%s' is now spectating you (selfkill to release them)", Server()->ClientName(pPlayer->GetCid()));
