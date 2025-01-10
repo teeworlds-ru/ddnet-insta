@@ -265,8 +265,8 @@ Below is a list of all the settings that were added in ddnet-insta.
 + `sv_anticamper_freeze` If a player should freeze on camping (and how long) or die
 + `sv_anticamper_time` How long to wait till the player dies/freezes
 + `sv_anticamper_range` Distance how far away the player must move to escape anticamper
-+ `sv_zcatch_min_players` How many active players (not spectators) are required to start a round
 + `sv_release_game` auto release on kill (only affects sv_gametype zCatch)
++ `sv_zcatch_require_multiple_ips_to_start` only start games if 5 or more different ips are connected
 + `sv_respawn_protection_ms` Delay in milliseconds a tee can not damage or get damaged after spawning
 + `sv_drop_flag_on_selfkill` drop flag on selfkill (activates chat cmd '/drop flag')
 + `sv_drop_flag_on_vote` drop flag on vote yes (activates chat cmd '/drop flag')

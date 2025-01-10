@@ -501,8 +501,11 @@ bool CGameControllerZcatch::CheckChangeGameState()
 
 	if(ActivePlayers >= MIN_ZCATCH_PLAYERS && CatchGameState() == ECatchGameState::WAITING_FOR_PLAYERS)
 	{
-		SendChatTarget(-1, "Enough players connected. Starting game!");
-		SetCatchGameState(ECatchGameState::RUNNING);
+		if(!g_Config.m_SvZcatchRequireMultipleIpsToStart || NumConnectedIps() >= MIN_ZCATCH_PLAYERS)
+		{
+			SendChatTarget(-1, "Enough players connected. Starting game!");
+			SetCatchGameState(ECatchGameState::RUNNING);
+		}
 		return true;
 	}
 	else if(ActivePlayers < MIN_ZCATCH_PLAYERS && CatchGameState() == ECatchGameState::RUNNING)
