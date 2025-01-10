@@ -84,6 +84,8 @@ public:
 	}
 };
 
+#define MIN_ZCATCH_PLAYERS 5
+
 class CGameControllerZcatch : public CGameControllerInstagib
 {
 public:
@@ -123,10 +125,22 @@ public:
 
 	enum class ECatchGameState
 	{
+		// automatic warmup phase if there is less than 5 players
+		// will switch to RUNNING as soon as there are enough
 		WAITING_FOR_PLAYERS,
+
+		// manually voted release game can also be played with 16 or more players
+		// will only change its state to RUNNING if the users vote for it again
 		RELEASE_GAME,
+
+		// regular round is running needs 5 or more players to start
+		// but once started the winner will get a win in the stats system
+		// the amount of points depends on the amount of kills
+		//
+		// the gamestate can not be downgraded again during a round
+		// if there is enough players to start and everyone leaves the game
+		// there still will be a winner that receives a full win in the stats system
 		RUNNING,
-		RUNNING_COMPETITIVE, // NEEDS 10 OR MORE TO START A REAL ROUND
 	};
 	ECatchGameState m_CatchGameState = ECatchGameState::WAITING_FOR_PLAYERS;
 	ECatchGameState CatchGameState() const;

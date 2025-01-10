@@ -75,8 +75,7 @@ CGameControllerZcatch::ECatchGameState CGameControllerZcatch::CatchGameState() c
 
 bool CGameControllerZcatch::IsCatchGameRunning() const
 {
-	return CatchGameState() == ECatchGameState::RUNNING ||
-	       CatchGameState() == ECatchGameState::RUNNING_COMPETITIVE;
+	return CatchGameState() == ECatchGameState::RUNNING;
 }
 
 void CGameControllerZcatch::SetCatchGameState(ECatchGameState State)
@@ -109,13 +108,6 @@ bool CGameControllerZcatch::IsWinner(const CPlayer *pPlayer, char *pMessage, int
 	// there are no winners in release games even if the round ends
 	if(!IsCatchGameRunning())
 		return false;
-	// the win does not count in casual rounds
-	if(CatchGameState() != ECatchGameState::RUNNING_COMPETITIVE)
-	{
-		if(pMessage)
-			str_copy(pMessage, "The win did not count because the round was started with less than 10 players.", SizeOfMessage);
-		return false;
-	}
 
 	if(pMessage)
 		str_copy(pMessage, "+1 win was saved on your name (see /rank_wins).", SizeOfMessage);
@@ -124,9 +116,9 @@ bool CGameControllerZcatch::IsWinner(const CPlayer *pPlayer, char *pMessage, int
 
 bool CGameControllerZcatch::IsLoser(const CPlayer *pPlayer)
 {
-	// because you can not win a casual game
-	// it does also not track your loss
-	if(CatchGameState() != ECatchGameState::RUNNING_COMPETITIVE)
+	// you can only win running games
+	// so you can also only lose running games
+	if(IsGameRunning())
 		return false;
 
 	// rage quit as dead player is counted as a loss
@@ -184,7 +176,7 @@ void CGameControllerZcatch::OnRoundStart()
 	CGameControllerInstagib::OnRoundStart();
 
 	int ActivePlayers = NumActivePlayers();
-	if(ActivePlayers < g_Config.m_SvZcatchMinPlayers && CatchGameState() != ECatchGameState::RELEASE_GAME)
+	if(ActivePlayers < MIN_ZCATCH_PLAYERS && CatchGameState() != ECatchGameState::RELEASE_GAME)
 	{
 		SendChatTarget(-1, "Not enough players to start a round");
 		SetCatchGameState(ECatchGameState::WAITING_FOR_PLAYERS);
@@ -474,21 +466,9 @@ void CGameControllerZcatch::CheckGameState()
 {
 	int ActivePlayers = NumActivePlayers();
 
-	const int CompetitiveMin = 10;
-
-	if(ActivePlayers >= CompetitiveMin && CatchGameState() != ECatchGameState::RUNNING_COMPETITIVE)
-	{
-		SendChatTarget(-1, "Enough players connected. Starting competitive game!");
-		SetCatchGameState(ECatchGameState::RUNNING_COMPETITIVE);
-	}
-	else if(ActivePlayers >= g_Config.m_SvZcatchMinPlayers && CatchGameState() == ECatchGameState::WAITING_FOR_PLAYERS)
+	if(ActivePlayers >= MIN_ZCATCH_PLAYERS && CatchGameState() == ECatchGameState::WAITING_FOR_PLAYERS)
 	{
 		SendChatTarget(-1, "Enough players connected. Starting game!");
-		SetCatchGameState(ECatchGameState::RUNNING);
-	}
-	else if(ActivePlayers < CompetitiveMin && CatchGameState() == ECatchGameState::RUNNING_COMPETITIVE)
-	{
-		SendChatTarget(-1, "Not enough players connected anymore. Starting casual game!");
 		SetCatchGameState(ECatchGameState::RUNNING);
 	}
 }
