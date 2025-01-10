@@ -133,13 +133,12 @@ public:
 		// will only change its state to RUNNING if the users vote for it again
 		RELEASE_GAME,
 
-		// regular round is running needs 5 or more players to start
-		// but once started the winner will get a win in the stats system
-		// the amount of points depends on the amount of kills
+		// Regular round is running. Needs 5 or more players to start
+		// the amount of points for the win depends on the amount of kills
 		//
-		// the gamestate can not be downgraded again during a round
-		// if there is enough players to start and everyone leaves the game
-		// there still will be a winner that receives a full win in the stats system
+		// as long as there is still a player that already made a kill
+		// and there are enough players in game to end the round the game will keep going
+		// otherwise it will revert back to WAITING_FOR_PLAYERS
 		RUNNING,
 	};
 	ECatchGameState m_CatchGameState = ECatchGameState::WAITING_FOR_PLAYERS;
@@ -166,9 +165,10 @@ public:
 	int GetBodyColorSavander(int Kills);
 
 	void SetCatchColors(class CPlayer *pPlayer);
-
 	void SendSkinBodyColor7(int ClientId, int Color);
-
 	void OnUpdateZcatchColorConfig() override;
+
+	// returns nullptr if nobody made a kill yet that counts
+	CPlayer *PlayerWithMostKillsThatCount();
 };
 #endif // GAME_SERVER_GAMEMODES_ZCATCH_H

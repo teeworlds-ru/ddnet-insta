@@ -111,6 +111,12 @@ bool CGameControllerZcatch::IsWinner(const CPlayer *pPlayer, char *pMessage, int
 	// where everyone else is currently in a death screen
 	if(!pPlayer->m_Spree)
 		return false;
+	// you can not win a round with less than 5 kills
+	// if players leave after the game started
+	// before they got killed by the leading player
+	// the leading player has to wait for new players to join
+	if(pPlayer->m_KillsThatCount < MIN_ZCATCH_PLAYERS)
+		return false;
 	// there are no winners in release games even if the round ends
 	if(!IsCatchGameRunning())
 		return false;
@@ -145,6 +151,8 @@ int CGameControllerZcatch::PointsForWin(const CPlayer *pPlayer)
 {
 	int Kills = pPlayer->m_KillsThatCount;
 	int Points = 0;
+	// 0 points should not be possible on round end
+	// because you can only end it with 5 or more kills
 	if(Kills < 5) // 1-4
 		Points = 0;
 	else if(Kills <= 6) // 5-6
@@ -232,6 +240,9 @@ void CGameControllerZcatch::OnCharacterSpawn(class CCharacter *pChr)
 	CGameControllerInstagib::OnCharacterSpawn(pChr);
 
 	SetSpawnWeapons(pChr);
+
+	// just to be sure
+	pChr->GetPlayer()->m_KillsThatCount = 0;
 }
 
 int CGameControllerZcatch::GetPlayerTeam(class CPlayer *pPlayer, bool Sixup)
@@ -484,6 +495,17 @@ void CGameControllerZcatch::CheckGameState()
 		SendChatTarget(-1, "Enough players connected. Starting game!");
 		SetCatchGameState(ECatchGameState::RUNNING);
 	}
+	else if(ActivePlayers < MIN_ZCATCH_PLAYERS && CatchGameState() == ECatchGameState::RUNNING)
+	{
+		CPlayer *pBestPlayer = PlayerWithMostKillsThatCount();
+
+		// not enough players alive to win the round
+		if(!pBestPlayer || pBestPlayer->m_KillsThatCount + NumNonDeadActivePlayers() < MIN_ZCATCH_PLAYERS)
+		{
+			SendChatTarget(-1, "Not enough players connected anymore. Starting release game.");
+			SetCatchGameState(ECatchGameState::WAITING_FOR_PLAYERS);
+		}
+	}
 }
 
 int CGameControllerZcatch::GetAutoTeam(int NotThisId)
@@ -568,34 +590,25 @@ bool CGameControllerZcatch::DoWincheckRound()
 {
 	if(IsCatchGameRunning() && NumNonDeadActivePlayers() <= 1)
 	{
+		bool GotWinner = false;
 		for(CPlayer *pPlayer : GameServer()->m_apPlayers)
 		{
 			if(!pPlayer)
 				continue;
 
 			// this player ended the round
-			if(!pPlayer->m_IsDead && IsCatchGameRunning() && pPlayer->GetTeam() != TEAM_SPECTATORS)
+			if(IsWinner(pPlayer, 0, 0))
 			{
 				char aBuf[512];
-				str_format(aBuf, sizeof(aBuf), "'%s' won the round.", Server()->ClientName(pPlayer->GetCid()));
-				if(!IsWinner(pPlayer, 0, 0))
-				{
-					// if the win did not count because there were less than 10
-					// players we still give the winner points
-					int Points = PointsForWin(pPlayer);
-					if(!Points)
-					{
-						str_format(aBuf, sizeof(aBuf), "'%s' won the round (not enough kills to gain points).", Server()->ClientName(pPlayer->GetCid()));
-					}
-					else
-					{
-						pPlayer->m_Stats.m_Points += Points;
-						str_format(aBuf, sizeof(aBuf), "'%s' won the round and gained %d points.", Server()->ClientName(pPlayer->GetCid()), Points);
-					}
-				}
+				int Points = PointsForWin(pPlayer);
+				pPlayer->m_Stats.m_Points += Points;
+				str_format(aBuf, sizeof(aBuf), "'%s' won the round and gained %d points.", Server()->ClientName(pPlayer->GetCid()), Points);
 				SendChat(-1, TEAM_ALL, aBuf);
+				GotWinner = true;
 			}
 		}
+		if(!GotWinner)
+			return false;
 
 		EndRound();
 
@@ -616,6 +629,23 @@ bool CGameControllerZcatch::DoWincheckRound()
 		return true;
 	}
 	return false;
+}
+
+CPlayer *CGameControllerZcatch::PlayerWithMostKillsThatCount()
+{
+	CPlayer *pBestKiller = nullptr;
+	int HighestCount = 0;
+	for(CPlayer *pPlayer : GameServer()->m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+		if(pPlayer->m_KillsThatCount <= HighestCount)
+			continue;
+
+		pBestKiller = pPlayer;
+		HighestCount = pPlayer->m_KillsThatCount;
+	}
+	return pBestKiller;
 }
 
 void CGameControllerZcatch::Snap(int SnappingClient)

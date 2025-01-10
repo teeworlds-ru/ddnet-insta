@@ -46,7 +46,7 @@ public:
 	// if the player wins
 	//
 	// it includes players that left the game so it might be more than m_vVictimIds.size()
-	// and it does not include players that were released
+	// and it does not include players that were released so it is more than m_Spree
 	int m_KillsThatCount = 0;
 
 	/*******************************************************************
