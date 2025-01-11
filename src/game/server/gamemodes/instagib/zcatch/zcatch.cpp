@@ -317,7 +317,13 @@ bool CGameControllerZcatch::OnSelfkill(int ClientId)
 	str_format(aBuf, sizeof(aBuf), "You released '%s' (%d players left)", Server()->ClientName(pVictim->GetCid()), pPlayer->m_vVictimIds.size());
 	SendChatTarget(ClientId, aBuf);
 
-	pPlayer->m_KillsThatCount--;
+	// the kill count should never go negative
+	// that could happen if you made 1 kill and then 3 new spectators joined
+	// if all of them get released manually we should arrive at 0 kills
+	// not at -2
+	//
+	// https://github.com/ddnet-insta/ddnet-insta/issues/225
+	pPlayer->m_KillsThatCount = std::max(0, pPlayer->m_KillsThatCount - 1);
 
 	return true;
 }
