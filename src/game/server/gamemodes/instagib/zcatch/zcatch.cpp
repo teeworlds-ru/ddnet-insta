@@ -524,7 +524,7 @@ bool CGameControllerZcatch::CheckChangeGameState()
 
 int CGameControllerZcatch::GetAutoTeam(int NotThisId)
 {
-	if(IsCatchGameRunning() && GetHighestSpreeClientId() != -1)
+	if(IsCatchGameRunning() && PlayerWithMostKillsThatCount())
 	{
 		return TEAM_SPECTATORS;
 	}
@@ -547,16 +547,16 @@ void CGameControllerZcatch::OnPlayerConnect(CPlayer *pPlayer)
 
 	CGameControllerInstagib::OnPlayerConnect(pPlayer);
 
-	int KillerId = GetHighestSpreeClientId();
-	if(KillerId != -1 && IsCatchGameRunning() && IsGameRunning())
+	CPlayer *pBestPlayer = PlayerWithMostKillsThatCount();
+	if(pBestPlayer && IsCatchGameRunning() && IsGameRunning())
 	{
 		// avoid team change message by pre setting it
 		pPlayer->SetTeamRaw(TEAM_SPECTATORS);
-		KillPlayer(pPlayer, GameServer()->m_apPlayers[KillerId], false);
+		KillPlayer(pPlayer, GameServer()->m_apPlayers[pBestPlayer->GetCid()], false);
 
 		char aBuf[512];
 		str_format(aBuf, sizeof(aBuf), "'%s' is now spectating you (selfkill to release them)", Server()->ClientName(pPlayer->GetCid()));
-		SendChatTarget(KillerId, aBuf);
+		SendChatTarget(pBestPlayer->GetCid(), aBuf);
 	}
 	// complicated way of saying not tournament mode
 	else if(CGameControllerInstagib::GetAutoTeam(pPlayer->GetCid()) != TEAM_SPECTATORS && pPlayer->GetTeam() == TEAM_SPECTATORS)
