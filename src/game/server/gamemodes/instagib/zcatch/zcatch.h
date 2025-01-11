@@ -147,6 +147,12 @@ public:
 	void SetCatchGameState(ECatchGameState State);
 	void ReleaseAllPlayers();
 
+	// sets up the gamestate of a fresh round
+	// can happen if the previous round ended
+	// or if we switch from a release game to
+	// a regular game
+	void StartZcatchRound();
+
 	bool CheckChangeGameState();
 	bool IsCatchGameRunning() const;
 

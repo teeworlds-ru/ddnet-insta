@@ -94,7 +94,10 @@ void CGameControllerZcatch::SetCatchGameState(ECatchGameState State)
 	if(State != m_CatchGameState)
 	{
 		if(State == ECatchGameState::RUNNING)
+		{
 			KillAllPlayers();
+			StartZcatchRound();
+		}
 		ReleaseAllPlayers();
 	}
 
@@ -194,6 +197,23 @@ int CGameControllerZcatch::PointsForWin(const CPlayer *pPlayer)
 	return Points;
 }
 
+void CGameControllerZcatch::StartZcatchRound()
+{
+	for(CPlayer *pPlayer : GameServer()->m_apPlayers)
+	{
+		if(!pPlayer)
+			continue;
+
+		pPlayer->m_GotRespawnInfo = false;
+		pPlayer->m_vVictimIds.clear(); // TODO: these victims have to be released!
+		pPlayer->m_KillerId = -1;
+
+		// resets the winners color
+		pPlayer->m_Spree = 0;
+		pPlayer->m_UntrackedSpree = 0;
+	}
+}
+
 void CGameControllerZcatch::OnRoundStart()
 {
 	CGameControllerInstagib::OnRoundStart();
@@ -204,20 +224,7 @@ void CGameControllerZcatch::OnRoundStart()
 		SendChatTarget(-1, "Not enough players to start a round");
 		SetCatchGameState(ECatchGameState::WAITING_FOR_PLAYERS);
 	}
-
-	for(CPlayer *pPlayer : GameServer()->m_apPlayers)
-	{
-		if(!pPlayer)
-			continue;
-
-		pPlayer->m_GotRespawnInfo = false;
-		pPlayer->m_vVictimIds.clear();
-		pPlayer->m_KillerId = -1;
-
-		// resets the winners color
-		pPlayer->m_Spree = 0;
-		pPlayer->m_UntrackedSpree = 0;
-	}
+	StartZcatchRound();
 }
 
 CGameControllerZcatch::~CGameControllerZcatch() = default;
