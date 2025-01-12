@@ -320,6 +320,7 @@ Below is a list of all the settings that were added in ddnet-insta.
 + `add_map_to_pool` Can be picked by random_map_from_pool command (entries can be duplicated to increase chance)
 + `clear_map_pool` Clears pool used by random_map_from_pool command
 + `random_map_from_pool` Changes to random map from pool (see add_map_to_pool)
++ `redirect` Redirect client to given port use victim -1 to redirect all
 
 # Chat commands
 
