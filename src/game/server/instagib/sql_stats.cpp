@@ -28,6 +28,7 @@ void CInstaSqlResult::SetVariant(EInstaSqlRequestType RequestType)
 	{
 	case EInstaSqlRequestType::CHAT_CMD_RANK:
 	case EInstaSqlRequestType::CHAT_CMD_STATSALL:
+	case EInstaSqlRequestType::CHAT_CMD_MULTIS:
 	case EInstaSqlRequestType::PLAYER_DATA:
 	case EInstaSqlRequestType::DIRECT:
 	case EInstaSqlRequestType::ALL:
@@ -183,11 +184,11 @@ void CSqlStats::LoadInstaPlayerData(int ClientId, const char *pTable)
 	ExecPlayerStatsThread(ShowStatsWorker, "load insta player data", ClientId, pName, pTable, EInstaSqlRequestType::PLAYER_DATA);
 }
 
-void CSqlStats::ShowStats(int ClientId, const char *pName, const char *pTable)
+void CSqlStats::ShowStats(int ClientId, const char *pName, const char *pTable, EInstaSqlRequestType RequestType)
 {
 	if(RateLimitPlayer(ClientId))
 		return;
-	ExecPlayerStatsThread(ShowStatsWorker, "show stats", ClientId, pName, pTable, EInstaSqlRequestType::CHAT_CMD_STATSALL);
+	ExecPlayerStatsThread(ShowStatsWorker, "show stats", ClientId, pName, pTable, RequestType);
 }
 
 void CSqlStats::ShowRank(

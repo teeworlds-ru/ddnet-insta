@@ -108,9 +108,32 @@ void CGameControllerBaseFng::OnShowStatsAll(const CSqlStatsPlayer *pStats, class
 			continue;
 
 		str_format(aBuf, sizeof(aBuf), "~  x%d multis %d", i + 2, pStats->m_aMultis[i]);
-		// if(i + 1 == MaxMultiLines)
-		// 	str_append(aBuf, ", see /multis for more");
+		if(i + 1 == MaxMultiLines)
+			str_append(aBuf, ", see /multis for more");
 
+		SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+	}
+}
+
+void CGameControllerBaseFng::OnShowMultis(const CSqlStatsPlayer *pStats, class CPlayer *pRequestingPlayer, const char *pRequestedName)
+{
+	char aBuf[512];
+	str_format(
+		aBuf,
+		sizeof(aBuf),
+		"~~~ all time multi stats for '%s'",
+		pRequestedName, pStats->m_Kills, Server()->ClientName(pRequestingPlayer->GetCid()));
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	str_format(aBuf, sizeof(aBuf), "~ Highest multi: %d", pStats->m_BestMulti);
+	GameServer()->SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
+
+	for(int i = 0; i < MAX_MULTIS; i++)
+	{
+		if(!pStats->m_aMultis[i])
+			continue;
+
+		str_format(aBuf, sizeof(aBuf), "~  x%d multis %d", i + 2, pStats->m_aMultis[i]);
 		SendChatTarget(pRequestingPlayer->GetCid(), aBuf);
 	}
 }

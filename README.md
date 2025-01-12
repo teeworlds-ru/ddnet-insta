@@ -343,6 +343,7 @@ ddnet-insta then added a bunch of own slash chat commands and also bang (!) chat
 + `/stats` Shows the current round stats of player name (your stats by default)
 + `/statsall` Shows the all time stats of player name (your stats by default)
 + `/stats_all` Shows the all time stats of player name (your stats by default)
++ `/multis` Shows the all time fng multi kill stats
 + `/points` Shows the all time points rank of player name (your stats by default)
 + `/rank_points` Shows the all time points rank of player name (your stats by default)
 + `/rank_kills` Shows the all time kills rank of player name (your stats by default)

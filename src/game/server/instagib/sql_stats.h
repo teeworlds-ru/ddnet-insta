@@ -29,6 +29,9 @@ enum class EInstaSqlRequestType
 	// /rank_xxx chat command
 	CHAT_CMD_RANK,
 
+	// /multis chat command
+	CHAT_CMD_MULTIS,
+
 	// initial stats load on connect
 	PLAYER_DATA,
 };
@@ -253,7 +256,7 @@ public:
 
 	void LoadInstaPlayerData(int ClientId, const char *pTable);
 
-	void ShowStats(int ClientId, const char *pName, const char *pTable);
+	void ShowStats(int ClientId, const char *pName, const char *pTable, EInstaSqlRequestType RequestType);
 	void ShowRank(int ClientId, const char *pName, const char *pRankColumnDisplay, const char *pRankColumnSql, const char *pTable, const char *pOrderBy);
 	void ShowTop(int ClientId, const char *pName, const char *pRankColumnDisplay, const char *pRankColumnSql, const char *pTable, const char *pOrderBy, int Offset);
 	void ShowFastcapRank(int ClientId, const char *pName, const char *pMap, const char *pGametype, bool Grenade, bool OnlyStatTrack);
