@@ -1387,7 +1387,7 @@ void CGameControllerPvp::DoTeamChange(CPlayer *pPlayer, int Team, bool DoChatMsg
 	str_format(aBuf, sizeof(aBuf), "team_join player='%d:%s' m_Team=%d", ClientId, Server()->ClientName(ClientId), Team);
 	GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
 
-	// OnPlayerInfoChange(pPlayer);
+	OnPlayerInfoChange(pPlayer);
 
 	// ddnet-insta
 
