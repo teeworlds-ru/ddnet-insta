@@ -128,6 +128,11 @@ public:
 	static void ConInstaModeCredits(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaCredits(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaTeam(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaLock(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaUnlock(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaInvite(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaJoin(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaTeam0Mode(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaTogglePause(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaToggleSpec(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaTogglePauseVoted(IConsole::IResult *pResult, void *pUserData);

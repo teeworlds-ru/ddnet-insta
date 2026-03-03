@@ -1,5 +1,5 @@
 // This file can be included several times.
-// doc gen ignore: ready, pause, shuffle, swap, drop, spec
+// doc gen ignore: ready, pause, shuffle, swap, drop, spec, team, lock, unlock, invite, join, team0mode
 
 #ifndef CHAT_COMMAND
 #error "The config macros must be defined"
@@ -19,8 +19,13 @@ CHAT_COMMAND("credits", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaModeCredits, 
 CHAT_COMMAND("credits_insta", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaCredits, this, "Shows the credits of the entire ddnet-insta project");
 CHAT_COMMAND("credits_ddnet", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConCredits, this, "Shows the credits of the DDNet mod");
 
-// "team" shadows a ddnet command
+// all these team related commands shadow ddnet commands
 CHAT_COMMAND("team", "?i[id]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaTeam, this, "Lets you join team i (shows your team if left blank)");
+CHAT_COMMAND("lock", "?i['0'|'1']", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaLock, this, "Toggle team lock so no one else can join and so the team restarts when a player dies. /lock 0 to unlock, /lock 1 to lock");
+CHAT_COMMAND("unlock", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaUnlock, this, "Unlock a team");
+CHAT_COMMAND("invite", "r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaInvite, this, "Invite a person to a locked team");
+CHAT_COMMAND("join", "r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaJoin, this, "Join the team of the specified player");
+CHAT_COMMAND("team0mode", "?i['0'|'1']", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaTeam0Mode, this, "Toggle team between team 0 and team mode. This mode will make your team behave like team 0.");
 
 // "rank" shadows a ddnet command
 CHAT_COMMAND("rank", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConRankCmdlist, this, "Lists available rank commands")

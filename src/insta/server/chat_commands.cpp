@@ -41,6 +41,86 @@ void CGameContext::ConInstaTeam(IConsole::IResult *pResult, void *pUserData)
 	ConTeam(pResult, pUserData);
 }
 
+void CGameContext::ConInstaLock(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!pSelf->m_pController)
+		return;
+
+	if(!g_Config.m_SvAllowDDRaceTeamChange)
+	{
+		log_info("chatresp", "The /lock chat command is currently disabled.");
+		return;
+	}
+
+	// ddnet
+	ConLock(pResult, pUserData);
+}
+
+void CGameContext::ConInstaUnlock(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!pSelf->m_pController)
+		return;
+
+	if(!g_Config.m_SvAllowDDRaceTeamChange)
+	{
+		log_info("chatresp", "The /unlock chat command is currently disabled.");
+		return;
+	}
+
+	// ddnet
+	ConUnlock(pResult, pUserData);
+}
+
+void CGameContext::ConInstaInvite(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!pSelf->m_pController)
+		return;
+
+	if(!g_Config.m_SvAllowDDRaceTeamChange)
+	{
+		log_info("chatresp", "The /invite chat command is currently disabled.");
+		return;
+	}
+
+	// ddnet
+	ConInvite(pResult, pUserData);
+}
+
+void CGameContext::ConInstaJoin(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!pSelf->m_pController)
+		return;
+
+	if(!g_Config.m_SvAllowDDRaceTeamChange)
+	{
+		log_info("chatresp", "The /join chat command is currently disabled.");
+		return;
+	}
+
+	// ddnet
+	ConJoin(pResult, pUserData);
+}
+
+void CGameContext::ConInstaTeam0Mode(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!pSelf->m_pController)
+		return;
+
+	if(!g_Config.m_SvAllowDDRaceTeamChange)
+	{
+		log_info("chatresp", "The /team0mode chat command is currently disabled.");
+		return;
+	}
+
+	// ddnet
+	ConTeam0Mode(pResult, pUserData);
+}
+
 void CGameContext::ConInstaTogglePause(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;
