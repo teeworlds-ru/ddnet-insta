@@ -1513,6 +1513,7 @@ set(EXPECTED_DATA
   mapres/desert_mountains_new_background.png
   mapres/desert_mountains_new_foreground.png
   mapres/desert_sun.png
+  mapres/easter_0.7.png
   mapres/entities.png
   mapres/fadeout.png
   mapres/font_teeworlds.png
@@ -2007,6 +2008,8 @@ set_src(BASE GLOB_RECURSE src/base
   aio.h
   bezier.cpp
   bezier.h
+  bytes.cpp
+  bytes.h
   color.cpp
   color.h
   crashdump.cpp
@@ -2032,6 +2035,8 @@ set_src(BASE GLOB_RECURSE src/base
   math.h
   mem.cpp
   mem.h
+  os.cpp
+  os.h
   process.cpp
   process.h
   rust.h
