@@ -27,6 +27,20 @@ void CGameContext::ConInstaCredits(IConsole::IResult *pResult, void *pUserData)
 	pSelf->PrintInstaCredits();
 }
 
+void CGameContext::ConInstaTeam(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!pSelf->m_pController)
+		return;
+
+	// ddnet-insta
+	if(pSelf->m_pController->OnTeamChatCmd(pResult))
+		return;
+
+	// ddnet
+	ConTeam(pResult, pUserData);
+}
+
 void CGameContext::ConInstaTogglePause(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

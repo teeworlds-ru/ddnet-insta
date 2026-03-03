@@ -19,6 +19,9 @@ CHAT_COMMAND("credits", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaModeCredits, 
 CHAT_COMMAND("credits_insta", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaCredits, this, "Shows the credits of the entire ddnet-insta project");
 CHAT_COMMAND("credits_ddnet", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConCredits, this, "Shows the credits of the DDNet mod");
 
+// "team" shadows a ddnet command
+CHAT_COMMAND("team", "?i[id]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaTeam, this, "Lets you join team i (shows your team if left blank)");
+
 // "rank" shadows a ddnet command
 CHAT_COMMAND("rank", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConRankCmdlist, this, "Lists available rank commands")
 // "top5" shadows a ddnet command

@@ -1308,10 +1308,6 @@ void CGameContext::ConTeam(IConsole::IResult *pResult, void *pUserData)
 	if(!pPlayer)
 		return;
 
-	// ddnet-insta
-	if(pSelf->m_pController->OnTeamChatCmd(pResult))
-		return;
-
 	if(pResult->NumArguments() > 0)
 	{
 		pSelf->AttemptJoinTeam(pResult->m_ClientId, pResult->GetInteger(0));

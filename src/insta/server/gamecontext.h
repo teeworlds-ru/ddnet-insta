@@ -127,6 +127,7 @@ public:
 	// chat_commands.cpp
 	static void ConInstaModeCredits(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaCredits(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaTeam(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaTogglePause(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaToggleSpec(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaTogglePauseVoted(IConsole::IResult *pResult, void *pUserData);
