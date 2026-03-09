@@ -3,6 +3,7 @@
 #include <base/log.h>
 #include <base/str.h>
 #include <base/system.h>
+#include <base/time.h>
 
 #include <engine/server/databases/connection.h>
 #include <engine/server/databases/connection_pool.h>
@@ -575,7 +576,7 @@ bool CSqlStats::ShowFastcapTopWorker(IDbConnection *pSqlServer, const ISqlData *
 		char aName[MAX_NAME_LENGTH];
 		pSqlServer->GetString(1, aName, sizeof(aName));
 		float Time = pSqlServer->GetFloat(2);
-		str_time_float(Time, TIME_HOURS_CENTISECS, aTime, sizeof(aTime));
+		str_time_float(Time, ETimeFormat::HOURS_CENTISECS, aTime, sizeof(aTime));
 		int Rank = pSqlServer->GetInt(3);
 		str_format(pResult->m_aaMessages[Line], sizeof(pResult->m_aaMessages[Line]),
 			"%d. '%s' - Time: %s", Rank, aName, aTime);
@@ -636,7 +637,7 @@ bool CSqlStats::ShowFastcapRankWorker(IDbConnection *pSqlServer, const ISqlData 
 		float Time = pSqlServer->GetFloat(2);
 		// CEIL and FLOOR are not supported in SQLite
 		int BetterThanPercent = std::floor(100.0f - (100.0f * pSqlServer->GetFloat(3)));
-		str_time_float(Time, TIME_HOURS_CENTISECS, aBuf, sizeof(aBuf));
+		str_time_float(Time, ETimeFormat::HOURS_CENTISECS, aBuf, sizeof(aBuf));
 
 		if(str_comp_nocase(pData->m_aRequestingPlayer, pData->m_aName) == 0)
 		{
