@@ -2,6 +2,7 @@
 
 #include <base/log.h>
 #include <base/system.h>
+#include <base/time.h>
 
 #include <engine/console.h>
 #include <engine/server/server.h>
@@ -520,7 +521,7 @@ void CGameControllerInstaCore::OnFlagCapture(CFlag *pFlag, float Time, int TimeT
 		bool Grenade = IsGrenadeGameType();
 
 		char aTimestamp[TIMESTAMP_STR_LENGTH];
-		str_timestamp_format(aTimestamp, sizeof(aTimestamp), FORMAT_SPACE); // 2019-04-02 19:41:58
+		str_timestamp_format(aTimestamp, sizeof(aTimestamp), TimestampFormat::SPACE); // 2019-04-02 19:41:58
 
 		m_pSqlStats->SaveFastcap(ClientId, TimeTicks, aTimestamp, Grenade, IsStatTrack());
 	}
