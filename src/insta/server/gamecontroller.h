@@ -633,6 +633,18 @@ public:
 	virtual void OnSpecChatCmd(IConsole::IResult *pResult, void *pUserData);
 
 	/*
+		Function: OnKillChatCmd
+			Called when a player runs the /kill ddnet chat command
+			Contains the full implementation
+
+		Arguments:
+			pResult - the parsed arguments passed to the chat command by the user
+			pUserData - the callback context you can safely ignore. This is only useful
+				    if you want to call the original static ddnet callback
+	*/
+	virtual void OnKillChatCmd(IConsole::IResult *pResult, void *pUserData);
+
+	/*
 		Function: OnCreditsChatCmd
 			Called when a player runs the /credits ddnet chat command
 			Contains the full implementation

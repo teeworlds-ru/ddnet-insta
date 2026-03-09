@@ -143,6 +143,11 @@ bool CGameControllerInstaCore::OnTeamChatCmd(IConsole::IResult *pResult)
 	return CGameControllerDDNet::OnTeamChatCmd(pResult);
 }
 
+void CGameControllerInstaCore::OnKillChatCmd(IConsole::IResult *pResult, void *pUserData)
+{
+	IGameController::OnKillChatCmd(pResult, pUserData);
+}
+
 void CGameControllerInstaCore::OnReset()
 {
 	CGameControllerDDNet::OnReset();

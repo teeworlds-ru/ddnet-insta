@@ -40,6 +40,7 @@ public:
 
 	void OnCreditsChatCmd(IConsole::IResult *pResult, void *pUserData) override;
 	bool OnTeamChatCmd(IConsole::IResult *pResult) override;
+	void OnKillChatCmd(IConsole::IResult *pResult, void *pUserData) override;
 
 	void OnReset() override;
 	void OnInit() override;

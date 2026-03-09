@@ -1,5 +1,5 @@
 // This file can be included several times.
-// doc gen ignore: ready, pause, shuffle, swap, drop, spec, team, lock, unlock, invite, join, team0mode
+// doc gen ignore: ready, pause, shuffle, swap, drop, spec, team, lock, unlock, invite, join, team0mode, ^kill
 
 #ifndef CHAT_COMMAND
 #error "The config macros must be defined"
@@ -41,6 +41,8 @@ CHAT_COMMAND("spec", "?r[player name]", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaT
 CHAT_COMMAND("pausevoted", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaTogglePauseVoted, this, "Toggles pause on the currently voted player");
 // "specvoted" shadows a ddnet command
 CHAT_COMMAND("specvoted", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaToggleSpecVoted, this, "Toggles spec on the currently voted player");
+// "kill" shadows a ddnet command
+CHAT_COMMAND("kill", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConInstaKill, this, "Kill yourself when kill-protected during a long game (use f1, kill for regular kill)");
 
 // alias for "pause" in pvp modes
 CHAT_COMMAND("ready", "", CFGFLAG_CHAT | CFGFLAG_SERVER, ConReadyChange, this, "Pause or resume the game")

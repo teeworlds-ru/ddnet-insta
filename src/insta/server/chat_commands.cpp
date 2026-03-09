@@ -193,6 +193,17 @@ void CGameContext::ConInstaToggleSpecVoted(IConsole::IResult *pResult, void *pUs
 	ConToggleSpecVoted(pResult, pUserData);
 }
 
+void CGameContext::ConInstaKill(IConsole::IResult *pResult, void *pUserData)
+{
+	CGameContext *pSelf = (CGameContext *)pUserData;
+	if(!pSelf->m_pController)
+		return;
+	if(!CheckClientId(pResult->m_ClientId))
+		return;
+
+	pSelf->m_pController->OnKillChatCmd(pResult, pUserData);
+}
+
 void CGameContext::ConReadyChange(IConsole::IResult *pResult, void *pUserData)
 {
 	CGameContext *pSelf = (CGameContext *)pUserData;

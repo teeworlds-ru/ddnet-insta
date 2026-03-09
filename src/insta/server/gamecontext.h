@@ -137,6 +137,7 @@ public:
 	static void ConInstaToggleSpec(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaTogglePauseVoted(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaToggleSpecVoted(IConsole::IResult *pResult, void *pUserData);
+	static void ConInstaKill(IConsole::IResult *pResult, void *pUserData);
 	static void ConReadyChange(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaSwap(IConsole::IResult *pResult, void *pUserData);
 	static void ConInstaSwapRandom(IConsole::IResult *pResult, void *pUserData);
