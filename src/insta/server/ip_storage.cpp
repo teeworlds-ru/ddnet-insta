@@ -1,6 +1,7 @@
 #include "ip_storage.h"
 
 #include <base/log.h>
+#include <base/net.h>
 #include <base/system.h>
 
 #include <cstdint>
