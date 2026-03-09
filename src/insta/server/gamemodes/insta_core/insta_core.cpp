@@ -145,6 +145,12 @@ bool CGameControllerInstaCore::OnTeamChatCmd(IConsole::IResult *pResult)
 
 void CGameControllerInstaCore::OnKillChatCmd(IConsole::IResult *pResult, void *pUserData)
 {
+	if(!g_Config.m_SvAllowSelfkill)
+	{
+		log_info("chatresp", "Self kill is disabled");
+		return;
+	}
+
 	IGameController::OnKillChatCmd(pResult, pUserData);
 }
 
@@ -863,6 +869,13 @@ bool CGameControllerInstaCore::CanSelfkill(CPlayer *pPlayer, char *pErrorReason,
 {
 	CCharacter *pChr = pPlayer->GetCharacter();
 	bool IsFrozen = pChr && pChr->m_FreezeTime;
+
+	if(!g_Config.m_SvAllowSelfkill)
+	{
+		if(pErrorReason)
+			str_copy(pErrorReason, "Self kill is disabled", ErrorReasonSize);
+		return false;
+	}
 
 	if(IsFrozen && !CanSelfkillWhileFrozen(pPlayer))
 	{

@@ -123,6 +123,7 @@ Below is a list of all the settings that were added in ddnet-insta.
 + `sv_allow_ddr_team_change` enable or disable /team chat command but does not affect set_team_ddr rcon command
 + `sv_allow_team_change` allow players to switch teams for example from red to blue or to spectators
 + `sv_allow_team_change_during_pause` allow players to join the game or spectators during pause
++ `sv_allow_selfkill` if set to 0 selfkills and the /kill command will be blocked
 + `sv_tournament` Print messages saying tournament is running. No other effects.
 + `sv_tournament_chat` 0=off, 1=Spectators can not public chat, 2=Nobody can public chat
 + `sv_tournament_chat_smart` Turns sv_tournament_chat on on restart and off on round end

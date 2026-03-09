@@ -263,7 +263,7 @@ bool CGameControllerTsmash::DecreaseHealthAndKill(int Dmg, int From, int Weapon,
 bool CGameControllerTsmash::CanSelfkill(CPlayer *pPlayer, char *pErrorReason, int ErrorReasonSize)
 {
 	if(pErrorReason)
-		str_copy(pErrorReason, "Self kill is disabled", ErrorReasonSize);
+		str_copy(pErrorReason, "Self kill is disabled in tsmash", ErrorReasonSize);
 	return false;
 }
 

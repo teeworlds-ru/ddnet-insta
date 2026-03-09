@@ -126,6 +126,7 @@ MACRO_CONFIG_INT(SvCasualRounds, sv_casual_rounds, 1, 0, 1, CFGFLAG_SERVER, "1=s
 MACRO_CONFIG_INT(SvAllowDDRaceTeamChange, sv_allow_ddr_team_change, 1, 0, 1, CFGFLAG_SERVER, "enable or disable /team chat command but does not affect set_team_ddr rcon command")
 MACRO_CONFIG_INT(SvAllowTeamChange, sv_allow_team_change, 1, 0, 1, CFGFLAG_SERVER, "allow players to switch teams for example from red to blue or to spectators")
 MACRO_CONFIG_INT(SvAllowTeamChangeDuringPause, sv_allow_team_change_during_pause, 1, 0, 1, CFGFLAG_SERVER, "allow players to join the game or spectators during pause")
+MACRO_CONFIG_INT(SvAllowSelfkill, sv_allow_selfkill, 1, 0, 1, CFGFLAG_SERVER, "if set to 0 selfkills and the /kill command will be blocked")
 MACRO_CONFIG_INT(SvTournament, sv_tournament, 0, 0, 1, CFGFLAG_SERVER, "Print messages saying tournament is running. No other effects.")
 MACRO_CONFIG_STR(SvTournamentWelcomeChat, sv_tournament_welcome_chat, 900, "", CFGFLAG_SERVER, "Chat message shown in chat on join when sv_tournament is 1")
 MACRO_CONFIG_INT(SvTournamentChat, sv_tournament_chat, 0, 0, 2, CFGFLAG_SERVER, "0=off, 1=Spectators can not public chat, 2=Nobody can public chat")
