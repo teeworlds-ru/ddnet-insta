@@ -1392,6 +1392,18 @@ void CGameControllerInstaCore::OnUnfreeze(CPlayer *pPlayer)
 {
 }
 
+void CGameControllerInstaCore::StartRound()
+{
+	CGameControllerDDNet::StartRound();
+
+	OnRoundStart(); // ddnet-insta
+}
+
+void CGameControllerInstaCore::EndRound()
+{
+	SetGameState(IGS_END_ROUND, TIMER_END);
+}
+
 void CGameControllerInstaCore::OnRoundEnd()
 {
 	dbg_msg("ddnet-insta", "match end");

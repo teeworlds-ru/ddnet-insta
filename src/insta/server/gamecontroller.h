@@ -1587,8 +1587,6 @@ public:
 	int m_GameStartTick;
 	int m_aTeamscore[protocol7::NUM_TEAMS];
 
-	void EndRound() { SetGameState(IGS_END_ROUND, TIMER_END); }
-
 	float CalcKillDeathRatio(int Kills, int Deaths) const;
 
 	// Get current stats as json for one player

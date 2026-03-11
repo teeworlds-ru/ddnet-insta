@@ -498,6 +498,16 @@ void IGameController::OnPlayerDisconnect(class CPlayer *pPlayer, const char *pRe
 	}
 }
 
+void IGameController::EndRound()
+{
+	if(m_Warmup) // game can't end when we are running warmup
+		return;
+
+	SetGamePaused(true);
+	m_GameOverTick = Server()->Tick();
+	m_SuddenDeath = 0;
+}
+
 void IGameController::ResetGame()
 {
 	// ddnet-insta
@@ -556,8 +566,6 @@ void IGameController::StartRound()
 	char aBuf[256];
 	str_format(aBuf, sizeof(aBuf), "start round type='%s' teamplay='%d'", m_pGameType, m_GameFlags & GAMEFLAG_TEAMS);
 	GameServer()->Console()->Print(IConsole::OUTPUT_LEVEL_DEBUG, "game", aBuf);
-
-	OnRoundStart(); // ddnet-insta
 }
 
 void IGameController::ChangeMap(const char *pToMap)

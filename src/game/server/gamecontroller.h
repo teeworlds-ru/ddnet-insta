@@ -145,8 +145,8 @@ public:
 
 	void SetGamePaused(bool Paused);
 	bool IsGamePaused() const;
-	void StartRound();
-	// void EndRound(); // ddnet-insta
+	virtual void StartRound();
+	virtual void EndRound();
 	void ChangeMap(const char *pToMap);
 
 	/*
