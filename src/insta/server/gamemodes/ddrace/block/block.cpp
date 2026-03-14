@@ -116,6 +116,7 @@ void CGameControllerBlock::OnCharacterDeathImpl(CCharacter *pVictim, int Killer,
 
 	if(pKiller && pKiller != pVictim->GetPlayer() && CountKill)
 	{
+		OnKill(pVictim->GetPlayer(), pKiller, LastToucher.value().m_Weapon);
 		CGameControllerBasePvp::OnCharacterDeathImpl(
 			pVictim,
 			pKiller->GetCid(),
