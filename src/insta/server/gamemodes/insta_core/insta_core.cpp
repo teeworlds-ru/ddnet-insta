@@ -1690,6 +1690,8 @@ void CGameControllerInstaCore::SendSkinChangeToAllSixup(protocol7::CNetMsg_Sv_Sk
 		if(!Server()->IsSixup(pReceivingPlayer->GetCid()))
 			continue;
 
+		// TODO: this is a flawed attempt at determining who shows up in the bottom right hud
+		//       https://github.com/ddnet-insta/ddnet-insta/issues/633
 		const bool IsTopscorer = !GameServer()->m_pController->IsTeamPlay() && GameServer()->m_pController->HasWinningScore(pPlayer);
 
 		// never clip when in scoreboard or the top scorer
