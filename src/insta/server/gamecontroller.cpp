@@ -65,7 +65,7 @@ void IGameController::SendDeathInfoMessage(CCharacter *pVictim, int Killer, int 
 void IGameController::SendDeathEvent(CCharacter *pVictim, int Killer, int Weapon)
 {
 	GameServer()->CreateSound(pVictim->m_Pos, SOUND_PLAYER_DIE, pVictim->TeamMask());
-	GameServer()->CreateDeath(pVictim->m_Pos, pVictim->m_pPlayer->GetCid(), pVictim->TeamMask());
+	GameServer()->CreateDeath(pVictim->m_Pos, pVictim->GetPlayer()->GetCid(), pVictim->TeamMask());
 }
 
 void IGameController::LogKillMessage(CCharacter *pVictim, int Killer, int Weapon, int ModeSpecial)
