@@ -45,14 +45,14 @@ void IGameController::OnCharacterDeathImpl(CCharacter *pVictim, int Killer, int 
 	SendDeathEvent(pVictim, Killer, Weapon);
 
 	// this is to rate limit respawning to 3 secs
-	pVictim->m_pPlayer->m_PreviousDieTick = pVictim->m_pPlayer->m_DieTick;
-	pVictim->m_pPlayer->m_DieTick = Server()->Tick();
+	pVictim->GetPlayer()->m_PreviousDieTick = pVictim->GetPlayer()->m_DieTick;
+	pVictim->GetPlayer()->m_DieTick = Server()->Tick();
 
 	pVictim->m_Alive = false;
 	pVictim->SetSolo(false);
 
 	GameServer()->m_World.RemoveEntity(pVictim);
-	GameServer()->m_World.m_Core.m_apCharacters[pVictim->m_pPlayer->GetCid()] = nullptr;
+	GameServer()->m_World.m_Core.m_apCharacters[pVictim->GetPlayer()->GetCid()] = nullptr;
 	pVictim->Teams()->OnCharacterDeath(pVictim->GetPlayer()->GetCid(), Weapon);
 	pVictim->CancelSwapRequests();
 }
