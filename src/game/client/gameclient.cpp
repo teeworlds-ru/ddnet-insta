@@ -2366,7 +2366,12 @@ void CGameClient::OnNewSnapshot()
 				if(IsOtherTeam(i))
 					Alpha = g_Config.m_ClShowOthersAlpha / 100.0f;
 				const float Volume = 1.0f; // TODO snd_game_volume_others
-				m_Effects.AirJump(Pos, Alpha, Volume);
+
+				const bool Grounded = Collision()->IsOnGround(vec2(m_Snap.m_aCharacters[i].m_Prev.m_X, m_Snap.m_aCharacters[i].m_Prev.m_Y), CCharacterCore::PhysicalSize());
+				if(!Grounded)
+				{
+					m_Effects.AirJump(Pos, Alpha, Volume);
+				}
 			}
 		}
 	}
@@ -3398,13 +3403,13 @@ void CGameClient::UpdateLocalTuning()
 				m_aExpectingTuningForZone[g_Config.m_ClDummy] = -1;
 				m_aExpectingTuningSince[g_Config.m_ClDummy] = 0;
 				m_aReceivedTuning[g_Config.m_ClDummy] = false;
-				dbg_msg("tunezone", "the tuning was missed");
+				log_debug("tunezone", "the tuning was missed");
 			}
 			else
 			{
 				// if we are expecting tuning and have not received one yet.
 				// do not update any tuning, so we don't apply it to the wrong tunezone.
-				dbg_msg("tunezone", "waiting for tuning for zone %d", m_aExpectingTuningForZone[g_Config.m_ClDummy]);
+				log_debug("tunezone", "waiting for tuning for zone %d", m_aExpectingTuningForZone[g_Config.m_ClDummy]);
 				m_aExpectingTuningSince[g_Config.m_ClDummy]++;
 			}
 		}
