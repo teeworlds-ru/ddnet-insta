@@ -217,6 +217,14 @@ void CDeadSpecController::KillPlayer(CPlayer *pPlayer, int KillerId)
 			.m_Team = TEAM_SPECTATORS,
 			.m_SpectatorId = KillerId};
 	}
+	else
+	{
+		// https://github.com/ddnet-insta/ddnet-insta/issues/622
+		// if a player joins as spec in a running zcatch round with leader
+		// they will not be moved to spectators they will stay there
+		// in that case they have to be explicitly set to follow the leading player
+		pPlayer->SetSpectatorId(KillerId);
+	}
 }
 
 void CDeadSpecController::RespawnPlayer(CPlayer *pPlayer)
