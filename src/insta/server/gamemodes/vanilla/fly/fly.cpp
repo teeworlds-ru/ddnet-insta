@@ -44,7 +44,9 @@ int CGameControllerFly::OnCharacterDeath(class CCharacter *pVictim, class CPlaye
 	if(LastToucherId >= 0 && LastToucherId < MAX_CLIENTS)
 		pKiller = GameServer()->m_apPlayers[LastToucherId];
 
-	if(pKiller && pKiller != pVictim->GetPlayer() && Weapon == WEAPON_WORLD)
+	bool IsTeamKill = pKiller && IsTeamPlay() && pVictim->GetPlayer()->GetTeam() == pKiller->GetTeam();
+
+	if(pKiller && pKiller != pVictim->GetPlayer() && !IsTeamKill && Weapon == WEAPON_WORLD)
 	{
 		OnKill(pVictim->GetPlayer(), pKiller, Weapon);
 

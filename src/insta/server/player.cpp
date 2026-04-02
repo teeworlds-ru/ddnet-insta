@@ -355,15 +355,19 @@ void CPlayer::UpdateLastToucher(int ClientId, int Weapon)
 	if(!pPlayer)
 		return;
 
-	// TODO: should we really reset the last toucher when we get shot by a team mate?
-	if(
-		GameServer()->m_pController &&
-		GameServer()->m_pController->IsTeamPlay() &&
-		pPlayer->GetTeam() == GetTeam())
-	{
-		m_LastToucher = std::nullopt;
-		return;
-	}
+	// intentionally do not clear out the last toucher when it is a team mate!
+	// a bit related to this issue https://github.com/ddnet-insta/ddnet-insta/issues/631
+	// the mode has to check if the last toucher was a team mate
+	// this is needed to properly implement punishments for team kills
+
+	// if(
+	// 	GameServer()->m_pController &&
+	// 	GameServer()->m_pController->IsTeamPlay() &&
+	// 	pPlayer->GetTeam() == GetTeam())
+	// {
+	// 	m_LastToucher = std::nullopt;
+	// 	return;
+	// }
 
 	m_LastToucher = CLastToucher(
 		ClientId,

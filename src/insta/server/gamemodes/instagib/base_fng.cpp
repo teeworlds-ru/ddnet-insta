@@ -253,7 +253,9 @@ void CGameControllerBaseFng::OnSpike(class CCharacter *pChr, int SpikeTile)
 	if(LastToucherId >= 0 && LastToucherId < MAX_CLIENTS)
 		pKiller = GameServer()->m_apPlayers[LastToucherId];
 
-	if(pKiller)
+	bool IsTeamKill = pKiller && IsTeamPlay() && pChr->GetPlayer()->GetTeam() == pKiller->GetTeam();
+
+	if(pKiller && !IsTeamKill)
 	{
 		switch(SpikeTile)
 		{
@@ -325,7 +327,7 @@ void CGameControllerBaseFng::OnSpike(class CCharacter *pChr, int SpikeTile)
 		OnKill(pChr->GetPlayer(), pKiller, WEAPON_WORLD);
 	}
 
-	if(LastToucherId == -1)
+	if(LastToucherId == -1 || IsTeamKill)
 		pChr->Die(pChr->GetPlayer()->GetCid(), WEAPON_WORLD);
 	else
 		pChr->Die(LastToucherId, WEAPON_NINJA);
