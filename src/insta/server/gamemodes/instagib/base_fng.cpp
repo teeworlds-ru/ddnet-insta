@@ -34,6 +34,29 @@ int CGameControllerBaseFng::SnapGameInfoExFlags(int SnappingClient, int DDRaceFl
 
 	// to make ddnet clients "snd_long_pain" work https://github.com/ddnet-insta/ddnet-insta/issues/298
 	Flags |= GAMEINFOFLAG_GAMETYPE_FNG;
+
+	// GAMEINFOFLAG_PREDICT_FNG enables a hardcodet hammer force on the client side
+	// so only if we match that value correctly we ask the client to predict it like that
+	// these values are also the default values so it is likely that we hit that branch
+	// https://github.com/ddnet/ddnet/blob/f9df4a85be4ca94ca91057cd447707bcce16fd94/src/game/client/prediction/entities/character.cpp#L334-L346
+	if(g_Config.m_SvFngHammer &&
+		g_Config.m_SvHammerScaleX == 320 &&
+		g_Config.m_SvHammerScaleY == 120 &&
+		g_Config.m_SvMeltHammerScaleX == 50 &&
+		g_Config.m_SvMeltHammerScaleY == 50)
+	{
+		// while the hammer tuning is the strongest effect of the predict fng flag
+		// the client does two other things too
+		//
+		// reset character prediction
+		// https://github.com/ddnet/ddnet/blob/e728c58f84795389484196e249b4063c5e7a6e53/src/game/client/gameclient.cpp#L1146-L1153
+		//
+		// increase laser energy
+		// https://github.com/ddnet/ddnet/blob/e728c58f84795389484196e249b4063c5e7a6e53/src/game/client/prediction/entities/laser.cpp#L21-L22
+
+		Flags |= GAMEINFOFLAG_PREDICT_FNG;
+	}
+
 	return Flags;
 }
 
